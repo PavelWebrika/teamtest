@@ -1,0 +1,219 @@
+---
+description: MAIN router rule for the PHYTO.bg WordPress catalog project. Always read first; it explains which Cursor rule file to use for each kind of work.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.js"
+  - "**/*.json"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# MAIN Cursor Instructions: PHYTO.bg WordPress Catalog Project
+
+Read this file first. It is the router/index for the project rule set.
+
+## Project in one sentence
+
+Build a Bulgarian WordPress catalog/information site based on the PHYTO reference/design, using a custom classic theme, ACF, custom post types, plain CSS, and no e-commerce or public customer-auth features.
+
+## Non-negotiable scope
+
+Do not build:
+
+- WooCommerce.
+- Cart.
+- Checkout.
+- Buy buttons.
+- Add-to-cart.
+- Prices/payment/shipping/order logic.
+- Stock/inventory logic.
+- Public login/register/account pages.
+- Wishlist/order history/customer dashboard.
+- Public users/auth.
+- Quiz module.
+
+WordPress admin users are allowed only for content management.
+
+## Rule priority
+
+When rules overlap, follow this order:
+
+1. `000-main-phyto-cursor-instructions.mdc`
+   - This router/index file.
+   - Use first to decide which supporting rule files apply.
+
+2. `selecta-phyto-catalog-project-context.mdc`
+   - Project scope and business rules.
+   - Use for all decisions about what the site is and is not.
+   - This file overrides generic WordPress examples.
+
+3. `selecta-phyto-sitemap-context.mdc`
+   - Reference-site structure and route/template mapping.
+   - Use when building navigation, pages, product archives, product detail pages, advice/blog pages, CMS pages, legal pages, partners/store locator, and footer structure.
+
+4. `selecta-figma-mcp-wordpress-instructions.mdc`
+   - Figma MCP workflow.
+   - Use whenever implementing UI from Figma frames/components.
+   - Figma is the visual source of truth; WordPress/ACF/CPT rules are the architecture source of truth.
+
+5. `wordpress-acf-theme-instructions-updated.mdc`
+   - General always-on WordPress custom theme rules.
+   - Use for PHP, template hierarchy, asset loading, ACF safety, CPTs, escaping, security, and plain CSS practices.
+
+6. `wordpress-acf-theme-skill-updated.mdc`
+   - Detailed implementation skill.
+   - Use when planning/building/refactoring components, templates, CPTs, ACF fields, product catalog pages, advice pages, and CSS.
+
+## Which file to use when
+
+Use `selecta-phyto-catalog-project-context.mdc` when the task asks about:
+
+- project scope
+- catalog-only behavior
+- what to remove from the reference site
+- no e-commerce
+- no public auth
+- product CPT strategy
+- brand reuse
+- global components
+- tracking/GDPR/newsletter boundaries
+
+Use `selecta-phyto-sitemap-context.mdc` when the task asks about:
+
+- site map
+- routes
+- page structure
+- navigation
+- mega menu
+- homepage sections
+- product listing pages
+- product detail pages
+- advice/blog
+- CMS pages
+- legal/footer pages
+- partners/store locator
+
+Use `selecta-figma-mcp-wordpress-instructions.mdc` when the task asks about:
+
+- Figma
+- Figma MCP
+- implementing a Figma frame
+- mapping design to code
+- extracting CSS variables
+- assets/icons/images from Figma
+- responsive variants
+- matching the visual UI
+
+Use `wordpress-acf-theme-instructions-updated.mdc` when the task asks about:
+
+- WordPress theme structure
+- PHP practices
+- hooks
+- enqueueing assets
+- escaping/sanitization
+- ACF usage
+- CPT/taxonomy registration
+- template hierarchy
+- plain CSS rules
+- accessibility/security basics
+
+Use `wordpress-acf-theme-skill-updated.mdc` when the task asks to:
+
+- create or refactor code
+- plan implementation
+- create templates
+- create template parts
+- create product/archive/single pages
+- create ACF field structures
+- create CPTs/taxonomies
+- debug WordPress/ACF/template issues
+- write CSS components
+
+## Standard implementation flow
+
+For most coding tasks, follow this order:
+
+1. Confirm the scope in `selecta-phyto-catalog-project-context.mdc`.
+2. If the task maps to a reference page/route, check `selecta-phyto-sitemap-context.mdc`.
+3. If a Figma link/frame is provided, inspect it using the Figma MCP and follow `selecta-figma-mcp-wordpress-instructions.mdc`.
+4. Plan the WordPress/ACF/CPT/template mapping using `wordpress-acf-theme-skill-updated.mdc`.
+5. Implement according to `wordpress-acf-theme-instructions-updated.mdc`.
+6. Verify no e-commerce or public-auth behavior was introduced.
+
+## Data model defaults
+
+Default product content model:
+
+```text
+CPT: selecta_product
+Purpose: catalog-only product entries
+Templates:
+  - archive-selecta_product.php
+  - single-selecta_product.php
+Suggested taxonomies:
+  - selecta_product_category
+  - selecta_product_line
+  - selecta_hair_type
+  - selecta_hair_concern
+```
+
+Default editorial model:
+
+```text
+CPT: selecta_advice
+Purpose: advice/editorial content
+Templates:
+  - archive-selecta_advice.php
+  - single-selecta_advice.php
+```
+
+Optional structured content:
+
+```text
+selecta_faq
+selecta_partner
+selecta_promotion
+```
+
+## Default UI implementation rules
+
+- Use PHP template parts for reusable UI.
+- Use ACF fields for editable content.
+- Use CPTs/taxonomies for structured products/advice/FAQ/partners/promotions.
+- Use plain CSS only.
+- Keep CSS component-scoped and low-specificity.
+- Use semantic HTML.
+- Keep menus and accordions keyboard-accessible.
+- Escape all dynamic output.
+- Do not hardcode product content that should come from WordPress admin.
+- Do not introduce a page builder unless the user explicitly changes the plan.
+
+## Before editing code, state this
+
+Before making larger edits, tell the user:
+
+```text
+Relevant rule files:
+WordPress mapping:
+Files to edit:
+ACF/CPT data needed:
+Commerce/auth elements excluded:
+```
+
+Keep it short.
+
+## Final QA checklist
+
+Before finalizing any implementation:
+
+- Product pages are catalog-only.
+- Products use `selecta_product` or the confirmed project CPT.
+- No WooCommerce/cart/checkout/buy/add-to-cart/price/payment/shipping/order logic exists.
+- No public login/register/account/wishlist/order-history/customer-dashboard UI exists.
+- Figma visual intent is respected when Figma is provided.
+- Reference sitemap structure is respected where relevant.
+- ACF fields are guarded and escaped.
+- Images use WordPress image functions when possible.
+- CSS is plain and responsive.
+- The result is simple, maintainable, and aligned with the project rule files.

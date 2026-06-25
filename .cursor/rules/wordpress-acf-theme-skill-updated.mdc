@@ -1,0 +1,1078 @@
+---
+description: Detailed Cursor skill for planning and implementing a simple, robust WordPress custom theme using ACF, custom post types, and plain CSS.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "acf-json/**/*.json"
+alwaysApply: false
+---
+
+# Skill: Build a WordPress Custom Theme with ACF, CPTs, and Plain CSS
+
+Use this skill when the user asks to create, refactor, debug, or extend a custom WordPress theme that relies on Advanced Custom Fields, custom post types, taxonomies, and hand-written CSS.
+
+The goal is a production-friendly classic theme: simple PHP templates, clear content modeling, explicit escaping, predictable CSS, and minimal moving parts.
+
+
+## PHYTO catalog clone project mode
+
+When the project includes `selecta-phyto-catalog-project-context.mdc`, read it before planning implementation.
+
+In this mode:
+
+- Treat `fr.phyto.com` as the primary UI/page-structure reference for the current build.
+- Build a Bulgarian catalog/information WordPress site, not an e-commerce site.
+- Implement products as a catalog custom post type, not WooCommerce products.
+- Recreate the useful UI patterns: announcement bar, header, mega menu, mobile menu, hero/banner sections, product listing grids, product detail layout, ingredients/benefits/usage sections, advice/editorial pages, brand pages, newsletter, footer, FAQ/contact/legal/partners pages.
+- Remove or replace all commerce behavior from the reference: buy buttons, add-to-cart, checkout, price/payment/shipping modules, loyalty points, customer reviews for purchase decisions, customer login, account, registration, wishlist, order history, and gated customer features.
+- WordPress admin users are allowed for content management; public customer auth is out of scope.
+- Use ACF for structured fields and controlled flexible sections.
+- Use plain CSS to match the UI; do not introduce a CSS framework.
+- Keep the theme reusable for LIERAC/future brands where this does not complicate the PHYTO build.
+
+## Core principles
+
+1. Content structure first. Define post types, taxonomies, and fields before templates.
+2. Use WordPress conventions instead of custom frameworks.
+3. Use ACF for editor data, not as a substitute for good template architecture.
+4. Escape all dynamic output at the final echo.
+5. Keep CSS plain, scoped, and low specificity.
+6. Prefer fewer files than a complicated architecture, but separate repeated concerns.
+7. When a feature should survive theme switching, recommend a plugin or must-use plugin.
+
+## Step 1: Clarify or infer the content model
+
+Identify:
+
+- Content types: pages, posts, projects, services, team members, testimonials, products, locations, events, etc.
+- Taxonomies: categories, project types, industries, services, locations, tags.
+- Global fields: logo alternatives, phone, email, social links, footer text, global CTA.
+- Template-specific fields: homepage hero, page sections, cards, FAQ, stats, galleries.
+- Archive/single needs: whether each CPT needs public URLs, archives, search inclusion, REST support, featured images, excerpts, revisions.
+
+Make a compact content model before writing code.
+
+For the current PHYTO catalog clone, the base content model should usually be:
+
+```text
+CPT: Product
+Key: selecta_product
+Purpose: catalog-only product entries.
+Public: yes
+Archive: yes
+Supports: title, editor, thumbnail, excerpt, revisions
+Taxonomies:
+  - selecta_product_category
+  - selecta_product_line
+  - selecta_hair_type
+  - selecta_hair_concern
+Explicitly excluded:
+  - WooCommerce product type
+  - price
+  - stock
+  - cart
+  - checkout
+  - shipping
+  - payment
+  - customer account/login
+  - customer order history
+  - wishlist
+
+CPT: Advice Article
+Key: selecta_advice
+Purpose: editorial / "Our advice" content.
+Public: yes
+Archive: yes
+
+CPT: FAQ
+Key: selecta_faq
+Purpose: reusable FAQ entries.
+
+CPT: Partner
+Key: selecta_partner
+Purpose: partner/location listings if the Partners page needs structured editing.
+
+CPT: Promotion / Offer
+Key: selecta_promotion
+Purpose: non-commerce promotional/catalog sections.
+```
+
+Use optional external CTA fields only for approved external links, such as a future shared Shopify store or loyalty/partner system. Do not label CTAs as "buy" unless the client confirms wording and URL.
+
+
+Example:
+
+```text
+CPT: project
+Key: theme_project
+Public: yes
+Archive: /projects/
+Supports: title, editor, thumbnail, excerpt, revisions
+Taxonomy: theme_project_type
+ACF group: Project Details
+Fields:
+  - client_name: text
+  - project_date: date picker
+  - hero_image: image ID
+  - summary: textarea
+  - gallery: gallery or repeater
+Templates:
+  - archive-theme_project.php
+  - single-theme_project.php
+```
+
+## Step 2: Create or normalize the theme structure
+
+Target structure:
+
+```text
+theme-name/
+  style.css
+  functions.php
+  index.php
+  header.php
+  footer.php
+  front-page.php
+  page.php
+  single.php
+  archive.php
+  assets/css/main.css
+  inc/setup.php
+  inc/assets.php
+  inc/post-types.php
+  inc/acf.php
+  inc/helpers.php
+  template-parts/content/content.php
+  template-parts/content/content-page.php
+  template-parts/content/content-none.php
+  template-parts/components/hero.php
+  acf-json/
+```
+
+Implementation rules:
+
+- If files already exist, adapt to the existing structure.
+- Keep `functions.php` as a bootstrap loader.
+- Use `inc/` for functions and hooks.
+- Use `template-parts/` for repeated markup.
+- Use `assets/css/main.css` for all theme styling.
+- Keep the root `style.css` for the WordPress theme header and optional import/comment only.
+
+Minimal `style.css`:
+
+```css
+/*
+Theme Name: Theme Name
+Theme URI: https://example.com
+Author: Author Name
+Author URI: https://example.com
+Description: Custom WordPress theme.
+Version: 1.0.0
+Text Domain: theme-name
+*/
+```
+
+Minimal `functions.php`:
+
+```php
+<?php
+/**
+ * Theme bootstrap.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+$theme_includes = array(
+	'inc/setup.php',
+	'inc/assets.php',
+	'inc/post-types.php',
+	'inc/acf.php',
+	'inc/helpers.php',
+);
+
+foreach ( $theme_includes as $theme_file ) {
+	$theme_path = get_template_directory() . '/' . $theme_file;
+
+	if ( file_exists( $theme_path ) ) {
+		require_once $theme_path;
+	}
+}
+```
+
+## Step 3: Add setup and assets
+
+`inc/setup.php`:
+
+```php
+<?php
+/**
+ * Theme setup.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function theme_setup() {
+	load_theme_textdomain( 'theme-name', get_template_directory() . '/languages' );
+
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support(
+		'html5',
+		array(
+			'search-form',
+			'comment-form',
+			'comment-list',
+			'gallery',
+			'caption',
+			'style',
+			'script',
+		)
+	);
+
+	register_nav_menus(
+		array(
+			'primary' => esc_html__( 'Primary Menu', 'theme-name' ),
+			'footer'  => esc_html__( 'Footer Menu', 'theme-name' ),
+		)
+	);
+}
+add_action( 'after_setup_theme', 'theme_setup' );
+```
+
+`inc/assets.php`:
+
+```php
+<?php
+/**
+ * Theme assets.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function theme_enqueue_assets() {
+	$main_css_path = get_template_directory() . '/assets/css/main.css';
+	$main_css_uri  = get_template_directory_uri() . '/assets/css/main.css';
+
+	wp_enqueue_style(
+		'theme-main',
+		$main_css_uri,
+		array(),
+		file_exists( $main_css_path ) ? filemtime( $main_css_path ) : wp_get_theme()->get( 'Version' )
+	);
+}
+add_action( 'wp_enqueue_scripts', 'theme_enqueue_assets' );
+```
+
+## Step 4: Register custom post types and taxonomies
+
+Use this decision rule:
+
+- If the user wants admin-managed content modeling with ACF UI, create the CPT/taxonomies in ACF and commit `acf-json/`.
+- If the user wants code-managed definitions, use `register_post_type()` and `register_taxonomy()`.
+- If the CPT must survive theme switching, create or recommend a small plugin instead of theme-only registration.
+
+`inc/post-types.php` example:
+
+```php
+<?php
+/**
+ * Custom post types and taxonomies.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function theme_register_post_types() {
+	register_taxonomy(
+		'theme_project_type',
+		array( 'theme_project' ),
+		array(
+			'labels'            => array(
+				'name'              => esc_html__( 'Project Types', 'theme-name' ),
+				'singular_name'     => esc_html__( 'Project Type', 'theme-name' ),
+				'search_items'      => esc_html__( 'Search Project Types', 'theme-name' ),
+				'all_items'         => esc_html__( 'All Project Types', 'theme-name' ),
+				'edit_item'         => esc_html__( 'Edit Project Type', 'theme-name' ),
+				'update_item'       => esc_html__( 'Update Project Type', 'theme-name' ),
+				'add_new_item'      => esc_html__( 'Add New Project Type', 'theme-name' ),
+				'new_item_name'     => esc_html__( 'New Project Type Name', 'theme-name' ),
+				'menu_name'         => esc_html__( 'Project Types', 'theme-name' ),
+			),
+			'public'            => true,
+			'hierarchical'      => true,
+			'show_admin_column' => true,
+			'show_in_rest'      => true,
+			'rewrite'           => array( 'slug' => 'project-type' ),
+		)
+	);
+
+	register_post_type(
+		'theme_project',
+		array(
+			'labels'             => array(
+				'name'               => esc_html__( 'Projects', 'theme-name' ),
+				'singular_name'      => esc_html__( 'Project', 'theme-name' ),
+				'add_new_item'       => esc_html__( 'Add New Project', 'theme-name' ),
+				'edit_item'          => esc_html__( 'Edit Project', 'theme-name' ),
+				'new_item'           => esc_html__( 'New Project', 'theme-name' ),
+				'view_item'          => esc_html__( 'View Project', 'theme-name' ),
+				'search_items'       => esc_html__( 'Search Projects', 'theme-name' ),
+				'not_found'          => esc_html__( 'No projects found', 'theme-name' ),
+				'not_found_in_trash' => esc_html__( 'No projects found in Trash', 'theme-name' ),
+			),
+			'public'             => true,
+			'publicly_queryable' => true,
+			'has_archive'        => true,
+			'menu_position'      => 20,
+			'menu_icon'          => 'dashicons-portfolio',
+			'show_in_rest'       => true,
+			'rewrite'            => array( 'slug' => 'projects' ),
+			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ),
+			'taxonomies'         => array( 'theme_project_type' ),
+		)
+	);
+}
+add_action( 'init', 'theme_register_post_types' );
+```
+
+After adding or changing rewrite slugs, instruct the user to go to **Settings > Permalinks > Save Changes** once. Never call `flush_rewrite_rules()` on every request.
+
+## Step 5: Configure ACF Local JSON
+
+Create:
+
+```text
+acf-json/
+```
+
+Make sure the server can write to it during development. Commit the JSON files.
+
+Optional custom load/save paths in `inc/acf.php`:
+
+```php
+<?php
+/**
+ * ACF integration.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function theme_acf_json_save_path( $path ) {
+	return get_stylesheet_directory() . '/acf-json';
+}
+add_filter( 'acf/settings/save_json', 'theme_acf_json_save_path' );
+
+function theme_acf_json_load_paths( $paths ) {
+	$paths[] = get_stylesheet_directory() . '/acf-json';
+
+	return $paths;
+}
+add_filter( 'acf/settings/load_json', 'theme_acf_json_load_paths' );
+```
+
+Use ACF field groups like:
+
+```text
+Field Group: Page - Homepage
+Location: Page Type is Front Page
+Fields:
+  hero_title: Text
+  hero_text: WYSIWYG or Textarea
+  hero_image: Image, return ID
+  hero_link: Link
+  featured_projects: Relationship, filter by Project CPT
+```
+
+```text
+Field Group: Project Details
+Location: Post Type is Project
+Fields:
+  project_summary: Textarea
+  client_name: Text
+  project_gallery: Gallery or Repeater
+```
+
+## Step 6: Add safe ACF helper functions
+
+`inc/helpers.php`:
+
+```php
+<?php
+/**
+ * Template helpers.
+ *
+ * @package ThemeName
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function theme_get_acf_field( $selector, $post_id = false, $default = '' ) {
+	if ( ! function_exists( 'get_field' ) ) {
+		return $default;
+	}
+
+	$value = get_field( $selector, $post_id );
+
+	if ( null === $value || false === $value || '' === $value ) {
+		return $default;
+	}
+
+	return $value;
+}
+
+function theme_get_link_attrs( $link ) {
+	if ( ! is_array( $link ) || empty( $link['url'] ) ) {
+		return '';
+	}
+
+	$target = ! empty( $link['target'] ) ? $link['target'] : '_self';
+	$rel    = '_blank' === $target ? ' rel="noopener noreferrer"' : '';
+
+	return sprintf(
+		'href="%s" target="%s"%s',
+		esc_url( $link['url'] ),
+		esc_attr( $target ),
+		$rel
+	);
+}
+```
+
+Use helper output carefully. If a helper returns an HTML attribute string, generate it only from escaped values and document that it is safe.
+
+## Step 7: Build templates
+
+
+### PHYTO-style catalog templates
+
+For the product listing page, copy the reference structure conceptually but remove commerce UI:
+
+- Category/collection heading.
+- Description text.
+- Filter/navigation groups for product type, line, hair type, concern, or collection.
+- Product cards with image, title, line/range, short benefit, and optional badges.
+- No price.
+- No discount/sale price.
+- No add-to-cart.
+- No stock/shipping/payment text.
+
+For the product detail page, copy the content hierarchy conceptually but make it catalog-only:
+
+- Product title.
+- Range/line.
+- Short description.
+- Product image/gallery.
+- Size/format if needed for catalog accuracy.
+- Benefit/result claims.
+- Description.
+- Ingredients/key active ingredients.
+- Usage instructions.
+- Related products.
+- Related advice articles.
+- Optional external CTA only when provided by the client.
+
+Never include buy buttons, cart forms, checkout links, account/login links, order logic, or customer-commerce widgets.
+
+
+`index.php` fallback:
+
+```php
+<?php
+/**
+ * Main template file.
+ *
+ * @package ThemeName
+ */
+
+get_header();
+?>
+
+<main id="primary" class="site-main">
+	<div class="container">
+		<?php if ( have_posts() ) : ?>
+			<?php while ( have_posts() ) : ?>
+				<?php the_post(); ?>
+				<?php get_template_part( 'template-parts/content/content', get_post_type() ); ?>
+			<?php endwhile; ?>
+
+			<?php the_posts_pagination(); ?>
+		<?php else : ?>
+			<?php get_template_part( 'template-parts/content/content', 'none' ); ?>
+		<?php endif; ?>
+	</div>
+</main>
+
+<?php
+get_footer();
+```
+
+`front-page.php` with ACF:
+
+```php
+<?php
+/**
+ * Front page template.
+ *
+ * @package ThemeName
+ */
+
+get_header();
+
+$hero_title = theme_get_acf_field( 'hero_title' );
+$hero_text  = theme_get_acf_field( 'hero_text' );
+$hero_image = theme_get_acf_field( 'hero_image' );
+$hero_link  = theme_get_acf_field( 'hero_link' );
+?>
+
+<main id="primary" class="site-main">
+	<section class="hero">
+		<div class="container hero__inner">
+			<div class="hero__content">
+				<?php if ( $hero_title ) : ?>
+					<h1 class="hero__title"><?php echo esc_html( $hero_title ); ?></h1>
+				<?php endif; ?>
+
+				<?php if ( $hero_text ) : ?>
+					<div class="hero__text"><?php echo wp_kses_post( $hero_text ); ?></div>
+				<?php endif; ?>
+
+				<?php if ( is_array( $hero_link ) && ! empty( $hero_link['title'] ) ) : ?>
+					<a class="button" <?php echo theme_get_link_attrs( $hero_link ); ?>>
+						<?php echo esc_html( $hero_link['title'] ); ?>
+					</a>
+				<?php endif; ?>
+			</div>
+
+			<?php if ( $hero_image ) : ?>
+				<div class="hero__media">
+					<?php
+					echo wp_get_attachment_image(
+						(int) $hero_image,
+						'large',
+						false,
+						array( 'class' => 'hero__image' )
+					);
+					?>
+				</div>
+			<?php endif; ?>
+		</div>
+	</section>
+</main>
+
+<?php
+get_footer();
+```
+
+`archive-theme_project.php`:
+
+```php
+<?php
+/**
+ * Project archive.
+ *
+ * @package ThemeName
+ */
+
+get_header();
+?>
+
+<main id="primary" class="site-main">
+	<header class="archive-header">
+		<div class="container">
+			<h1 class="archive-title"><?php post_type_archive_title(); ?></h1>
+		</div>
+	</header>
+
+	<div class="container">
+		<?php if ( have_posts() ) : ?>
+			<div class="card-grid">
+				<?php while ( have_posts() ) : ?>
+					<?php the_post(); ?>
+					<?php get_template_part( 'template-parts/content/content', 'project-card' ); ?>
+				<?php endwhile; ?>
+			</div>
+
+			<?php the_posts_pagination(); ?>
+		<?php else : ?>
+			<?php get_template_part( 'template-parts/content/content', 'none' ); ?>
+		<?php endif; ?>
+	</div>
+</main>
+
+<?php
+get_footer();
+```
+
+`template-parts/content/content-project-card.php`:
+
+```php
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'card project-card' ); ?>>
+	<a class="card__link" href="<?php the_permalink(); ?>">
+		<?php if ( has_post_thumbnail() ) : ?>
+			<div class="card__media">
+				<?php the_post_thumbnail( 'medium_large', array( 'class' => 'card__image' ) ); ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="card__body">
+			<h2 class="card__title"><?php the_title(); ?></h2>
+
+			<?php if ( has_excerpt() ) : ?>
+				<p class="card__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p>
+			<?php endif; ?>
+		</div>
+	</a>
+</article>
+```
+
+## Step 8: Handle ACF repeaters and flexible fields safely
+
+Repeater:
+
+```php
+<?php if ( function_exists( 'have_rows' ) && have_rows( 'faq_items' ) ) : ?>
+	<div class="faq">
+		<?php while ( have_rows( 'faq_items' ) ) : ?>
+			<?php the_row(); ?>
+			<?php
+			$question = get_sub_field( 'question' );
+			$answer   = get_sub_field( 'answer' );
+			?>
+
+			<?php if ( $question || $answer ) : ?>
+				<details class="faq__item">
+					<?php if ( $question ) : ?>
+						<summary class="faq__question"><?php echo esc_html( $question ); ?></summary>
+					<?php endif; ?>
+
+					<?php if ( $answer ) : ?>
+						<div class="faq__answer"><?php echo wp_kses_post( $answer ); ?></div>
+					<?php endif; ?>
+				</details>
+			<?php endif; ?>
+		<?php endwhile; ?>
+	</div>
+<?php endif; ?>
+```
+
+Relationship field:
+
+```php
+<?php
+$projects = theme_get_acf_field( 'featured_projects', false, array() );
+?>
+
+<?php if ( is_array( $projects ) && $projects ) : ?>
+	<section class="featured-projects">
+		<div class="container">
+			<div class="card-grid">
+				<?php foreach ( $projects as $project ) : ?>
+					<?php
+					$project_id = is_object( $project ) ? $project->ID : (int) $project;
+
+					get_template_part(
+						'template-parts/content/content',
+						'project-card',
+						array( 'post_id' => $project_id )
+					);
+					?>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+<?php endif; ?>
+```
+
+Template part accepting `$args`:
+
+```php
+<?php
+$post_id = isset( $args['post_id'] ) ? (int) $args['post_id'] : get_the_ID();
+
+if ( ! $post_id ) {
+	return;
+}
+?>
+
+<article class="card">
+	<a class="card__link" href="<?php echo esc_url( get_permalink( $post_id ) ); ?>">
+		<?php
+		if ( has_post_thumbnail( $post_id ) ) {
+			echo get_the_post_thumbnail(
+				$post_id,
+				'medium_large',
+				array( 'class' => 'card__image' )
+			);
+		}
+		?>
+
+		<h3 class="card__title"><?php echo esc_html( get_the_title( $post_id ) ); ?></h3>
+	</a>
+</article>
+```
+
+## Step 9: Write plain CSS
+
+Start with foundation CSS and add components only as templates require them.
+
+`assets/css/main.css`:
+
+```css
+:root {
+	--color-text: #111;
+	--color-muted: #666;
+	--color-background: #fff;
+	--color-surface: #f6f6f6;
+	--color-accent: #0a66c2;
+
+	--font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 1rem;
+	--space-4: 1.5rem;
+	--space-5: 2rem;
+	--space-6: 3rem;
+	--space-7: 5rem;
+
+	--container: 72rem;
+	--radius: 0.75rem;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+body {
+	margin: 0;
+	color: var(--color-text);
+	background: var(--color-background);
+	font-family: var(--font-base);
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+img,
+picture,
+svg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+a {
+	color: inherit;
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.15em;
+}
+
+a:focus-visible,
+button:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+.container {
+	width: min(100% - 2rem, var(--container));
+	margin-inline: auto;
+}
+
+.site-main {
+	padding-block: var(--space-6);
+}
+
+.hero {
+	padding-block: clamp(3rem, 9vw, 8rem);
+}
+
+.hero__inner {
+	display: grid;
+	gap: var(--space-5);
+	align-items: center;
+}
+
+.hero__title {
+	max-width: 12ch;
+	margin: 0;
+	font-size: clamp(2.5rem, 8vw, 6rem);
+	line-height: 0.95;
+	letter-spacing: -0.04em;
+}
+
+.hero__text {
+	max-width: 42rem;
+	margin-top: var(--space-3);
+	color: var(--color-muted);
+	font-size: clamp(1.125rem, 2vw, 1.35rem);
+}
+
+.hero__media {
+	overflow: hidden;
+	border-radius: var(--radius);
+	background: var(--color-surface);
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: var(--space-4);
+	padding: 0.75rem 1rem;
+	border-radius: 999px;
+	background: var(--color-accent);
+	color: #fff;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.card-grid {
+	display: grid;
+	gap: var(--space-4);
+}
+
+.card {
+	overflow: hidden;
+	border-radius: var(--radius);
+	background: var(--color-surface);
+}
+
+.card__link {
+	display: block;
+	height: 100%;
+	text-decoration: none;
+}
+
+.card__body {
+	padding: var(--space-4);
+}
+
+.card__title {
+	margin: 0;
+	font-size: 1.25rem;
+	line-height: 1.2;
+}
+
+.card__excerpt {
+	margin: var(--space-2) 0 0;
+	color: var(--color-muted);
+}
+
+.screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@media (min-width: 48rem) {
+	.hero__inner {
+		grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+	}
+
+	.card-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+```
+
+CSS expansion rules:
+
+- Add CSS when markup is added, not before.
+- Do not use IDs for styling.
+- Avoid deeply nested selectors.
+- Keep component class names aligned with template part names.
+- Use custom properties for repeated colors, spacing, and layout values.
+- Use one component block per section: hero, card, nav, footer, form, archive, single.
+- Keep mobile styles as the default.
+
+## Step 10: Add header and footer correctly
+
+`header.php` essentials:
+
+```php
+<?php
+/**
+ * Header.
+ *
+ * @package ThemeName
+ */
+?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php wp_head(); ?>
+</head>
+
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+
+<a class="screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'theme-name' ); ?></a>
+
+<header class="site-header">
+	<div class="container site-header__inner">
+		<a class="site-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
+			<?php echo esc_html( get_bloginfo( 'name' ) ); ?>
+		</a>
+
+		<nav class="site-header__nav" aria-label="<?php echo esc_attr__( 'Primary navigation', 'theme-name' ); ?>">
+			<?php
+			wp_nav_menu(
+				array(
+					'theme_location' => 'primary',
+					'menu_class'     => 'menu',
+					'container'      => false,
+					'fallback_cb'    => false,
+				)
+			);
+			?>
+		</nav>
+	</div>
+</header>
+```
+
+`footer.php` essentials:
+
+```php
+<?php
+/**
+ * Footer.
+ *
+ * @package ThemeName
+ */
+?>
+
+<footer class="site-footer">
+	<div class="container">
+		<p class="site-footer__copyright">
+			&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?>
+		</p>
+	</div>
+</footer>
+
+<?php wp_footer(); ?>
+</body>
+</html>
+```
+
+## Step 11: Debugging workflow
+
+When debugging:
+
+1. Reproduce the exact template and field involved.
+2. Check whether ACF is active before assuming a field issue.
+3. Check field return type: ID, array, URL, object.
+4. Check whether the field is attached to the current post, an options page, a term, or another post ID.
+5. Check escaping context after confirming the value.
+6. For archives and custom loops, check global post state and `wp_reset_postdata()`.
+7. For CPT 404s, check rewrite slugs and permalink flush.
+8. For CSS bugs, inspect class names generated by templates and confirm styles are enqueued.
+
+Safe debug snippets:
+
+```php
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	error_log( print_r( $value, true ) );
+}
+```
+
+Never leave `var_dump()`, `print_r()`, or `error_log()` in final production templates unless explicitly requested.
+
+## Step 12: Final QA checklist
+
+Before final answer or commit:
+
+- Theme has required `style.css` and `index.php`.
+- `wp_head()`, `wp_footer()`, and `wp_body_open()` are present.
+- Assets are enqueued with `wp_enqueue_style()` / `wp_enqueue_script()`.
+- Theme setup runs on `after_setup_theme`.
+- CPTs/taxonomies run on `init`.
+- Taxonomies are explicitly registered and listed in the CPT `taxonomies` argument.
+- ACF calls are guarded or the plugin dependency is documented.
+- ACF output is escaped with `esc_html()`, `esc_attr()`, `esc_url()`, or `wp_kses_post()`.
+- Image fields render via `wp_get_attachment_image()` where possible.
+- Custom loops reset post data.
+- No raw request data is trusted.
+- CSS is plain, mobile-first, and scoped to classes.
+- No unused dependencies were introduced.
+- No broad plugin-like features were hidden inside the theme without warning.
+
+## Common implementation prompts this skill should satisfy
+
+- "Create a custom theme structure."
+- "Add an ACF-powered homepage hero."
+- "Add a Projects custom post type with archive and single templates."
+- "Render an ACF repeater safely."
+- "Refactor templates into reusable template parts."
+- "Write plain CSS for the theme."
+- "Fix an ACF field not showing."
+- "Audit this theme for security and WordPress best practices."
+
+## Source references
+
+- Project context: `selecta-phyto-catalog-project-context.mdc`
+- Cursor Rules: https://cursor.com/docs/rules
+- WordPress Theme Handbook: https://developer.wordpress.org/themes/
+- WordPress template hierarchy: https://developer.wordpress.org/themes/classic-themes/basics/template-hierarchy/
+- WordPress enqueueing assets: https://developer.wordpress.org/themes/classic-themes/basics/including-css-javascript/
+- WordPress theme functions: https://developer.wordpress.org/themes/classic-themes/basics/theme-functions/
+- WordPress `add_theme_support()`: https://developer.wordpress.org/reference/functions/add_theme_support/
+- WordPress `get_template_part()`: https://developer.wordpress.org/reference/functions/get_template_part/
+- WordPress `register_post_type()`: https://developer.wordpress.org/reference/functions/register_post_type/
+- WordPress PHP coding standards: https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/
+- WordPress escaping: https://developer.wordpress.org/apis/security/escaping/
+- WordPress validation: https://developer.wordpress.org/apis/security/data-validation/
+- WordPress theme security: https://developer.wordpress.org/themes/advanced-topics/security/
+- ACF Local JSON: https://www.advancedcustomfields.com/resources/local-json/
+- ACF `get_field()`: https://www.advancedcustomfields.com/resources/get_field/
+- ACF `have_rows()`: https://www.advancedcustomfields.com/resources/have_rows/
+- ACF Post Types and Taxonomies: https://www.advancedcustomfields.com/resources/post-types-and-taxonomies/
+- ACF Options Page: https://www.advancedcustomfields.com/resources/options-page/

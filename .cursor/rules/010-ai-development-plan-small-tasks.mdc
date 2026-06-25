@@ -1,0 +1,492 @@
+---
+description: Overall AI-assisted development plan for the PHYTO.bg WordPress catalog project. Enforces small tasks, small diffs, and one feature at a time.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.js"
+  - "**/*.json"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# Overall AI Development Plan: PHYTO.bg WordPress Catalog
+
+This file defines how the Cursor agent should work on this project.
+
+Read this file before implementation work.
+
+## Core principle
+
+Work in small, safe, reviewable tasks.
+
+Do not build multiple large features at the same time. Do not rewrite large files when a focused edit is enough. Do not replace working code just to make it look cleaner.
+
+The goal is steady progress with low bug risk.
+
+## Project goal
+
+Build a Bulgarian WordPress catalog/information site based on the PHYTO design/reference, using:
+
+- custom classic WordPress theme
+- PHP templates and template parts
+- ACF for editable structured content
+- custom post types for catalog products and structured content
+- plain CSS
+- minimal JavaScript only where needed
+
+The site is not e-commerce.
+
+Do not implement:
+
+- WooCommerce
+- cart
+- checkout
+- buy buttons
+- add-to-cart
+- prices/payment/shipping/order logic
+- stock/inventory logic
+- public login/register/account pages
+- wishlist/order history/customer dashboard
+- public customer auth
+- quiz module
+
+WordPress admin users are allowed for content management.
+
+## Rule files to use
+
+Use this plan together with:
+
+```text
+000-main-phyto-cursor-instructions.mdc
+selecta-phyto-catalog-project-context.mdc
+selecta-phyto-sitemap-context.mdc
+selecta-figma-mcp-wordpress-instructions.mdc
+wordpress-acf-theme-instructions-updated.mdc
+wordpress-acf-theme-skill-updated.mdc
+```
+
+If this file conflicts with implementation details, keep the small-task workflow and consult the more specific rule file for technical details.
+
+## Development style
+
+Default to this workflow:
+
+```text
+Inspect -> Plan -> Implement one small task -> Validate -> Stop and report
+```
+
+Do not continue into the next feature unless the user asks.
+
+A good task is one of these:
+
+- one template part
+- one CSS component
+- one ACF field group plan
+- one CPT/taxonomy registration file
+- one page template
+- one archive template
+- one product single section
+- one JS interaction
+- one bug fix
+- one responsive fix
+- one accessibility improvement
+
+A bad task is:
+
+- "build the whole site"
+- "implement all product pages and homepage"
+- "rewrite the theme"
+- "refactor all CSS"
+- "create all templates at once"
+- "connect Figma and build everything"
+- "change header, footer, product pages, homepage, CPTs, and CSS in one pass"
+
+## Maximum change size
+
+Unless the user explicitly asks for a larger implementation:
+
+- edit at most 3 files per task
+- create at most 2 new files per task
+- implement at most 1 feature/component/template per task
+- avoid touching unrelated files
+- avoid broad formatting-only diffs
+- avoid rewriting a whole file when a patch is enough
+
+If more files are truly required, explain why before editing.
+
+## Before editing code
+
+Before any meaningful code edit, state:
+
+```text
+Task:
+Relevant rule files:
+Files to inspect:
+Files to edit:
+What I will not touch:
+Commerce/auth elements excluded:
+Validation steps:
+```
+
+Keep it short.
+
+Example:
+
+```text
+Task: Implement product card component.
+Relevant rule files: main, project context, Figma MCP, WordPress skill.
+Files to inspect: existing product archive, CSS, helper files.
+Files to edit: template-parts/components/product-card.php, assets/css/main.css.
+What I will not touch: CPT registration, header, footer, product single page.
+Commerce/auth elements excluded: price, buy button, cart, wishlist, account.
+Validation steps: check escaping, image rendering, responsive card layout.
+```
+
+## After editing code
+
+After each task, report:
+
+```text
+Changed files:
+What was implemented:
+What was intentionally not implemented:
+How to test:
+Suggested next small task:
+```
+
+Do not start the suggested next task automatically.
+
+## Figma-driven task workflow
+
+When using Figma MCP:
+
+1. Use the smallest useful selected frame/component.
+2. Describe the design in plain terms.
+3. Map it to WordPress:
+   - template
+   - template part
+   - ACF fields
+   - CPT data
+   - CSS block
+   - JS only if needed
+4. Identify commerce/auth elements to remove.
+5. Implement only that selected component/section.
+6. Stop.
+
+Do not select a full page if the current task is one component.
+
+Do not generate static HTML copies of Figma pages. Build reusable WordPress components.
+
+## Recommended implementation phases
+
+Follow this project sequence unless the user changes priorities.
+
+### Phase 0: Project setup
+
+Goal:
+
+- clean repo structure
+- Cursor rules installed
+- theme skeleton exists
+- local WordPress runs
+
+Small tasks:
+
+```text
+0.1 Add/check theme header and required files.
+0.2 Add functions.php loader.
+0.3 Add inc/setup.php.
+0.4 Add inc/assets.php.
+0.5 Add assets/css/main.css foundation.
+0.6 Add basic header/footer shell.
+```
+
+Stop after each task.
+
+### Phase 1: Data model
+
+Goal:
+
+- define structured content before complex templates
+
+Small tasks:
+
+```text
+1.1 Add selecta_product CPT only.
+1.2 Add product taxonomies.
+1.3 Add selecta_advice CPT if needed.
+1.4 Add FAQ/partner/promotion CPTs only if needed.
+1.5 Add ACF JSON path support.
+1.6 Draft product field group structure.
+```
+
+Do not build templates and CPTs in the same task unless very small.
+
+### Phase 2: Global layout
+
+Goal:
+
+- shared site shell
+
+Small tasks:
+
+```text
+2.1 Header desktop structure.
+2.2 Mobile menu structure.
+2.3 Mega menu structure.
+2.4 Announcement bar.
+2.5 Footer structure.
+2.6 Newsletter block.
+2.7 Search UI if needed.
+```
+
+Do not implement header, footer, mega menu, and mobile menu in one pass.
+
+### Phase 3: Product catalog UI
+
+Goal:
+
+- catalog browsing without commerce
+
+Small tasks:
+
+```text
+3.1 Product card PHP.
+3.2 Product card CSS.
+3.3 Product archive query/template.
+3.4 Product taxonomy template.
+3.5 Product filters/navigation.
+3.6 Product pagination/load-more if needed.
+3.7 Product archive responsive polish.
+```
+
+Never add price, cart, buy, wishlist, account, stock, payment, or shipping UI.
+
+### Phase 4: Product detail UI
+
+Goal:
+
+- catalog-only product detail page
+
+Small tasks:
+
+```text
+4.1 Product detail hero/gallery.
+4.2 Product overview/meta section.
+4.3 Benefits/results section.
+4.4 Ingredients section.
+4.5 Usage instructions section.
+4.6 Related products section.
+4.7 Related advice section.
+4.8 Product detail responsive polish.
+```
+
+Do not implement all product detail sections at once unless the user explicitly asks.
+
+### Phase 5: Homepage
+
+Goal:
+
+- Figma-based homepage sections
+
+Small tasks:
+
+```text
+5.1 Homepage hero.
+5.2 Featured product line section.
+5.3 Product grid/carousel section.
+5.4 Campaign/promotion cards.
+5.5 Editorial/advice cards.
+5.6 Brand story section.
+5.7 Benefit grid.
+5.8 Homepage responsive polish.
+```
+
+Use ACF flexible sections where content should be editable.
+
+### Phase 6: Advice, CMS, and content pages
+
+Goal:
+
+- editorial and informational pages
+
+Small tasks:
+
+```text
+6.1 Advice card.
+6.2 Advice archive.
+6.3 Advice single page.
+6.4 Brand page section.
+6.5 FAQ page/block.
+6.6 Contact page/block.
+6.7 Partners/store locator page.
+6.8 Legal page layout.
+```
+
+### Phase 7: Forms, tracking, GDPR
+
+Goal:
+
+- safe integrations
+
+Small tasks:
+
+```text
+7.1 Newsletter integration placeholder/config.
+7.2 Contact form integration.
+7.3 Cookie consent/CMP decision.
+7.4 GTM configurable integration.
+7.5 Meta Pixel configurable integration.
+7.6 Form spam protection.
+```
+
+Do not hardcode tracking IDs unless explicitly requested.
+
+### Phase 8: QA and launch polish
+
+Goal:
+
+- stabilize and reduce bugs
+
+Small tasks:
+
+```text
+8.1 Escaping/security audit.
+8.2 ACF inactive guard audit.
+8.3 Responsive audit.
+8.4 Accessibility audit.
+8.5 SEO heading/template audit.
+8.6 Performance/image audit.
+8.7 Broken link/menu audit.
+8.8 Remove unused code/assets.
+```
+
+## How to handle existing code
+
+Before changing existing code:
+
+- read the relevant files
+- identify the current pattern
+- preserve naming conventions
+- patch only the needed area
+- do not reformat unrelated code
+- do not replace working code wholesale
+- do not remove code unless clearly unused or harmful
+- when uncertain, add a small TODO instead of large speculative changes
+
+## Anti-overwrite rules
+
+Never do these without explicit user approval:
+
+- replace the entire theme
+- rewrite all CSS
+- replace all templates
+- rename CPTs/taxonomies after content exists
+- delete existing ACF field groups
+- restructure folders broadly
+- introduce a framework
+- introduce WooCommerce
+- add public auth/account systems
+- convert plain CSS to Sass/Tailwind/Bootstrap
+- create a page-builder architecture
+- change public URL slugs after they are agreed
+
+## Branch and commit guidance
+
+If Git is available:
+
+- use a feature branch per task or small group of related tasks
+- keep commits small
+- use commit messages that describe the user-facing change
+- do not mix refactoring and feature work in the same commit
+- inspect diffs before finalizing
+
+Example commits:
+
+```text
+feat(product): add catalog product card component
+feat(product): add product archive template
+style(header): implement mobile nav layout
+fix(acf): guard product gallery when field is empty
+```
+
+## Validation checklist for every task
+
+Before reporting done:
+
+- no PHP syntax issues introduced
+- no obvious fatal if ACF is inactive
+- dynamic output is escaped
+- images use WordPress image functions where possible
+- CSS is scoped to the component
+- responsive behavior is considered
+- keyboard/focus states are considered for interactive UI
+- no commerce UI introduced
+- no public auth UI introduced
+- changed files match the task scope
+- no unrelated large rewrite happened
+
+## Agent behavior when scope grows
+
+If the user asks for a large feature:
+
+1. Break it into small tasks.
+2. Show the first 3-6 tasks.
+3. Implement only the first task unless the user asks for more.
+4. Stop after completing the task.
+
+Example:
+
+```text
+Large request: Build the full product detail page.
+
+Breakdown:
+1. Product detail hero/gallery.
+2. Product overview/meta fields.
+3. Benefits/results section.
+4. Ingredients section.
+5. Usage instructions section.
+6. Related products/advice.
+
+Implement now: task 1 only.
+```
+
+## Agent behavior when Figma differs from scope
+
+If Figma includes forbidden commerce/auth UI:
+
+- mention it briefly
+- do not implement it
+- replace with neutral catalog UI only if needed
+- do not ask repeatedly unless the design cannot work without a decision
+
+Example:
+
+```text
+The Figma frame includes a cart icon and price area. I will not implement those because the project is catalog-only. I will keep the product title, image, range, short description, and detail-page link.
+```
+
+## Definition of done for the project
+
+The project is ready when:
+
+- core templates exist
+- product CPT and taxonomies work
+- product archive and single pages are catalog-only
+- homepage matches the approved Figma design
+- global header/mega menu/mobile menu/footer work
+- advice/CMS/legal/contact/partners pages are implemented as needed
+- editable content is managed through WordPress admin/ACF
+- no e-commerce or public auth exists
+- responsive layout is acceptable
+- accessibility basics are covered
+- SEO basics are covered
+- tracking/forms/GDPR are handled according to final plugin/config decisions
+- unused code is removed
+- the final diff is understandable
+
+## Final reminder
+
+Small tasks are not optional. They are the main safety mechanism for AI-assisted development on this project.
+
+When in doubt, reduce scope.

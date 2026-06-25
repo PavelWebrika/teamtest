@@ -1,0 +1,618 @@
+---
+description: Cursor/Figma MCP workflow instructions for implementing the PHYTO.bg WordPress catalog UI from Figma designs.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.js"
+  - "**/*.json"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# Figma MCP to WordPress Implementation Instructions
+
+Use this rule when implementing the PHYTO.bg catalog site from Figma through the Figma MCP server in Cursor.
+
+This file should be used together with:
+
+- `wordpress-acf-theme-instructions-updated.mdc`
+- `wordpress-acf-theme-skill-updated.mdc`
+- `selecta-phyto-catalog-project-context.mdc`
+- `selecta-phyto-sitemap-context.mdc`
+
+The Figma design is the main source of truth for visual UI implementation. The WordPress/ACF/CPT rules are the source of truth for architecture and content modeling. The PHYTO project context is the source of truth for scope.
+
+## Critical project scope
+
+The site is a catalog/information WordPress site, not an e-commerce site.
+
+When Figma contains e-commerce-like elements copied from the reference site, do not implement them as commerce functionality.
+
+Do not implement:
+
+- WooCommerce.
+- Shopify inside WordPress.
+- Buy buttons.
+- Add-to-cart.
+- Cart.
+- Checkout.
+- Price/payment/shipping/order logic.
+- Stock/inventory logic.
+- Customer login.
+- Registration.
+- Account pages.
+- Wishlist.
+- Order history.
+- Customer dashboard.
+- Public user/auth flows.
+- Quiz module.
+
+WordPress admin users are allowed for content management. The restriction is against public/customer auth and commerce features.
+
+## What the Figma MCP is for
+
+Use the Figma MCP to inspect structured design context:
+
+- Selected frames.
+- Components.
+- Component properties and variants.
+- Layer names.
+- Layout structure.
+- Auto Layout intent.
+- Spacing.
+- Typography.
+- Colors.
+- Variables/tokens.
+- Image assets.
+- Icons.
+- Responsive variants if present.
+- Design annotations and dev resources if present.
+
+Do not treat MCP output as final production code. Adapt it to this WordPress theme using PHP templates, ACF fields, CPTs, and plain CSS.
+
+## Required workflow before coding from Figma
+
+When the user provides a Figma link or asks to implement a design:
+
+1. Identify the exact frame/component/page to implement.
+2. Use Figma MCP to fetch design context for the smallest useful selected frame, not the whole file.
+3. Summarize what the frame represents:
+   - page type
+   - section/component name
+   - desktop/mobile state
+   - data/content requirements
+   - reusable components involved
+4. Map the design to WordPress architecture:
+   - template file
+   - template part/component file
+   - ACF fields
+   - CPT/taxonomy data if relevant
+   - CSS component block
+   - JS only if required
+5. Compare the Figma design against project scope:
+   - remove commerce elements
+   - remove account/auth elements
+   - keep catalog/editorial UI
+6. Implement the smallest coherent piece.
+7. Verify markup, CSS, escaping, and responsiveness.
+8. Avoid unrelated refactors.
+
+## Preferred Figma selection strategy
+
+Always prefer small selections.
+
+Good selections:
+
+```text
+Single button component
+Product card component
+Header desktop frame
+Header mobile frame
+Mega menu frame
+Homepage hero section
+Product grid section
+Product detail hero section
+Ingredients section
+FAQ accordion section
+Footer section
+One complete page frame only when needed for page-level spacing/order
+```
+
+Avoid selecting:
+
+```text
+Entire huge file
+All pages at once
+All desktop + mobile frames at once
+Deeply nested unorganized groups
+Unrelated flows
+Very large page frames when only one section is needed
+```
+
+If MCP is slow, incomplete, or confused, retry with a smaller frame or component.
+
+## Figma file expectations
+
+The agent should get better output when the Figma file uses:
+
+- Components for repeated UI such as buttons, cards, nav items, product cards, accordions, and newsletter forms.
+- Variables for color, spacing, radius, and typography.
+- Semantic layer names such as `ProductCard`, `ProductImage`, `HeaderNav`, `MegaMenu`, `HeroTitle`, not `Group 12`.
+- Auto Layout for responsive layout intent.
+- Separate desktop and mobile frames when the design changes meaningfully.
+- Annotations for behavior that cannot be inferred visually.
+- Dev resources for implementation notes where available.
+
+If the Figma file is messy, still implement the design, but infer cautiously and prefer clean WordPress/CSS structure over copying bad layer structure.
+
+## Design-to-code mapping
+
+Map Figma objects to WordPress theme concepts like this:
+
+```text
+Figma page frame
+  -> WordPress template or page with ACF flexible sections
+
+Figma repeated section
+  -> template part in template-parts/components/
+
+Figma product card
+  -> template-parts/components/product-card.php
+
+Figma advice/article card
+  -> template-parts/components/advice-card.php
+
+Figma header/nav
+  -> header.php + header component template parts
+
+Figma mega menu
+  -> WordPress nav menu + optional ACF menu metadata + template part
+
+Figma footer
+  -> footer.php + footer component template part
+
+Figma product listing page
+  -> archive-selecta_product.php or taxonomy-selecta_*.php
+
+Figma product detail page
+  -> single-selecta_product.php
+
+Figma blog/advice page
+  -> archive-selecta_advice.php or single-selecta_advice.php
+
+Figma legal/brand/contact page
+  -> WordPress page template or default page with flexible sections
+```
+
+Do not create static hardcoded pages when the content should be editable.
+
+## Template and component rules
+
+For each Figma section, decide whether it is:
+
+1. Global reusable component.
+2. Page-specific component.
+3. CPT-driven listing.
+4. CPT-driven single template section.
+5. Flexible ACF layout.
+6. Static legal/content page markup.
+
+Implementation preference:
+
+```text
+Reusable UI
+  -> template-parts/components/{component-name}.php
+
+Product card/grid
+  -> CPT query + reusable product-card component
+
+Homepage/content sections
+  -> ACF flexible content layouts
+
+Product detail content
+  -> selecta_product CPT fields + template parts
+
+Advice/editorial
+  -> selecta_advice CPT + card/single templates
+
+Header/footer/global values
+  -> ACF Options fields
+```
+
+## ACF mapping rules from Figma
+
+Use ACF when the design shows content editors should control.
+
+Examples:
+
+```text
+Hero title/text/image/CTA
+  -> ACF fields or flexible layout fields
+
+Product specification content
+  -> Product CPT ACF fields
+
+Product ingredients section
+  -> Product CPT repeater/flexible fields
+
+Product benefit cards
+  -> Product CPT repeater fields
+
+Homepage product carousel
+  -> relationship field or taxonomy query selector
+
+Promotion/banner cards
+  -> flexible content layout or selecta_promotion CPT
+
+Brand story section
+  -> page flexible fields or options fields
+
+FAQ accordion
+  -> FAQ CPT, repeater field, or relationship field depending on reuse
+
+Newsletter block
+  -> options fields for copy + integration/embed config
+```
+
+Do not hardcode Bulgarian copy unless it is a fixed label. Use CMS fields for marketing/content copy.
+
+## CSS extraction rules
+
+When using Figma values:
+
+- Convert Figma colors to CSS custom properties where they repeat.
+- Convert Figma spacing to a small spacing scale when practical.
+- Convert typography to reusable CSS variables/classes.
+- Use plain CSS.
+- Use class selectors.
+- Keep specificity low.
+- Mobile-first.
+- Use `clamp()` for fluid typography/spacing when appropriate.
+- Use CSS Grid/Flexbox rather than absolute positioning unless the design truly requires overlay positioning.
+- Preserve focus styles and accessible states even if not visible in Figma.
+- Respect `prefers-reduced-motion`.
+
+Do not blindly copy pixel-perfect absolute positions from Figma if it would break responsiveness.
+
+Suggested token extraction:
+
+```css
+:root {
+	--color-brand-primary: #111;
+	--color-brand-accent: #7a5b43;
+	--color-surface: #f6f1eb;
+	--color-text: #111;
+	--color-muted: #666;
+
+	--font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+	--space-xs: 0.5rem;
+	--space-sm: 1rem;
+	--space-md: 1.5rem;
+	--space-lg: 2rem;
+	--space-xl: 4rem;
+
+	--radius-sm: 0.25rem;
+	--radius-md: 0.75rem;
+}
+```
+
+## Asset handling rules
+
+For images and icons from Figma:
+
+- Prefer real WordPress media fields for content images.
+- Use Figma-exported assets only for fixed decorative assets, icons, or temporary implementation placeholders.
+- Do not hardcode product images from Figma into product templates. Product images should come from the `selecta_product` featured image/gallery.
+- Use SVG inline only when safe and simple, or as an asset file if reused.
+- Optimize exported image sizes.
+- Use `wp_get_attachment_image()` for WordPress-managed images.
+- Add meaningful alt text through WordPress media or ACF fields when needed.
+- Treat decorative images as decorative.
+
+## Product card rules from Figma
+
+When implementing a Figma product card:
+
+Keep:
+
+- Image.
+- Product title.
+- Product line/range.
+- Short benefit/claim.
+- Badge such as "new" or non-commerce label.
+- Link to catalog product detail page.
+
+Remove or ignore:
+
+- Price.
+- Discount.
+- Sale price.
+- Add-to-cart button.
+- Buy button.
+- Rating stars if they require public review flow.
+- Stock/shipping/payment text.
+- Wishlist/account actions.
+
+Neutral CTA examples:
+
+```text
+Виж продукта
+Научи повече
+Разгледай
+```
+
+Only include a CTA if the Figma design requires one and it is non-commerce.
+
+## Product detail rules from Figma
+
+When implementing a Figma product detail page:
+
+Keep:
+
+- Product title.
+- Product line.
+- Subtitle/claim.
+- Image gallery.
+- Size/format if catalog-relevant.
+- Formula claims.
+- Description.
+- Key ingredients.
+- Full ingredient list.
+- Benefits/results.
+- Usage instructions.
+- Related products.
+- Related advice.
+
+Remove or ignore:
+
+- Price.
+- Add-to-cart.
+- Quantity selector.
+- Payment.
+- Shipping.
+- Loyalty points.
+- Customer review submission.
+- Login/account prompt.
+- Wishlist.
+- Purchase incentives.
+
+## Header and navigation rules from Figma
+
+When implementing the Figma header:
+
+Keep:
+
+- Logo.
+- Main navigation.
+- Mega menu.
+- Mobile menu.
+- Search if it is catalog/content search.
+- Announcement bar if present.
+- Store locator/partners link if needed.
+
+Remove or ignore:
+
+- Account icon/link.
+- Cart icon/link.
+- Order links.
+- Customer login/register.
+- Country selector unless the Bulgarian site needs it.
+
+If the design includes account/cart because it was copied from the French reference, do not implement them.
+
+## Forms from Figma
+
+Allowed forms:
+
+- Newsletter signup.
+- Contact form.
+- Search form.
+- Store locator filter form if needed.
+
+Not allowed:
+
+- Login form.
+- Register form.
+- Checkout form.
+- Customer account form.
+- Wishlist/account preferences.
+
+Form implementation rules:
+
+- Use a trusted WordPress plugin if selected by the project.
+- For custom forms, use nonces, validation, sanitization, escaping, and spam protection.
+- Keep consent/GDPR copy visible where required.
+- Newsletter signup is not customer account creation.
+
+## JavaScript rules
+
+Use JavaScript only when needed for interaction:
+
+- Mobile menu toggle.
+- Mega menu interaction.
+- Accordions.
+- Sliders/carousels only if the design truly requires them.
+- Product filter UI if it cannot be handled by links/forms.
+- Search overlay if designed.
+
+Rules:
+
+- Prefer simple vanilla JS.
+- Do not introduce React/Vue/Svelte.
+- Do not add large libraries for simple toggles.
+- Ensure keyboard accessibility.
+- Sync ARIA states such as `aria-expanded`.
+- Respect reduced motion.
+- Do not put core content behind JavaScript.
+
+## Responsive implementation
+
+When Figma includes desktop and mobile frames:
+
+1. Compare layout differences.
+2. Build mobile-first CSS.
+3. Add media queries only at real layout breakpoints.
+4. Keep content order logical in the DOM.
+5. Do not duplicate entire markup for desktop/mobile unless necessary.
+6. Ensure the mobile menu and mega menu are keyboard usable.
+
+When Figma only includes desktop:
+
+- Infer mobile behavior using existing project patterns.
+- Keep product grids, cards, and sections responsive.
+- Avoid fixed widths that break smaller screens.
+
+## Accessibility requirements
+
+Even if the Figma design omits accessibility details, implement them:
+
+- Semantic landmarks.
+- Logical heading order.
+- One clear page H1.
+- Alt text for meaningful images.
+- Real buttons for actions.
+- Real links for navigation.
+- Visible focus states.
+- Keyboard-operable menus and accordions.
+- Labels for forms.
+- No color-only meaning.
+- Sufficient contrast where possible.
+- `aria-expanded` and `aria-controls` for toggles.
+
+## Implementation prompt pattern for Cursor
+
+When using Cursor with Figma MCP, use prompts like:
+
+```text
+Use the Figma MCP to inspect this selected frame: [Figma frame link].
+Implement it as a WordPress classic-theme component for this project.
+
+Constraints:
+- Use PHP template parts and plain CSS.
+- Use ACF fields where content should be editable.
+- Products are selecta_product CPT catalog entries.
+- No WooCommerce, no cart, no checkout, no buy button, no price, no public auth.
+- Match the design visually but keep semantic HTML and accessible behavior.
+- Tell me which files you will edit before editing.
+```
+
+For a product card:
+
+```text
+Use the Figma MCP to inspect this product card component: [Figma link].
+Implement it as template-parts/components/product-card.php plus CSS.
+
+Data source:
+- selecta_product CPT
+- featured image
+- title
+- product_line taxonomy or ACF field
+- short_description / short claim
+
+Remove:
+- price
+- rating submission
+- add-to-cart
+- wishlist
+```
+
+For a full page:
+
+```text
+Use the Figma MCP to inspect this page frame: [Figma link].
+First break it into reusable WordPress components and ACF flexible sections.
+Do not code the whole page in one static file.
+Then implement the first section/component only.
+```
+
+## File-editing discipline
+
+Before editing files, the agent should state:
+
+```text
+Design source:
+WordPress mapping:
+Files to edit:
+ACF/CPT data needed:
+Commerce/auth elements removed:
+```
+
+Example:
+
+```text
+Design source: Figma Product Card component
+WordPress mapping: reusable product card for selecta_product loops
+Files to edit:
+  - template-parts/components/product-card.php
+  - assets/css/main.css
+ACF/CPT data needed:
+  - featured image
+  - title
+  - product_subtitle or short_description
+  - product_line taxonomy
+Commerce/auth elements removed:
+  - price
+  - add-to-cart
+  - wishlist icon
+```
+
+## Code quality checklist after Figma implementation
+
+Before finishing:
+
+- The implementation matches the Figma visual intent.
+- It uses WordPress templates/template parts, not static HTML pages.
+- Editable content is modeled with ACF or CPT fields.
+- Product content comes from `selecta_product`, not hardcoded mock cards.
+- No WooCommerce or commerce logic was introduced.
+- No public auth/account UI was introduced.
+- Dynamic output is escaped.
+- Images use WordPress image functions where possible.
+- CSS is plain and component-scoped.
+- The layout is responsive.
+- Keyboard/focus behavior is handled.
+- ARIA states are correct for interactive components.
+- No unnecessary JS library was added.
+- The component remains reusable.
+
+## Troubleshooting Figma MCP
+
+If the MCP returns too much or gets slow:
+
+- Use a smaller selected frame.
+- Select one component instead of the whole page.
+- Ask for design context first, then code after confirming mapping.
+- Avoid heavy nested frames.
+- Use clear prompts with file targets and project constraints.
+
+If the MCP produces React/web-app style code:
+
+- Do not use it directly.
+- Translate the structure into PHP template parts and plain CSS.
+- Use WordPress data sources and ACF.
+- Remove app-state/auth/e-commerce assumptions.
+
+If Figma variables are available:
+
+- Extract them into CSS custom properties.
+- Use the existing CSS token naming convention.
+- Avoid creating duplicate token systems.
+
+If variables are not available:
+
+- Infer a minimal token set from repeated colors, spacing, type sizes, and radii.
+- Do not over-engineer.
+
+## Source references
+
+- Figma MCP server introduction: https://developers.figma.com/docs/figma-mcp-server/
+- Cursor and Figma MCP setup: https://help.figma.com/hc/en-us/articles/39889260656407-Cursor-and-Figma-Set-up-the-MCP-server
+- Figma MCP server guide: https://github.com/figma/mcp-server-guide
+- Figma MCP structure guide: https://developers.figma.com/docs/figma-mcp-server/structure-figma-file/
+- Figma MCP Code Connect integration: https://developers.figma.com/docs/figma-mcp-server/code-connect-integration/
+- Figma MCP: what the MCP sends vs what the agent does: https://developers.figma.com/docs/figma-mcp-server/mcp-vs-agent/
+- Figma MCP stuck/slow guidance: https://developers.figma.com/docs/figma-mcp-server/stuck-or-slow/
+- Figma MCP rate limits and access: https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/
+- Cursor MCP docs: https://cursor.com/docs/mcp
+- Cursor Rules docs: https://cursor.com/docs/rules

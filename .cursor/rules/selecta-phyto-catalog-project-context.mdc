@@ -1,0 +1,633 @@
+---
+description: Always-applied project context for the Selecta PHYTO.bg catalog website and reusable LIERAC/PHYTO WordPress theme.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.json"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# Selecta Project Context: PHYTO.bg Catalog Clone + Reusable Brand Theme
+
+This rule is the project-specific scope layer. Use it together with:
+
+- `wordpress-acf-theme-instructions.mdc`
+- `wordpress-acf-theme-skill.mdc`
+
+When this file conflicts with generic WordPress examples, this project context wins.
+
+## Current build focus
+
+The current site to build is a Bulgarian catalog/information site based on the UI, page structure, and content patterns of:
+
+- `https://fr.phyto.com/`
+
+The desired result is a close UI/content-structure adaptation, not a functional e-commerce clone.
+
+The product pages will be catalog pages only and must be built with custom post types.
+
+## Broader project background
+
+The broader project may include two Bulgarian brand websites:
+
+- `phyto.bg`
+- `lierac.bg`
+
+The original plan is to use one reusable custom WordPress theme as the base for both brands. However, the current implementation focus is PHYTO.
+
+Build PHYTO first, but do not hardcode architecture that makes LIERAC or future brand reuse impossible.
+
+## Critical scope boundaries
+
+Do **not** build or assume any of these:
+
+- WooCommerce.
+- Shopify inside WordPress.
+- Cart.
+- Checkout.
+- Online ordering.
+- Buy buttons.
+- Add-to-cart buttons.
+- Quantity selectors.
+- Payment logic.
+- Shipping logic.
+- Stock/inventory logic.
+- Order-management logic.
+- Product customer accounts.
+- Public login/register/account pages.
+- Wishlist.
+- Order history.
+- Front-end users/auth.
+- Quiz module.
+
+Important nuance:
+
+- WordPress admin users still exist for editors/administrators.
+- The restriction is against public/customer auth and customer-commerce features.
+
+## How to treat the PHYTO reference site
+
+Use the reference site for:
+
+- Visual direction.
+- Page structure.
+- Header/navigation/mega menu patterns.
+- Mobile menu behavior.
+- Homepage section order and component ideas.
+- Product listing/card structure.
+- Product detail content sections.
+- Brand/editorial/advice page patterns.
+- Newsletter/footer/legal/contact patterns.
+
+Do **not** copy the reference site's commerce functions.
+
+The reference site contains e-commerce UI such as prices, sale prices, add-to-cart buttons, payment/shipping messaging, loyalty points, and purchase CTAs. In this project those must be removed or replaced with neutral catalog UI.
+
+Recommended replacements:
+
+```text
+"Ajouter au panier"        -> remove
+"J'achète" / buy CTA       -> remove unless replaced by approved external link
+Price/sale price           -> remove
+Shipping/payment text      -> remove
+Loyalty points             -> remove
+Customer account/login     -> remove
+Reviews tied to purchase   -> remove unless explicitly requested as non-commerce testimonials
+```
+
+Possible neutral CTAs:
+
+```text
+"Виж повече"
+"Научи повече"
+"Разгледай продукта"
+"Открий серията"
+```
+
+Use Bulgarian labels in implementation unless the user asks otherwise.
+
+## Main deliverable
+
+The main deliverable is the UI and content-management structure.
+
+Prioritize:
+
+1. Accurate visual/component implementation.
+2. Catalog product CPT architecture.
+3. Easy editing through WordPress admin and ACF.
+4. Clean semantic PHP templates.
+5. Plain CSS that can closely match the reference UI.
+6. SEO-friendly server-rendered pages.
+7. Reusable brand theme architecture where practical.
+
+Do not prioritize:
+
+- E-commerce infrastructure.
+- Customer auth.
+- Complex application logic.
+- Heavy JavaScript.
+- Page-builder freedom that makes the design easy to break.
+- Over-generalized architecture that slows the PHYTO build.
+
+## Recommended WordPress architecture
+
+Use a custom classic WordPress theme.
+
+Recommended repo/theme structure:
+
+```text
+selecta-theme/
+  .cursor/
+    rules/
+      wordpress-acf-theme-instructions.mdc
+      wordpress-acf-theme-skill.mdc
+      selecta-phyto-catalog-project-context.mdc
+  style.css
+  functions.php
+  index.php
+  header.php
+  footer.php
+  front-page.php
+  page.php
+  archive.php
+  single.php
+  archive-selecta_product.php
+  single-selecta_product.php
+  assets/
+    css/
+      main.css
+    js/
+      main.js
+  inc/
+    setup.php
+    assets.php
+    post-types.php
+    acf.php
+    brand.php
+    helpers.php
+  template-parts/
+    components/
+      announcement-bar.php
+      header-nav.php
+      mega-menu.php
+      mobile-menu.php
+      hero.php
+      banner.php
+      product-card.php
+      advice-card.php
+      newsletter.php
+      benefits.php
+      faq.php
+      external-cta.php
+    content/
+      content-page.php
+      content-product.php
+      content-advice.php
+      content-none.php
+  acf-json/
+```
+
+Create only files that are actually used.
+
+## Custom post types
+
+### Product CPT
+
+Use a CPT for catalog products.
+
+Suggested key:
+
+```text
+selecta_product
+```
+
+Public behavior:
+
+```text
+Public: yes
+Archive: yes
+Single pages: yes
+REST: yes
+Supports:
+  - title
+  - editor
+  - thumbnail
+  - excerpt
+  - revisions
+```
+
+Do not use the WooCommerce product post type.
+
+Suggested taxonomies:
+
+```text
+selecta_product_category
+selecta_product_line
+selecta_hair_type
+selecta_hair_concern
+```
+
+Examples of category/filter concepts from the PHYTO reference:
+
+```text
+Product type:
+  - shampoo
+  - conditioner
+  - mask
+  - leave-in care
+  - oil
+  - styling
+  - color
+  - supplements
+  - travel size
+
+Hair type:
+  - normal hair
+  - dry hair
+  - curly/wavy hair
+  - frizzy/coily hair
+  - fine/flat hair
+  - damaged hair
+  - colored hair
+  - oily hair
+  - blonde hair
+  - sensitive/irritated scalp
+  - hair exposed to UV/salt/chlorine
+
+Concern:
+  - hair loss
+  - scalp care
+  - dandruff
+  - volume
+  - nourishment
+  - repair
+  - softness
+  - curls
+  - color protection
+```
+
+Use Bulgarian public labels.
+
+### Advice CPT
+
+Suggested key:
+
+```text
+selecta_advice
+```
+
+Purpose:
+
+- "Our advice" / educational haircare content.
+- Advice landing page and subpages.
+- Related products.
+
+### FAQ CPT
+
+Suggested key:
+
+```text
+selecta_faq
+```
+
+Purpose:
+
+- FAQ blocks and FAQ page content.
+- Usually no individual public single page unless requested.
+
+### Partner CPT
+
+Suggested key:
+
+```text
+selecta_partner
+```
+
+Purpose:
+
+- Partner locations or partner listings if needed.
+
+### Promotion CPT
+
+Suggested key:
+
+```text
+selecta_promotion
+```
+
+Purpose:
+
+- Non-commerce promotional sections, campaign content, brand highlights.
+- No checkout or cart flow.
+
+## Product fields
+
+Recommended ACF fields for `selecta_product`:
+
+```text
+Catalog basics:
+  - product_subtitle
+  - product_line
+  - short_description
+  - catalog_badges
+  - product_size
+  - product_format
+  - product_gallery
+
+Hair/product classification:
+  - product_type
+  - hair_type
+  - hair_concern
+  - range_or_collection
+
+Content sections:
+  - main_benefits
+  - key_results
+  - description
+  - key_ingredients
+  - full_ingredient_list
+  - usage_instructions
+  - routine_steps
+  - related_products
+  - related_advice_articles
+
+Optional external links:
+  - external_cta_label
+  - external_cta_url
+```
+
+Do not add these fields unless the user explicitly changes scope:
+
+```text
+price
+sale_price
+stock
+sku for commerce
+add_to_cart_url
+cart_id
+checkout_url
+shipping_class
+payment_plan
+order_status
+customer_account_required
+```
+
+A non-commerce internal product code/reference can exist only if needed for catalog/admin organization.
+
+## Product listing UI rules
+
+Product listing pages should be catalog pages.
+
+Include:
+
+- Page title.
+- Optional intro copy.
+- Category/filter navigation.
+- Product grid.
+- Product card image.
+- Product card title.
+- Product line/range.
+- Short benefit/description.
+- Optional neutral badge.
+- Link to product detail page.
+
+Exclude:
+
+- Price.
+- Sale price.
+- Discount percentage.
+- Add-to-cart.
+- Buy CTA.
+- Quantity selector.
+- Stock state.
+- Shipping/payment text.
+- Customer account prompts.
+
+## Product detail UI rules
+
+Product detail pages should copy the useful content structure from the reference but become catalog-only.
+
+Include:
+
+- Product title.
+- Product line/range.
+- Short description.
+- Hero image/gallery.
+- Format/size if useful.
+- Benefits/results.
+- Description.
+- Key ingredients.
+- Full INCI/ingredient list if provided.
+- Usage instructions.
+- Related products.
+- Related advice.
+- Optional external CTA only when approved.
+
+Exclude:
+
+- Buy buttons.
+- Add-to-cart form.
+- Price.
+- Discounts.
+- Payment methods.
+- Klarna/installment text.
+- Shipping promise.
+- Loyalty points.
+- Customer account/login.
+- Purchase reviews unless explicitly requested as static testimonials.
+
+## Global UI components
+
+Build reusable components for:
+
+- Announcement bar.
+- Header.
+- Primary navigation.
+- Mega menu.
+- Mobile menu.
+- Footer.
+- Newsletter section.
+- Homepage hero/banner sections.
+- Benefits sections.
+- Product cards.
+- Product carousels/grids.
+- Advice cards.
+- Brand story sections.
+- FAQ accordion.
+- Contact block.
+- Legal page layout.
+- Partners listing.
+- Optional external CTA block.
+
+Use ACF fields and template parts for repeatable sections.
+
+## Page/template scope
+
+Expected pages/templates:
+
+```text
+front-page.php
+archive-selecta_product.php
+single-selecta_product.php
+archive-selecta_advice.php
+single-selecta_advice.php
+page-brand.php or flexible standard page
+FAQ page
+Contact page
+Legal pages
+Partners page
+Promotions/offers page
+Generic landing page with controlled flexible sections
+```
+
+Use the WordPress template hierarchy first. Use custom page templates only when needed.
+
+## ACF strategy
+
+Use ACF for structured content and flexible CMS control.
+
+Required approach:
+
+- Prefer `get_field()` / `get_sub_field()` and explicit escaping.
+- Guard ACF calls so the theme does not fatal when ACF is inactive.
+- Use Local JSON and commit `acf-json/`.
+- Keep field names stable.
+- Keep flexible content layouts controlled.
+- Use image fields as attachment IDs where practical.
+- Render images with `wp_get_attachment_image()`.
+
+Recommended field groups:
+
+```text
+Options - Brand Settings
+Options - Header / Footer
+Page - Flexible Sections
+Product - Catalog Details
+Advice - Article Details
+FAQ - Details
+Partner - Details
+Promotion - Details
+```
+
+## Plain CSS direction
+
+Use plain CSS only.
+
+Rules:
+
+- No Tailwind.
+- No Bootstrap.
+- No Sass unless explicitly requested.
+- No CSS-in-JS.
+- Use CSS custom properties for design tokens.
+- Use component class names.
+- Keep specificity low.
+- Mobile-first.
+- Use responsive images and fluid type/spacing.
+- Match PHYTO reference visuals through clean component CSS, not a framework.
+
+Suggested design-token pattern:
+
+```css
+:root {
+	--brand-color-primary: #111;
+	--brand-color-secondary: #f6f1eb;
+	--brand-color-accent: #7a5b43;
+	--brand-color-text: #111;
+	--brand-color-muted: #666;
+	--brand-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+```
+
+## No front-end auth
+
+Do not create:
+
+- login templates
+- register templates
+- account templates
+- profile pages
+- member-only content
+- wishlist
+- order history
+- saved addresses
+- customer dashboard
+
+If a newsletter form exists, it is only an email marketing signup, not account registration.
+
+If a contact form exists, it is only a form submission, not user creation.
+
+## Tracking, GDPR, cookies, and forms
+
+The broader scope includes:
+
+- Google Tag Manager.
+- Meta Pixel / Facebook Pixel.
+- Newsletter/email marketing integration.
+- GDPR/cookie consent.
+- reCAPTCHA or other form protection where needed.
+
+Rules:
+
+- Make tracking IDs configurable, not hardcoded.
+- Respect cookie consent before non-essential tracking.
+- Prefer a trusted plugin for CMP/consent if available.
+- Protect forms with validation, sanitization, nonce checks, and spam protection.
+- Do not store unnecessary personal data in theme code.
+
+## Reusable brand theme rules
+
+Keep the theme reusable by isolating brand differences:
+
+- Brand colors as CSS variables.
+- Logos in ACF Options.
+- Header/footer content in ACF Options.
+- Social links in ACF Options.
+- Brand-specific copy in CMS fields.
+- Minor brand-specific UI differences via modifier classes or config.
+
+Do not duplicate the entire theme for PHYTO and LIERAC.
+
+Do not over-engineer brand abstraction if only PHYTO is being implemented in the current task.
+
+## Agent decision rules
+
+When asked to implement a feature:
+
+- If it is product information, implement it as catalog CPT content.
+- If it is product purchase behavior, do not implement it unless the user explicitly changes scope.
+- If it is front-end customer auth, do not implement it unless the user explicitly changes scope.
+- If it exists on `fr.phyto.com` but is commerce-related, remove or neutralize it.
+- If it is a reusable UI pattern, implement it as a template part/component.
+- If it is editable content, model it with ACF.
+- If it is brand styling, use CSS variables/options.
+- If it is SEO-critical content, render it server-side.
+- If it is JavaScript-only decoration, avoid it unless necessary.
+
+## Quality checklist
+
+Before finishing work, verify:
+
+- No WooCommerce code was introduced.
+- No cart, checkout, buy button, payment, shipping, or stock logic exists.
+- No front-end login/register/account/wishlist/order features exist.
+- Product pages are CPT catalog pages.
+- Product listing cards do not show price or add-to-cart.
+- Reference-site UI patterns are recreated without commerce behavior.
+- ACF fields are guarded and escaped.
+- Images use WordPress image functions.
+- Templates follow the WordPress hierarchy.
+- CSS is plain, scoped, and low-specificity.
+- Content remains editable through WordPress admin.
+- Tracking/form code is consent-aware and privacy-conscious.
+- The theme remains reasonably reusable for LIERAC/future brands.
+
+## Source context
+
+This context is based on:
+
+- The provided Selecta project scope document.
+- The updated instruction that the current build is a catalog-focused copy/adaptation of `fr.phyto.com`.
+- The requirement to use custom post types for product catalog pages.
+- The requirement to exclude public users/auth and focus mainly on UI implementation.

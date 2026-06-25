@@ -1,0 +1,925 @@
+---
+description: Sitemap-derived context for recreating fr.phyto.com as a Bulgarian WordPress catalog site without commerce or public auth.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.json"
+  - "**/*.md"
+alwaysApply: true
+---
+
+# PHYTO Reference Sitemap Context
+
+Use this file together with:
+
+- `wordpress-acf-theme-instructions-updated.mdc`
+- `wordpress-acf-theme-skill-updated.mdc`
+- `selecta-phyto-catalog-project-context.mdc`
+
+This file gives Cursor/agent context about the discovered public structure of `fr.phyto.com` and how to translate that structure into a WordPress catalog-only site.
+
+## Important limitation
+
+The implementation must be a catalog/information adaptation, not a commerce clone.
+
+The reference site includes commerce/account elements, but those are out of scope and must be removed or neutralized:
+
+- Mon compte
+- Mon panier
+- Add to cart
+- Price
+- Sale price
+- Checkout
+- Payment methods
+- Shipping claims tied to orders
+- Loyalty points
+- Customer account flows
+- Wishlist/order history
+- Product purchase review flows
+
+WordPress admin users are allowed for managing content. Public customer auth is not allowed.
+
+## Discovered top-level site structure
+
+The reference site uses these major public areas:
+
+```text
+/
+  Homepage
+
+/c/...
+  Category / listing pages
+
+/p/...
+  Product detail pages
+
+/blog/
+  Blog / advice archive
+
+/blog/{article-slug}
+  Blog / advice article pages
+
+/cms/{page-slug}
+  CMS / landing / legal / brand / campaign pages
+
+/storelocator
+  Store locator / points of sale
+```
+
+For WordPress, map these to:
+
+```text
+/
+  front-page.php
+
+/products/
+  archive-selecta_product.php
+
+/product/{slug}/
+  single-selecta_product.php
+
+/product-category/{term-slug}/
+  taxonomy-selecta_product_category.php
+
+/product-line/{term-slug}/
+  taxonomy-selecta_product_line.php
+
+/hair-type/{term-slug}/
+  taxonomy-selecta_hair_type.php
+
+/hair-concern/{term-slug}/
+  taxonomy-selecta_hair_concern.php
+
+/advice/
+  archive-selecta_advice.php or a CMS page using an advice query
+
+/advice/{slug}/
+  single-selecta_advice.php
+
+/pages/ or normal WordPress pages
+  Brand pages, legal pages, campaign pages, FAQ, contact, partners
+
+/store-locator/ or /points-of-sale/
+  Partner/store-locator page
+```
+
+Use Bulgarian slugs if the client wants localized URLs. Use stable English/internal slugs in code if they simplify development, but public labels should be Bulgarian.
+
+## Header and mega-menu sitemap
+
+The reference homepage/header exposes these navigation groups.
+
+### Utility header
+
+Reference items:
+
+```text
+Announcement/promotional bars
+Delivery message
+Points de vente
+Mon compte
+Mon panier
+Country selector
+```
+
+Project implementation:
+
+```text
+Announcement bar       -> keep as editable ACF/global option
+Delivery/order message -> remove or convert to neutral brand/catalog message
+Points de vente        -> keep as Partners / Points of sale if needed
+Mon compte             -> remove
+Mon panier             -> remove
+Country selector       -> optional; probably remove for Bulgarian single-market site
+```
+
+### Main navigation groups
+
+Reference groups:
+
+```text
+Compléments Alimentaires
+Chute de cheveux
+Coloration
+Soins & Beauté des cheveux
+Cadeaux et Offres
+Nos conseils
+La Marque
+```
+
+Recommended Bulgarian project navigation:
+
+```text
+Продукти
+  - Хранителни добавки
+  - Косопад
+  - Боядисване
+  - Грижа и красота за косата
+  - Серии / Гами
+
+Тип коса
+  - Нормална коса
+  - Суха коса
+  - Вълниста / къдрава коса
+  - Много къдрава / фризирана коса
+  - Фина и без обем коса
+  - Увредена / чуплива коса
+  - Боядисана коса
+  - Мазна коса
+  - Руса коса
+  - Чувствителен скалп
+  - Косa, изложена на слънце, сол, хлор
+
+Проблем / Нужда
+  - Косопад
+  - Пърхот
+  - Сърбеж / раздразнен скалп
+  - Обем
+  - Подхранване
+  - Възстановяване
+  - Блясък
+  - Защита на цвета
+  - Грижа за къдрици
+
+Нашите съвети
+  - Advice landing
+  - Advice article cards
+
+Марката
+  - История
+  - Визия
+  - Ангажименти
+
+Партньори / Точки на продажба
+```
+
+Do not include account/cart links.
+
+## Category/listing URL patterns from reference
+
+Reference category URLs often follow this form:
+
+```text
+/c/{encoded-id}/{section}/{taxonomy-type}/{slug}
+```
+
+Examples discovered:
+
+```text
+/c/NzY%3D/soins-de-beaute-et-coiffure/type-de-produit/shampooing
+/c/MTUx/soins-de-beaute-et-coiffure/collection/boucles
+/c/MTQy/offres-ventes-privees
+/c/NzE%3D/soins-de-beaute-et-coiffure/type-de-cheveux/cheveux-secs
+/c/chute-de-cheveux/phytophanere-pousse-croissance-cheveux-antichute-post-partum
+```
+
+Do not reproduce encoded IDs in WordPress. Use clean semantic slugs.
+
+Recommended WordPress taxonomy routes:
+
+```text
+/products/
+  All products listing
+
+/product-category/shampoani/
+  Product type category
+
+/product-category/balzami-i-maski/
+  Product type category
+
+/product-category/stilizanti/
+  Product type category
+
+/product-line/boucles/
+  Product line/range
+
+/hair-type/suha-kosa/
+  Hair type listing
+
+/hair-concern/kosopad/
+  Hair concern listing
+
+/promotions/
+  Non-commerce promotional/catalog landing page
+```
+
+If Bulgarian slugs are preferred, use transliterated Latin slugs for clean URLs and Bulgarian labels in the UI.
+
+## Product category and taxonomy map
+
+The reference navigation exposes these taxonomy groups.
+
+### Product type
+
+```text
+Shampooings
+Après-Shampooings et Masques
+Soins coiffants
+Huiles
+Fixation
+Brushing & lissage
+Boucles
+Les Best-Sellers
+Grands formats & Éco-recharges
+Formats voyage
+Compléments Alimentaires
+Coloration
+```
+
+Suggested WordPress taxonomy:
+
+```text
+selecta_product_category
+```
+
+Suggested Bulgarian labels:
+
+```text
+Шампоани
+Балсами и маски
+Стилизираща грижа
+Масла
+Фиксация
+Сешоар и изправяне
+Къдрици
+Бестселъри
+Големи формати и еко пълнители
+Пътни формати
+Хранителни добавки
+Боядисване
+```
+
+### Product line / range
+
+Reference ranges:
+
+```text
+PHYTO 7 ELIXIR
+NUTRITION
+RÉPARATION
+DOUCEUR
+BOUCLES
+BOUCLES INTENSES
+COULEUR
+BLOND
+VOLUME
+VIOLET
+SOLUTION CUIR CHEVELU
+PLAGE
+LAQUE
+PHYTOSPECIFIC
+PHYTOLAQUE
+PHYTODEFRISANT
+PHYTOPHANERE
+PHYTOCYANE
+```
+
+Suggested WordPress taxonomy:
+
+```text
+selecta_product_line
+```
+
+Keep line names mostly as brand names unless the client provides localized names.
+
+### Hair type
+
+Reference hair-type items:
+
+```text
+Cheveux normaux
+Cheveux secs
+Cheveux ondulés, bouclés 2A à 3A
+Cheveux frisés, crépus 3B à 4C
+Cheveux fins et plats
+Cheveux cassants et abîmés
+Cheveux colorés et méchés
+Cheveux gras
+Cuir chevelu sensible & irrité
+Cheveux blonds
+Cheveux exposés aux UV, sel, chlore
+```
+
+Suggested WordPress taxonomy:
+
+```text
+selecta_hair_type
+```
+
+Suggested Bulgarian labels:
+
+```text
+Нормална коса
+Суха коса
+Вълниста и къдрава коса 2A–3A
+Много къдрава и фризирана коса 3B–4C
+Фина и без обем коса
+Чуплива и увредена коса
+Боядисана и кичурирана коса
+Мазна коса
+Чувствителен и раздразнен скалп
+Руса коса
+Коса, изложена на UV, сол и хлор
+```
+
+### Hair/scalp concern
+
+Reference concern/navigation items:
+
+```text
+Chute de cheveux
+Chute de cheveux réactionnelle
+Chute de cheveux progressive
+Pellicules
+Shampooing anti-pelliculaire
+Shampooing anti-démangeaisons
+Shampooing cheveux gras
+Tous les soins du cuir chevelu
+```
+
+Suggested WordPress taxonomy:
+
+```text
+selecta_hair_concern
+```
+
+Suggested Bulgarian labels:
+
+```text
+Косопад
+Реактивен косопад
+Прогресивен косопад
+Пърхот
+Сърбеж
+Мазен скалп
+Грижа за скалпа
+Обем
+Подхранване
+Възстановяване
+Блясък
+Защита на цвета
+```
+
+## Homepage sitemap / section order
+
+The reference homepage contains this kind of structure:
+
+```text
+Announcement bars
+Header + mega menu
+Hero / highlighted range
+New products
+Offers / campaign cards
+Best sellers
+Anti-hair-loss solution section
+Editorial/category highlight cards
+Discover Phyto Paris / brand story
+Newsletter signup
+Footer
+```
+
+For this project:
+
+```text
+Announcement bars            -> keep, editable
+Header + mega menu           -> keep, no account/cart
+Hero / highlighted range      -> keep
+New products                 -> keep as catalog product query
+Offers/campaign cards        -> keep as non-commerce promo cards
+Best sellers                 -> keep as curated product query, no price/buy
+Anti-hair-loss section       -> keep as product/category highlight
+Editorial/category cards     -> keep
+Brand story                  -> keep
+Newsletter                   -> keep; no account creation
+Footer                       -> keep; remove order/payment footer links
+```
+
+Recommended ACF flexible layouts for homepage:
+
+```text
+hero_banner
+featured_product_line
+product_grid
+promotion_cards
+editorial_cards
+brand_story
+benefit_grid
+newsletter_signup
+```
+
+## Product listing page structure
+
+Reference product listing pages include:
+
+```text
+Category title
+Category image/banner
+Intro text
+Product grid
+Product cards with image, title, line, hair type/benefit
+Ratings
+Prices
+Add to cart
+Badges
+Load more / product count
+Advice/article teaser
+Newsletter
+Footer
+```
+
+For this project, keep:
+
+```text
+Category title
+Category image/banner
+Intro text
+Product grid
+Image
+Product title
+Product line
+Hair type / concern
+Short benefit
+Badges like "new", "eco", "travel size" only when non-commerce
+Load more / pagination
+Advice teaser
+Newsletter
+Footer
+```
+
+Remove:
+
+```text
+Ratings if they imply active customer review flow
+Prices
+Sale prices
+Add to cart
+Stock
+Shipping/payment
+Commerce promo mechanics
+```
+
+Suggested templates:
+
+```text
+archive-selecta_product.php
+taxonomy-selecta_product_category.php
+taxonomy-selecta_product_line.php
+taxonomy-selecta_hair_type.php
+taxonomy-selecta_hair_concern.php
+template-parts/components/product-card.php
+```
+
+## Product detail page structure
+
+Reference product detail pages include:
+
+```text
+Breadcrumb/navigation context
+Product line
+Product title
+Product subtitle/short claim
+Product image gallery
+Hair type / benefit line
+"No silicones / no sulfates" claims
+Size / format
+Reviews
+Loyalty points
+Add to cart + price
+Payment/shipping info
+Natural-origin percentage
+Description
+Ingredients
+Key ingredients cards
+Benefits & Results
+Usage instructions
+Review form
+Newsletter
+Footer
+```
+
+For this project, keep:
+
+```text
+Breadcrumb/navigation context
+Product line
+Product title
+Product subtitle/short claim
+Image gallery
+Hair type / benefit line
+Formula claims such as no silicones/no sulfates when content is provided
+Size / format
+Natural-origin percentage if provided
+Description
+Ingredients
+Key ingredient cards
+Benefits & Results
+Usage instructions
+Related products
+Related advice/articles
+Newsletter
+Footer
+```
+
+Remove:
+
+```text
+Reviews if they require public user/customer submission
+Loyalty points
+Add to cart
+Price
+Payment info
+Shipping info
+Order incentives
+Review form
+Customer account prompts
+```
+
+Suggested templates/parts:
+
+```text
+single-selecta_product.php
+template-parts/content/content-product.php
+template-parts/components/product-gallery.php
+template-parts/components/product-meta.php
+template-parts/components/product-ingredients.php
+template-parts/components/product-benefits.php
+template-parts/components/product-usage.php
+template-parts/components/related-products.php
+template-parts/components/related-advice.php
+```
+
+## Product CPT ACF field model from sitemap/content
+
+Recommended fields for `selecta_product`:
+
+```text
+Identity:
+  - product_line
+  - product_subtitle
+  - product_short_claim
+  - product_size
+  - product_format
+
+Catalog classification:
+  - product_category taxonomy
+  - product_line taxonomy
+  - hair_type taxonomy
+  - hair_concern taxonomy
+
+Media:
+  - product_gallery
+  - hover_image
+  - ingredient_section_image
+  - usage_section_image
+
+Claims:
+  - formula_claims
+  - natural_origin_percentage
+  - clinical_results
+  - satisfaction_results
+  - badges
+
+Main content:
+  - short_description
+  - description
+  - key_ingredients repeater
+  - full_ingredient_list
+  - benefits_results
+  - usage_steps repeater
+  - beauty_tip
+
+Relationships:
+  - related_products
+  - related_advice_articles
+
+Optional external CTA:
+  - external_cta_label
+  - external_cta_url
+```
+
+Explicitly do not include:
+
+```text
+price
+sale_price
+add_to_cart
+cart_quantity
+stock
+shipping
+payment
+loyalty_points
+review_form_enabled
+customer_account_required
+```
+
+## Blog / advice sitemap
+
+Reference blog/advice patterns:
+
+```text
+/blog/
+  Blog archive
+
+/blog/quels-sont-les-bienfaits-des-prebiotiques
+/blog/pourquoi-je-perds-mes-cheveux
+/blog/pourquoi-les-cheveux-colores-sont-plus-fragiles
+/blog/quelle-routine-cheveux-choisir-pour-les-cheveux-qui-jaunissent
+```
+
+Reference header also exposes `Nos conseils` and a CMS advice landing:
+
+```text
+/cms/nos-conseils
+```
+
+For WordPress, implement as either:
+
+```text
+/advice/
+  archive-selecta_advice.php
+
+/advice/{slug}/
+  single-selecta_advice.php
+```
+
+or use standard posts if the project stays simple. Prefer CPT `selecta_advice` if the site needs a dedicated advice content type separate from standard blog/news.
+
+Advice fields:
+
+```text
+advice_subtitle
+advice_category
+hero_image
+intro
+sections flexible content
+related_products
+related_advice
+seo_summary
+```
+
+## CMS / landing page sitemap
+
+Reference CMS pages discovered:
+
+```text
+/cms/la-marque
+/cms/nos-conseils
+/cms/mentions-legales
+/cms/cookies
+/cms/cgv
+/cms/phytophanere-complement-alimentaire-cheveux-ongles
+/cms/phytophanere-composition-ingredients-vitamines-b-zinc
+/cms/phytophanere-avant-apres-resultats-cheveux-ongles
+/cms/phytocyane-complement-alimentaire-chute-cheveux-ingredients-vitamines-B
+/cms/diagnostic-traitements-antichute-cheveux
+/cms/programme_fidelite_phyto
+/cms/huile-elixir-cheveux-secs-boucles-abimes
+/cms/valeurs-phyto-paris
+```
+
+For this project:
+
+- Brand and campaign pages should be WordPress pages with controlled ACF flexible sections.
+- Legal pages should be normal WordPress pages.
+- Loyalty-program pages should be excluded unless converted to a neutral external-link/partner informational page with no login/account behavior.
+- Diagnostic/quiz pages should be excluded unless the user explicitly changes scope, because quiz module is out of scope.
+
+Recommended WordPress pages:
+
+```text
+/markata/
+  Brand page
+
+/saveti/
+  Advice landing if not using archive route
+
+/kontakti/
+  Contact page
+
+/faq/
+  FAQ page
+
+/partnyori/
+  Partners / points of sale
+
+/legal/obshti-usloviya/
+  Terms or general conditions if required
+
+/legal/politika-za-poveritelnost/
+  Privacy policy
+
+/legal/cookies/
+  Cookie policy
+
+/promotsii/
+  Non-commerce promotions/catalog highlights
+```
+
+## Store locator / partners
+
+Reference route:
+
+```text
+/storelocator
+```
+
+For this project, decide based on actual requirements:
+
+Option A: simple partners page:
+
+```text
+/partnyori/
+```
+
+Use CPT:
+
+```text
+selecta_partner
+```
+
+Fields:
+
+```text
+partner_name
+address
+city
+phone
+website
+map_url
+partner_type
+brand_availability
+```
+
+Option B: embedded external locator:
+
+```text
+/partnyori/
+```
+
+Use ACF fields:
+
+```text
+intro_text
+embed_code or external_locator_url
+partner_cards
+```
+
+Do not create customer accounts.
+
+## Footer sitemap
+
+Reference footer includes:
+
+```text
+Mentions légales
+Conditions générales de vente
+Politique de cookies
+Blog
+Livraison
+Retours / Remboursements
+Social links
+Payment method icons
+reCAPTCHA notice
+```
+
+For this catalog project:
+
+Keep/adapt:
+
+```text
+Legal notice
+Privacy policy
+Cookie policy
+Blog/advice
+Contact
+Partners / points of sale
+Social links
+Newsletter
+reCAPTCHA/privacy notice where forms use it
+```
+
+Remove:
+
+```text
+Conditions générales de vente if there is no sale; replace with general terms if needed
+Delivery
+Returns/refunds
+Payment icons
+Order information
+Cart/account links
+```
+
+## URL and slug policy
+
+Do not copy the reference encoded `/c/{id}/...` URLs.
+
+Use clean WordPress routes:
+
+```text
+/products/
+product/{product-slug}/
+product-category/{term-slug}/
+product-line/{term-slug}/
+hair-type/{term-slug}/
+hair-concern/{term-slug}/
+advice/
+advice/{article-slug}/
+```
+
+Alternative Bulgarian public slugs are acceptable:
+
+```text
+/produkti/
+/produkt/{slug}/
+/kategoria-produkt/{slug}/
+/seria/{slug}/
+/tip-kosa/{slug}/
+/problem/{slug}/
+/saveti/
+/saveti/{slug}/
+```
+
+Choose one slug strategy and keep it consistent.
+
+## Implementation priority from sitemap
+
+Build in this order:
+
+1. Header, announcement bar, navigation, mega menu, mobile menu.
+2. Product CPT and taxonomies.
+3. Product listing/archive templates.
+4. Product card component.
+5. Product detail template.
+6. ACF product field groups.
+7. Homepage flexible sections.
+8. Advice/blog archive and article templates.
+9. Brand page and CMS flexible pages.
+10. Newsletter and footer.
+11. Legal/contact/partners pages.
+12. Tracking/GDPR/form protection.
+
+## Agent checklist before coding from sitemap
+
+Before coding a route or component, decide which source pattern it maps to:
+
+```text
+Reference /c/...        -> WordPress archive/taxonomy/product listing
+Reference /p/...        -> WordPress single catalog product
+Reference /blog/...     -> WordPress advice article/archive
+Reference /cms/...      -> WordPress page or campaign landing page
+Reference /storelocator -> WordPress partners/store-locator page
+```
+
+Then remove commerce/auth pieces before implementation.
+
+## Final guardrails
+
+- The sitemap is a structural guide, not a requirement to copy every commerce page.
+- Category/listing/product/advice/brand UI should be copied conceptually.
+- Checkout, account, cart, loyalty, order, and payment routes must not be created.
+- Product pages are catalog pages.
+- Products are custom post types.
+- Main work is UI and editable content structure.
+- Use ACF for flexible sections and product fields.
+- Use plain CSS.
+- Use semantic server-rendered HTML.
