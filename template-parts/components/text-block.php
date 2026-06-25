@@ -10,9 +10,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$heading   = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'heading' ) : '';
-$tagline   = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'tagline' ) : '';
-$body_text = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'body_text' ) : '';
+$heading   = (string) selecta_get_sub_field( 'heading' );
+$tagline   = (string) selecta_get_sub_field( 'tagline' );
+$body_text = (string) selecta_get_sub_field( 'body_text' );
 
 if ( ! $heading && ! $tagline && ! $body_text ) {
 	return;

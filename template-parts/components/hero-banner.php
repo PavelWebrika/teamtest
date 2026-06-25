@@ -9,10 +9,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bg_image_id  = function_exists( 'get_sub_field' ) ? (int) get_sub_field( 'bg_image' ) : 0;
-$bg_video_url = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'bg_video' ) : '';
-$heading      = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'heading' ) : '';
-$subheading   = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'subheading' ) : '';
+$bg_image_id  = (int) selecta_get_sub_field( 'bg_image' );
+$bg_video_url = (string) selecta_get_sub_field( 'bg_video' );
+$heading      = (string) selecta_get_sub_field( 'heading' );
+$subheading   = (string) selecta_get_sub_field( 'subheading' );
 
 if ( ! $bg_image_id && ! $bg_video_url && ! $heading && ! $subheading ) {
 	return;
