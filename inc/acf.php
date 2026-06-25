@@ -37,7 +37,42 @@ function selecta_register_acf_field_groups() {
 				'type'         => 'flexible_content',
 				'button_label' => 'Добави секция',
 				'layouts'      => array(
-					'layout_hero_banner' => array(
+					'layout_text_block' => array(
+					'key'        => 'layout_text_block',
+					'name'       => 'text_block',
+					'label'      => 'Text Block',
+					'display'    => 'block',
+					'sub_fields' => array(
+						array(
+							'key'          => 'field_text_block_heading',
+							'label'        => 'Заглавие',
+							'name'         => 'heading',
+							'type'         => 'text',
+							'instructions' => 'Незадължително.',
+							'required'     => 0,
+						),
+						array(
+							'key'          => 'field_text_block_tagline',
+							'label'        => 'Подзаглавие / Tagline',
+							'name'         => 'tagline',
+							'type'         => 'text',
+							'instructions' => 'Незадължително.',
+							'required'     => 0,
+						),
+						array(
+							'key'          => 'field_text_block_body',
+							'label'        => 'Текст',
+							'name'         => 'body_text',
+							'type'         => 'wysiwyg',
+							'instructions' => 'Незадължително.',
+							'required'     => 0,
+							'tabs'         => 'all',
+							'toolbar'      => 'basic',
+							'media_upload' => 0,
+						),
+					),
+				),
+				'layout_hero_banner' => array(
 						'key'        => 'layout_hero_banner',
 						'name'       => 'hero_banner',
 						'label'      => 'Hero Banner',

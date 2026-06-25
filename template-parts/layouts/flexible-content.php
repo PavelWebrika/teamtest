@@ -28,6 +28,10 @@ while ( have_rows( 'page_sections' ) ) :
 			get_template_part( 'template-parts/components/hero-banner' );
 			break;
 
+		case 'text_block':
+			get_template_part( 'template-parts/components/text-block' );
+			break;
+
 		default:
 			break;
 	}
