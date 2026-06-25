@@ -10,6 +10,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
+wp_enqueue_style( 'selecta-text-block' );
+wp_print_styles( 'selecta-text-block' );
+
 $heading   = (string) selecta_get_sub_field( 'heading' );
 $tagline   = (string) selecta_get_sub_field( 'tagline' );
 $body_text = (string) selecta_get_sub_field( 'body_text' );

@@ -30,5 +30,26 @@ function selecta_enqueue_assets() {
 		file_exists( $js_path ) ? filemtime( $js_path ) : wp_get_theme()->get( 'Version' ),
 		true
 	);
+
+	selecta_register_component_styles();
 }
 add_action( 'wp_enqueue_scripts', 'selecta_enqueue_assets' );
+
+function selecta_register_component_styles() {
+	$components = array(
+		'selecta-hero-banner' => 'assets/css/components/hero-banner.css',
+		'selecta-text-block'  => 'assets/css/components/text-block.css',
+	);
+
+	foreach ( $components as $handle => $path ) {
+		$full_path = get_template_directory() . '/' . $path;
+		$full_uri  = get_template_directory_uri() . '/' . $path;
+
+		wp_register_style(
+			$handle,
+			$full_uri,
+			array( 'selecta-main' ),
+			file_exists( $full_path ) ? filemtime( $full_path ) : wp_get_theme()->get( 'Version' )
+		);
+	}
+}

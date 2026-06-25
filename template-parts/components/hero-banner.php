@@ -9,6 +9,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
+wp_enqueue_style( 'selecta-hero-banner' );
+wp_print_styles( 'selecta-hero-banner' );
+
 $bg_image_id  = (int) selecta_get_sub_field( 'bg_image' );
 $bg_video_url = (string) selecta_get_sub_field( 'bg_video' );
 $heading      = (string) selecta_get_sub_field( 'heading' );

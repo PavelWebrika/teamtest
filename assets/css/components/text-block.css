@@ -1,0 +1,38 @@
+.text-block {
+	padding-block: clamp(3rem, 6vw, 5rem);
+	text-align: center;
+}
+
+.text-block__heading {
+	font-size: clamp(1.5rem, 3vw, 2rem);
+	font-weight: 900;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-brand-blue);
+	line-height: 1.2;
+}
+
+.text-block__tagline {
+	margin-top: var(--space-3);
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--color-muted);
+	max-width: 42rem;
+	margin-inline: auto;
+	line-height: 1.6;
+}
+
+.text-block__body {
+	margin-top: var(--space-3);
+	font-size: 1rem;
+	color: var(--color-muted);
+	max-width: 52rem;
+	margin-inline: auto;
+	line-height: 1.7;
+}
+
+.text-block__body strong,
+.text-block__body b {
+	font-weight: 700;
+	color: var(--color-text);
+}
