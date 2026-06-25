@@ -25,3 +25,10 @@ function selecta_setup() {
 	);
 }
 add_action( 'after_setup_theme', 'selecta_setup' );
+
+add_filter( 'use_block_editor_for_post', '__return_false' );
+add_filter( 'use_widgets_block_editor', '__return_false' );
+
+add_action( 'init', function() {
+	remove_post_type_support( 'page', 'editor' );
+} );

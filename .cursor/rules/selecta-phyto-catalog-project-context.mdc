@@ -497,6 +497,37 @@ Required approach:
 - Use image fields as attachment IDs where practical.
 - Render images with `wp_get_attachment_image()`.
 
+## Flexible content is the default for page sections
+
+Use ACF Flexible Content as the default for any page that has editable sections.
+
+Rules:
+
+- Every page template that has more than one content section must use a `page_sections` flexible content field.
+- Each section/component is a layout inside that flexible content field.
+- Do not use simple top-level ACF fields for page sections that will appear alongside other sections.
+- Simple top-level fields are only acceptable for truly isolated single-field data such as a page subtitle or a single override value.
+- When adding a new section/component to any page, add it as a new layout in the flexible content field group — not as a new standalone field group.
+- The homepage (`front-page.php`) uses `page_sections` flexible content.
+- Interior pages (`page.php`, campaign pages, brand pages) should also use `page_sections` flexible content.
+- The loop pattern for flexible content is:
+
+```php
+if ( function_exists( 'have_rows' ) && have_rows( 'page_sections' ) ) :
+    while ( have_rows( 'page_sections' ) ) :
+        the_row();
+
+        if ( is_row_layout( 'layout_name' ) ) :
+            get_template_part( 'template-parts/components/component-name', null, array(
+                'field_one' => get_sub_field( 'field_one' ),
+                'field_two' => get_sub_field( 'field_two' ),
+            ) );
+        endif;
+
+    endwhile;
+endif;
+```
+
 Recommended field groups:
 
 ```text
