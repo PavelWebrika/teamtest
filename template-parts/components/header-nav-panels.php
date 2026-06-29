@@ -38,9 +38,12 @@ if ( ! have_rows( 'nav_panels', 'option' ) ) {
 				<ul class="nav-panel__featured">
 					<?php while ( have_rows( 'featured_items' ) ) : the_row(); ?>
 						<?php
-						$image_id = get_sub_field( 'item_image' );
-						$title    = get_sub_field( 'item_title' );
-						$url      = get_sub_field( 'item_url' );
+						$image_id  = get_sub_field( 'item_image' );
+						$title     = get_sub_field( 'item_title' );
+						$link_type = get_sub_field( 'item_link_type' );
+						$link_path = get_sub_field( 'item_link_path' );
+						$link_url  = get_sub_field( 'item_url' );
+						$url       = selecta_get_nav_link_url( $link_type, $link_path, $link_url );
 
 						if ( ! $url ) {
 							continue;
@@ -82,14 +85,17 @@ if ( ! have_rows( 'nav_panels', 'option' ) ) {
 									<?php while ( have_rows( 'column_links' ) ) : the_row(); ?>
 										<?php
 										$link_text = get_sub_field( 'link_text' );
+										$link_type = get_sub_field( 'link_type' );
+										$link_path = get_sub_field( 'link_path' );
 										$link_url  = get_sub_field( 'link_url' );
+										$url       = selecta_get_nav_link_url( $link_type, $link_path, $link_url );
 
-										if ( ! $link_text || ! $link_url ) {
+										if ( ! $link_text || ! $url ) {
 											continue;
 										}
 										?>
 										<li>
-											<a href="<?php echo esc_url( $link_url ); ?>"><?php echo esc_html( $link_text ); ?></a>
+											<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $link_text ); ?></a>
 										</li>
 									<?php endwhile; ?>
 								</ul>

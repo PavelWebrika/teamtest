@@ -81,3 +81,44 @@ function selecta_get_svg( $name ) {
 
 	return is_string( $svg ) ? $svg : '';
 }
+
+/**
+ * Build a nav panel link URL from ACF link type fields.
+ *
+ * @param string $link_type  internal|external, or empty for legacy rows.
+ * @param string $link_path  Site path when internal.
+ * @param string $link_url   Full URL when external (legacy rows may only have this).
+ * @return string
+ */
+function selecta_get_nav_link_url( $link_type, $link_path, $link_url ) {
+	$link_path = trim( (string) $link_path );
+	$link_url  = trim( (string) $link_url );
+
+	if ( '' === $link_type || false === $link_type || null === $link_type ) {
+		if ( '' !== $link_path ) {
+			$link_type = 'internal';
+		} elseif ( '' !== $link_url ) {
+			return $link_url;
+		} else {
+			return '';
+		}
+	}
+
+	if ( 'internal' === $link_type ) {
+		if ( '' === $link_path ) {
+			return '';
+		}
+
+		if ( '/' === $link_path ) {
+			return home_url( '/' );
+		}
+
+		if ( 0 === strpos( $link_path, '/' ) ) {
+			return home_url( $link_path );
+		}
+
+		return home_url( '/' . $link_path );
+	}
+
+	return $link_url;
+}

@@ -361,10 +361,49 @@ function selecta_register_acf_field_groups() {
 								'media_upload' => 0,
 							),
 							array(
-								'key'   => 'field_nav_panel_item_url',
-								'label' => 'URL',
-								'name'  => 'item_url',
-								'type'  => 'url',
+								'key'           => 'field_nav_panel_item_link_type',
+								'label'         => 'Link Type',
+								'name'          => 'item_link_type',
+								'type'          => 'radio',
+								'choices'       => array(
+									'internal' => 'In-site link',
+									'external' => 'Outside link',
+								),
+								'default_value' => 'internal',
+								'layout'        => 'horizontal',
+							),
+							array(
+								'key'               => 'field_nav_panel_item_link_path',
+								'label'             => 'Path',
+								'name'              => 'item_link_path',
+								'type'              => 'text',
+								'instructions'      => 'Enter the path only — e.g. <code>/products/</code> or <code>products/category/shampoo</code>. The site domain is added automatically.',
+								'placeholder'       => '/products/',
+								'conditional_logic' => array(
+									array(
+										array(
+											'field'    => 'field_nav_panel_item_link_type',
+											'operator' => '==',
+											'value'    => 'internal',
+										),
+									),
+								),
+							),
+							array(
+								'key'               => 'field_nav_panel_item_url',
+								'label'             => 'URL',
+								'name'              => 'item_url',
+								'type'              => 'url',
+								'instructions'      => 'Full URL including https://',
+								'conditional_logic' => array(
+									array(
+										array(
+											'field'    => 'field_nav_panel_item_link_type',
+											'operator' => '==',
+											'value'    => 'external',
+										),
+									),
+								),
 							),
 						),
 					),
@@ -407,10 +446,47 @@ function selecta_register_acf_field_groups() {
 										'type'  => 'text',
 									),
 									array(
-										'key'   => 'field_nav_mega_link_url',
-										'label' => 'URL',
-										'name'  => 'link_url',
-										'type'  => 'url',
+										'key'           => 'field_nav_mega_link_type',
+										'label'         => 'Link Type',
+										'name'          => 'link_type',
+										'type'          => 'radio',
+										'choices'       => array(
+											'internal' => 'In-site',
+											'external' => 'Outside',
+										),
+										'default_value' => 'internal',
+										'layout'        => 'horizontal',
+									),
+									array(
+										'key'               => 'field_nav_mega_link_path',
+										'label'             => 'Path',
+										'name'              => 'link_path',
+										'type'              => 'text',
+										'placeholder'       => '/products/',
+										'conditional_logic' => array(
+											array(
+												array(
+													'field'    => 'field_nav_mega_link_type',
+													'operator' => '==',
+													'value'    => 'internal',
+												),
+											),
+										),
+									),
+									array(
+										'key'               => 'field_nav_mega_link_url',
+										'label'             => 'URL',
+										'name'              => 'link_url',
+										'type'              => 'url',
+										'conditional_logic' => array(
+											array(
+												array(
+													'field'    => 'field_nav_mega_link_type',
+													'operator' => '==',
+													'value'    => 'external',
+												),
+											),
+										),
 									),
 								),
 							),
@@ -492,6 +568,14 @@ function selecta_validate_nav_panel_key( $valid, $value, $field, $input_name ) {
 	return $valid;
 }
 
+add_filter( 'acf/load_field/key=field_nav_panel_item_link_path', 'selecta_nav_link_path_prepend' );
+add_filter( 'acf/load_field/key=field_nav_mega_link_path', 'selecta_nav_link_path_prepend' );
+function selecta_nav_link_path_prepend( $field ) {
+	$field['prepend'] = untrailingslashit( home_url() );
+
+	return $field;
+}
+
 add_action( 'acf/input/admin_head', 'selecta_nav_panels_collapse_script' );
 function selecta_nav_panels_collapse_script() {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -500,6 +584,66 @@ function selecta_nav_panels_collapse_script() {
 		return;
 	}
 	?>
+	<style>
+	.acf-field-field_nav_panel_item_link_path .acf-input,
+	.acf-field-field_nav_mega_link_path .acf-input,
+	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input,
+	.acf-field[data-key="field_nav_mega_link_path"] .acf-input {
+		display: flex !important;
+		flex-direction: row !important;
+		align-items: stretch !important;
+		width: 100%;
+	}
+
+	.acf-field-field_nav_panel_item_link_path .acf-input-wrap,
+	.acf-field-field_nav_mega_link_path .acf-input-wrap,
+	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-wrap,
+	.acf-field[data-key="field_nav_mega_link_path"] .acf-input-wrap {
+		display: flex !important;
+		flex: 1 1 auto !important;
+		min-width: 0 !important;
+		width: auto !important;
+	}
+
+	.acf-field-field_nav_panel_item_link_path .acf-input-prepend,
+	.acf-field-field_nav_mega_link_path .acf-input-prepend,
+	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-prepend,
+	.acf-field[data-key="field_nav_mega_link_path"] .acf-input-prepend {
+		float: none !important;
+		display: flex !important;
+		align-items: center !important;
+		flex: 0 0 auto !important;
+		width: auto !important;
+		max-width: none !important;
+		height: 32px !important;
+		min-height: 32px !important;
+		padding: 0 10px !important;
+		margin: 0 !important;
+		border: 1px solid #8c8f94 !important;
+		border-right: 0 !important;
+		border-radius: 4px 0 0 4px !important;
+		background: #f6f7f7 !important;
+		box-sizing: border-box !important;
+		line-height: 1 !important;
+		white-space: nowrap;
+		color: #50575e;
+	}
+
+	.acf-field-field_nav_panel_item_link_path .acf-input input[type="text"],
+	.acf-field-field_nav_mega_link_path .acf-input input[type="text"],
+	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input input[type="text"],
+	.acf-field[data-key="field_nav_mega_link_path"] .acf-input input[type="text"] {
+		float: none !important;
+		flex: 1 1 auto !important;
+		min-width: 0 !important;
+		width: 100% !important;
+		height: 32px !important;
+		min-height: 32px !important;
+		margin: 0 !important;
+		box-sizing: border-box !important;
+		border-radius: 0 4px 4px 0 !important;
+	}
+	</style>
 	<script>
 	( function ( $ ) {
 		function collapseNavPanelRows() {
