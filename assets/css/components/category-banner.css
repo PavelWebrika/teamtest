@@ -41,17 +41,19 @@
 }
 
 @media (min-width: 768px) {
-  .category-banner {
-    position: relative;
-    display: block;
-    aspect-ratio: 1920 / 605;
-    min-height: clamp(280px, 32vw, 605px);
-  }
+	.category-banner {
+		position: relative;
+		display: block;
+		height: 380px;
+		max-height: 380px;
+	}
 
-  .category-banner__media {
-    position: absolute;
-    inset: 0;
-  }
+	.category-banner__media {
+		position: absolute;
+		inset: 0;
+		height: 380px;
+		max-height: 380px;
+	}
 
   .category-banner__bg-img {
     width: 100%;

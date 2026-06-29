@@ -1,0 +1,27 @@
+.product-grid-progress {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-3);
+	padding-block: var(--space-4);
+}
+
+.product-grid-progress__text {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+	text-align: center;
+	color: #4c4d4f;
+}
+
+.product-grid-progress__bar {
+	width: min(100%, 18.5rem);
+	height: 5px;
+	background: transparent;
+}
+
+.product-grid-progress__fill {
+	display: block;
+	height: 5px;
+	background: #000;
+}

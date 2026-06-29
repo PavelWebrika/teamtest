@@ -33,6 +33,8 @@ if ( have_posts() ) :
 		)
 	);
 
+	get_template_part( 'template-parts/components/product-grid-progress' );
+
 else :
 	?>
 
