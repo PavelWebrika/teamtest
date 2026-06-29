@@ -233,6 +233,14 @@ button:focus-visible {
 	color: var(--color-text);
 }
 
+.product-archive__description {
+	margin-top: var(--space-3);
+	max-width: 42rem;
+	color: var(--color-muted);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+}
+
 .product-archive__empty {
 	padding-block: 3rem;
 	color: var(--color-muted);
