@@ -217,6 +217,17 @@ function selecta_register_acf_field_groups() {
 				'required'     => 0,
 			),
 			array(
+				'key'           => 'field_product_hover_image',
+				'label'         => 'Hover Image',
+				'name'          => 'product_hover_image',
+				'type'          => 'image',
+				'instructions'  => 'Optional. Shown in place of the featured image when the card is hovered in product listings.',
+				'required'      => 0,
+				'return_format' => 'id',
+				'preview_size'  => 'medium',
+				'library'       => 'all',
+			),
+			array(
 				'key'          => 'field_product_short_benefits',
 				'label'        => 'Short Benefits',
 				'name'         => 'product_short_benefits',

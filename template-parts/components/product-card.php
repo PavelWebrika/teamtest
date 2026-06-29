@@ -40,9 +40,16 @@ $score       = ( '' !== $score_raw && is_numeric( $score_raw ) ) ? (float) $scor
 
 $lines       = wp_get_object_terms( $post_id, 'selecta_product_line', array( 'fields' => 'names' ) );
 $product_line = ( ! is_wp_error( $lines ) && ! empty( $lines ) ) ? $lines[0] : '';
+$hover_image_id = (int) selecta_get_field( 'product_hover_image', $post_id );
+
+$card_classes = array( 'product-card' );
+
+if ( $hover_image_id ) {
+	$card_classes[] = 'product-card--has-hover-image';
+}
 ?>
 
-<article class="product-card">
+<article class="<?php echo esc_attr( implode( ' ', $card_classes ) ); ?>">
 
 	<a class="product-card__image-link" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
 		<div class="product-card__image-wrap">
@@ -52,15 +59,31 @@ $product_line = ( ! is_wp_error( $lines ) && ! empty( $lines ) ) ? $lines[0] : '
 			<?php endif; ?>
 
 			<?php if ( has_post_thumbnail( $post_id ) ) : ?>
-				<?php
-				the_post_thumbnail(
-					'medium_large',
-					array(
-						'class' => 'product-card__image',
-						'alt'   => esc_attr( $title ),
-					)
-				);
-				?>
+				<div class="product-card__image-stack">
+					<?php
+					echo wp_get_attachment_image(
+						get_post_thumbnail_id( $post_id ),
+						'medium_large',
+						false,
+						array(
+							'class' => 'product-card__image product-card__image--default',
+							'alt'   => esc_attr( $title ),
+						)
+					);
+
+					if ( $hover_image_id ) {
+						echo wp_get_attachment_image(
+							$hover_image_id,
+							'medium_large',
+							false,
+							array(
+								'class' => 'product-card__image product-card__image--hover',
+								'alt'   => '',
+							)
+						);
+					}
+					?>
+				</div>
 			<?php else : ?>
 				<div class="product-card__image-placeholder" aria-hidden="true"></div>
 			<?php endif; ?>

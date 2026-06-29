@@ -219,6 +219,10 @@ button:focus-visible {
    Product Archive Grid
    ========================================================= */
 
+.product-archive {
+	padding-bottom: 4rem;
+}
+
 .product-archive__header {
 	padding-block: 2rem 1.5rem;
 }
