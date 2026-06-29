@@ -480,6 +480,21 @@ function selecta_register_acf_field_groups() {
 	) );
 }
 
+add_filter( 'acf/validate_value/key=field_nav_panel_key', 'selecta_validate_nav_panel_key', 10, 4 );
+function selecta_validate_nav_panel_key( $valid, $value, $field, $input_name ) {
+	if ( ! $valid ) {
+		return $valid;
+	}
+
+	$value = trim( (string) $value );
+
+	if ( '' !== $value && strpos( $value, 'panel-key-' ) !== 0 ) {
+		return __( 'Panel Key must start with "panel-key-" — for example: panel-key-products', 'selecta-theme' );
+	}
+
+	return $valid;
+}
+
 add_action( 'acf/input/admin_head', 'selecta_nav_panels_collapse_script' );
 function selecta_nav_panels_collapse_script() {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
