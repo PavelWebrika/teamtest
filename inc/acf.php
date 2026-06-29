@@ -527,3 +527,34 @@ function selecta_nav_panels_collapse_script() {
 	</script>
 	<?php
 }
+
+add_action( 'admin_footer-nav-menus.php', 'selecta_nav_menus_css_class_hint' );
+function selecta_nav_menus_css_class_hint() {
+	?>
+	<script>
+	( function () {
+		var hint = document.createElement( 'p' );
+		hint.style.cssText = 'margin:4px 0 0;font-size:11px;color:#d63638;font-style:italic;';
+		hint.textContent = '⚠ For nav panels: CSS class must start with panel-key- e.g. panel-key-products';
+
+		function addHints() {
+			document.querySelectorAll( '.edit-menu-item-classes' ).forEach( function ( input ) {
+				if ( input.dataset.panelHint ) {
+					return;
+				}
+				input.dataset.panelHint = '1';
+				input.parentNode.appendChild( hint.cloneNode( true ) );
+			} );
+		}
+
+		addHints();
+
+		document.addEventListener( 'click', function ( e ) {
+			if ( e.target && e.target.matches( '.item-add' ) ) {
+				setTimeout( addHints, 400 );
+			}
+		} );
+	} )();
+	</script>
+	<?php
+}
