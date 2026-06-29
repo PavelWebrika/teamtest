@@ -21,6 +21,23 @@ function selecta_acf_json_load_paths( $paths ) {
 }
 
 add_action( 'acf/init', 'selecta_register_acf_field_groups' );
+
+add_action( 'acf/init', 'selecta_register_nav_options_page' );
+function selecta_register_nav_options_page() {
+	if ( ! function_exists( 'acf_add_options_page' ) ) {
+		return;
+	}
+
+	acf_add_options_page(
+		array(
+			'page_title' => 'Navigation Panels',
+			'menu_title' => 'Navigation',
+			'menu_slug'  => 'selecta-nav-panels',
+			'capability' => 'manage_options',
+			'redirect'   => false,
+		)
+	);
+}
 function selecta_register_acf_field_groups() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -268,6 +285,129 @@ function selecta_register_acf_field_groups() {
 		),
 		'menu_order'      => 10,
 		'position'        => 'side',
+		'style'           => 'default',
+		'label_placement' => 'top',
+	) );
+
+	acf_add_local_field_group( array(
+		'key'    => 'group_header_nav_panels',
+		'title'  => 'Navigation Panels',
+		'fields' => array(
+			array(
+				'key'          => 'field_nav_panels',
+				'label'        => 'Panels',
+				'name'         => 'nav_panels',
+				'type'         => 'repeater',
+				'instructions' => 'Add one panel per top-level nav item. The CSS class on the WP menu item must match the key here, e.g. <code>panel-key-soins</code>.',
+				'button_label' => 'Add Panel',
+				'layout'       => 'block',
+				'sub_fields'   => array(
+					array(
+						'key'          => 'field_nav_panel_key',
+						'label'        => 'Panel Key',
+						'name'         => 'panel_key',
+						'type'         => 'text',
+						'instructions' => 'Unique identifier, e.g. <code>soins</code>. Add CSS class <code>panel-key-soins</code> to the menu item in Appearance > Menus.',
+						'required'     => 1,
+					),
+					array(
+						'key'           => 'field_nav_panel_type',
+						'label'         => 'Panel Type',
+						'name'          => 'panel_type',
+						'type'          => 'select',
+						'choices'       => array(
+							'simple' => 'Simple — images with links',
+							'mega'   => 'Mega menu — link columns',
+						),
+						'default_value' => 'simple',
+						'required'      => 1,
+					),
+					array(
+						'key'          => 'field_nav_panel_featured_items',
+						'label'        => 'Featured Items',
+						'name'         => 'featured_items',
+						'type'         => 'repeater',
+						'instructions' => 'For simple panels. Add up to 5 items with image, title, and link.',
+						'button_label' => 'Add Item',
+						'layout'       => 'table',
+						'max'          => 5,
+						'sub_fields'   => array(
+							array(
+								'key'           => 'field_nav_panel_item_image',
+								'label'         => 'Image',
+								'name'          => 'item_image',
+								'type'          => 'image',
+								'return_format' => 'id',
+								'preview_size'  => 'thumbnail',
+								'library'       => 'all',
+							),
+							array(
+								'key'   => 'field_nav_panel_item_title',
+								'label' => 'Title',
+								'name'  => 'item_title',
+								'type'  => 'text',
+							),
+							array(
+								'key'   => 'field_nav_panel_item_url',
+								'label' => 'URL',
+								'name'  => 'item_url',
+								'type'  => 'url',
+							),
+						),
+					),
+					array(
+						'key'          => 'field_nav_panel_mega_columns',
+						'label'        => 'Mega Menu Columns',
+						'name'         => 'mega_columns',
+						'type'         => 'repeater',
+						'instructions' => 'For mega menus. Add columns, each with an optional heading and a list of links.',
+						'button_label' => 'Add Column',
+						'layout'       => 'block',
+						'sub_fields'   => array(
+							array(
+								'key'   => 'field_nav_mega_col_title',
+								'label' => 'Column Title',
+								'name'  => 'column_title',
+								'type'  => 'text',
+							),
+							array(
+								'key'          => 'field_nav_mega_col_links',
+								'label'        => 'Links',
+								'name'         => 'column_links',
+								'type'         => 'repeater',
+								'button_label' => 'Add Link',
+								'layout'       => 'table',
+								'sub_fields'   => array(
+									array(
+										'key'   => 'field_nav_mega_link_text',
+										'label' => 'Text',
+										'name'  => 'link_text',
+										'type'  => 'text',
+									),
+									array(
+										'key'   => 'field_nav_mega_link_url',
+										'label' => 'URL',
+										'name'  => 'link_url',
+										'type'  => 'url',
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param'    => 'options_page',
+					'operator' => '==',
+					'value'    => 'selecta-nav-panels',
+				),
+			),
+		),
+		'menu_order'      => 0,
+		'position'        => 'normal',
 		'style'           => 'default',
 		'label_placement' => 'top',
 	) );
