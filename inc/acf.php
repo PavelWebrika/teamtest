@@ -507,11 +507,6 @@ function selecta_nav_panels_collapse_script() {
 
 		if ( typeof acf !== 'undefined' ) {
 			acf.addAction( 'ready', collapseNavPanelRows );
-			acf.addAction( 'append', function ( $el ) {
-				if ( $el.hasClass( 'acf-row' ) ) {
-					$el.addClass( '-collapsed' );
-				}
-			} );
 		}
 	} )( jQuery );
 	</script>
