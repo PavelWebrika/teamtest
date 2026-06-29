@@ -301,6 +301,7 @@ function selecta_register_acf_field_groups() {
 				'instructions' => 'Add one panel per top-level nav item. Use the same full CSS class in Panel Key and on the WP menu item, e.g. <code>panel-key-complements</code>.',
 				'button_label' => 'Add Panel',
 				'layout'       => 'block',
+				'collapsed'    => 'field_nav_panel_key',
 				'sub_fields'   => array(
 					array(
 						'key'          => 'field_nav_panel_key',
@@ -329,7 +330,8 @@ function selecta_register_acf_field_groups() {
 						'type'              => 'repeater',
 						'instructions'      => 'Add up to 5 items with image, title, and link.',
 						'button_label'      => 'Add Item',
-						'layout'            => 'table',
+						'layout'            => 'row',
+						'collapsed'         => 'field_nav_panel_item_url',
 						'max'               => 5,
 						'conditional_logic' => array(
 							array(
@@ -351,10 +353,13 @@ function selecta_register_acf_field_groups() {
 								'library'       => 'all',
 							),
 							array(
-								'key'   => 'field_nav_panel_item_title',
-								'label' => 'Title',
-								'name'  => 'item_title',
-								'type'  => 'text',
+								'key'          => 'field_nav_panel_item_title',
+								'label'        => 'Title',
+								'name'         => 'item_title',
+								'type'         => 'wysiwyg',
+								'tabs'         => 'all',
+								'toolbar'      => 'basic',
+								'media_upload' => 0,
 							),
 							array(
 								'key'   => 'field_nav_panel_item_url',
@@ -372,6 +377,7 @@ function selecta_register_acf_field_groups() {
 						'instructions'      => 'Add columns, each with an optional heading and a list of links.',
 						'button_label'      => 'Add Column',
 						'layout'            => 'block',
+						'collapsed'         => 'field_nav_mega_col_title',
 						'conditional_logic' => array(
 							array(
 								array(
@@ -395,6 +401,7 @@ function selecta_register_acf_field_groups() {
 								'type'         => 'repeater',
 								'button_label' => 'Add Link',
 								'layout'       => 'table',
+								'collapsed'    => 'field_nav_mega_link_text',
 								'sub_fields'   => array(
 									array(
 										'key'   => 'field_nav_mega_link_text',
@@ -471,4 +478,42 @@ function selecta_register_acf_field_groups() {
 		'style'           => 'default',
 		'label_placement' => 'top',
 	) );
+}
+
+add_action( 'acf/input/admin_head', 'selecta_nav_panels_collapse_script' );
+function selecta_nav_panels_collapse_script() {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	if ( ! $screen || false === strpos( (string) $screen->id, 'selecta-nav-panels' ) ) {
+		return;
+	}
+	?>
+	<script>
+	( function ( $ ) {
+		function collapseRepeaterRows( $field ) {
+			if ( ! $field.length ) {
+				return;
+			}
+
+			$field.find( '.acf-row' ).not( '.acf-clone' ).addClass( '-collapsed' );
+		}
+
+		function collapseNavPanelRows() {
+			collapseRepeaterRows( $( '.acf-field-field_nav_panels' ) );
+			collapseRepeaterRows( $( '.acf-field-field_nav_panel_featured_items' ) );
+			collapseRepeaterRows( $( '.acf-field-field_nav_panel_mega_columns' ) );
+			collapseRepeaterRows( $( '.acf-field-field_nav_mega_col_links' ) );
+		}
+
+		if ( typeof acf !== 'undefined' ) {
+			acf.addAction( 'ready', collapseNavPanelRows );
+			acf.addAction( 'append', function ( $el ) {
+				if ( $el.hasClass( 'acf-row' ) ) {
+					$el.addClass( '-collapsed' );
+				}
+			} );
+		}
+	} )( jQuery );
+	</script>
+	<?php
 }

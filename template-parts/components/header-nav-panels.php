@@ -48,18 +48,20 @@ if ( ! have_rows( 'nav_panels', 'option' ) ) {
 						?>
 						<li class="nav-panel__featured-item">
 							<a class="nav-panel__featured-link" href="<?php echo esc_url( $url ); ?>">
-								<?php if ( $image_id ) : ?>
-									<?php
-									echo wp_get_attachment_image(
-										(int) $image_id,
-										'medium',
-										false,
-										array( 'class' => 'nav-panel__featured-image' )
-									);
-									?>
-								<?php endif; ?>
+								<span class="nav-panel__featured-media">
+									<?php if ( $image_id ) : ?>
+										<?php
+										echo wp_get_attachment_image(
+											(int) $image_id,
+											'medium',
+											false,
+											array( 'class' => 'nav-panel__featured-image' )
+										);
+										?>
+									<?php endif; ?>
+								</span>
 								<?php if ( $title ) : ?>
-									<span class="nav-panel__featured-title"><?php echo esc_html( $title ); ?></span>
+									<span class="nav-panel__featured-title"><?php echo wp_kses_post( $title ); ?></span>
 								<?php endif; ?>
 							</a>
 						</li>
