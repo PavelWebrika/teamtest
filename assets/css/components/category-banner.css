@@ -1,23 +1,27 @@
 .category-banner {
   display: flex;
   flex-direction: column;
+  background: var(--color-surface);
+}
+
+.category-banner--has-image {
+  background: var(--color-bg);
 }
 
 .category-banner__media {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 390 / 220;
-  min-height: 11rem;
+  line-height: 0;
 }
 
 .category-banner__bg-img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
+  height: auto;
 }
 
 .category-banner__content {
+  width: 100%;
   padding: var(--space-4) var(--space-3) var(--space-3);
   text-align: center;
 }
@@ -47,11 +51,12 @@
   .category-banner__media {
     position: absolute;
     inset: 0;
-    aspect-ratio: auto;
-    min-height: 0;
   }
 
   .category-banner__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     object-position: center top;
   }
 
@@ -62,6 +67,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: auto;
     padding: var(--space-5) var(--space-4);
   }
 
