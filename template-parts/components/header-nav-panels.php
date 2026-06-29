@@ -4,7 +4,8 @@
  *
  * Renders dropdown/mega-menu panels driven by ACF Options.
  * Each panel is matched to a WP nav menu item via a CSS class
- * added in Appearance > Menus, e.g. "panel-key-soins".
+ * added in Appearance > Menus, e.g. "panel-key-complements".
+ * Use the same full class as the Panel Key in Navigation admin.
  *
  * @package SelectaTheme
  */

@@ -298,7 +298,7 @@ function selecta_register_acf_field_groups() {
 				'label'        => 'Panels',
 				'name'         => 'nav_panels',
 				'type'         => 'repeater',
-				'instructions' => 'Add one panel per top-level nav item. The CSS class on the WP menu item must match the key here, e.g. <code>panel-key-soins</code>.',
+				'instructions' => 'Add one panel per top-level nav item. Use the same full CSS class in Panel Key and on the WP menu item, e.g. <code>panel-key-complements</code>.',
 				'button_label' => 'Add Panel',
 				'layout'       => 'block',
 				'sub_fields'   => array(
@@ -307,7 +307,7 @@ function selecta_register_acf_field_groups() {
 						'label'        => 'Panel Key',
 						'name'         => 'panel_key',
 						'type'         => 'text',
-						'instructions' => 'Unique identifier, e.g. <code>soins</code>. Add CSS class <code>panel-key-soins</code> to the menu item in Appearance > Menus.',
+						'instructions' => 'Paste the full CSS class here, e.g. <code>panel-key-complements</code>. Add the same class in Appearance > Menus on that menu item (Screen Options > CSS Classes).',
 						'required'     => 1,
 					),
 					array(
@@ -323,15 +323,24 @@ function selecta_register_acf_field_groups() {
 						'required'      => 1,
 					),
 					array(
-						'key'          => 'field_nav_panel_featured_items',
-						'label'        => 'Featured Items',
-						'name'         => 'featured_items',
-						'type'         => 'repeater',
-						'instructions' => 'For simple panels. Add up to 5 items with image, title, and link.',
-						'button_label' => 'Add Item',
-						'layout'       => 'table',
-						'max'          => 5,
-						'sub_fields'   => array(
+						'key'               => 'field_nav_panel_featured_items',
+						'label'             => 'Featured Items',
+						'name'              => 'featured_items',
+						'type'              => 'repeater',
+						'instructions'      => 'Add up to 5 items with image, title, and link.',
+						'button_label'      => 'Add Item',
+						'layout'            => 'table',
+						'max'               => 5,
+						'conditional_logic' => array(
+							array(
+								array(
+									'field'    => 'field_nav_panel_type',
+									'operator' => '==',
+									'value'    => 'simple',
+								),
+							),
+						),
+						'sub_fields'        => array(
 							array(
 								'key'           => 'field_nav_panel_item_image',
 								'label'         => 'Image',
@@ -356,14 +365,23 @@ function selecta_register_acf_field_groups() {
 						),
 					),
 					array(
-						'key'          => 'field_nav_panel_mega_columns',
-						'label'        => 'Mega Menu Columns',
-						'name'         => 'mega_columns',
-						'type'         => 'repeater',
-						'instructions' => 'For mega menus. Add columns, each with an optional heading and a list of links.',
-						'button_label' => 'Add Column',
-						'layout'       => 'block',
-						'sub_fields'   => array(
+						'key'               => 'field_nav_panel_mega_columns',
+						'label'             => 'Mega Menu Columns',
+						'name'              => 'mega_columns',
+						'type'              => 'repeater',
+						'instructions'      => 'Add columns, each with an optional heading and a list of links.',
+						'button_label'      => 'Add Column',
+						'layout'            => 'block',
+						'conditional_logic' => array(
+							array(
+								array(
+									'field'    => 'field_nav_panel_type',
+									'operator' => '==',
+									'value'    => 'mega',
+								),
+							),
+						),
+						'sub_fields'        => array(
 							array(
 								'key'   => 'field_nav_mega_col_title',
 								'label' => 'Column Title',
