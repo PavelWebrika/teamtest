@@ -304,12 +304,12 @@ function selecta_register_acf_field_groups() {
 				'collapsed'    => 'field_nav_panel_key',
 				'sub_fields'   => array(
 					array(
-						'key'          => 'field_nav_panel_key',
-						'label'        => 'Panel Key',
-						'name'         => 'panel_key',
-						'type'         => 'text',
-						'instructions' => 'Paste the full CSS class here, e.g. <code>panel-key-complements</code>. Add the same class in Appearance > Menus on that menu item (Screen Options > CSS Classes).',
-						'required'     => 1,
+					'key'          => 'field_nav_panel_key',
+					'label'        => 'Panel Key',
+					'name'         => 'panel_key',
+					'type'         => 'text',
+					'instructions' => '⚠️ IMPORTANT: The class MUST start with <strong>panel-key-</strong> — for example <code>panel-key-products</code> or <code>panel-key-hair-type</code>. Without this prefix the panel will NOT open on the site. Step 1: enter the full class here (e.g. <code>panel-key-products</code>). Step 2: go to Appearance → Menus, enable CSS Classes via Screen Options, and paste the exact same class on the matching menu item.',
+					'required'     => 1,
 					),
 					array(
 						'key'           => 'field_nav_panel_type',
