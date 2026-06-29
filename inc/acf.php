@@ -437,32 +437,36 @@ function selecta_register_acf_field_groups() {
 								'name'         => 'column_links',
 								'type'         => 'repeater',
 								'button_label' => 'Add Link',
-								'layout'       => 'table',
+								'layout'       => 'block',
 								'sub_fields'   => array(
 									array(
-										'key'   => 'field_nav_mega_link_text',
-										'label' => 'Text',
-										'name'  => 'link_text',
-										'type'  => 'text',
+										'key'             => 'field_nav_mega_link_text',
+										'label'           => 'Text',
+										'name'            => 'link_text',
+										'type'            => 'text',
+										'label_placement' => 'left',
 									),
 									array(
-										'key'           => 'field_nav_mega_link_type',
-										'label'         => 'Link Type',
-										'name'          => 'link_type',
-										'type'          => 'radio',
-										'choices'       => array(
-											'internal' => 'In-site',
-											'external' => 'Outside',
+										'key'             => 'field_nav_mega_link_type',
+										'label'           => 'Link Type',
+										'name'            => 'link_type',
+										'type'            => 'radio',
+										'choices'         => array(
+											'internal' => 'In-site link',
+											'external' => 'Outside link',
 										),
-										'default_value' => 'internal',
-										'layout'        => 'horizontal',
+										'default_value'   => 'internal',
+										'layout'          => 'horizontal',
+										'label_placement' => 'left',
 									),
 									array(
 										'key'               => 'field_nav_mega_link_path',
 										'label'             => 'Path',
 										'name'              => 'link_path',
 										'type'              => 'text',
+										'instructions'      => 'Enter the path only — e.g. <code>/products/</code> or <code>products/category/shampoo</code>. The site domain is added automatically.',
 										'placeholder'       => '/products/',
+										'label_placement'   => 'left',
 										'conditional_logic' => array(
 											array(
 												array(
@@ -478,6 +482,8 @@ function selecta_register_acf_field_groups() {
 										'label'             => 'URL',
 										'name'              => 'link_url',
 										'type'              => 'url',
+										'instructions'      => 'Full URL including https://',
+										'label_placement'   => 'left',
 										'conditional_logic' => array(
 											array(
 												array(
@@ -586,9 +592,9 @@ function selecta_nav_panels_collapse_script() {
 	?>
 	<style>
 	.acf-field-field_nav_panel_item_link_path .acf-input,
-	.acf-field-field_nav_mega_link_path .acf-input,
+	.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input,
 	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input,
-	.acf-field[data-key="field_nav_mega_link_path"] .acf-input {
+	.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input {
 		display: flex !important;
 		flex-direction: row !important;
 		align-items: stretch !important;
@@ -596,9 +602,9 @@ function selecta_nav_panels_collapse_script() {
 	}
 
 	.acf-field-field_nav_panel_item_link_path .acf-input-wrap,
-	.acf-field-field_nav_mega_link_path .acf-input-wrap,
+	.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-wrap,
 	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-wrap,
-	.acf-field[data-key="field_nav_mega_link_path"] .acf-input-wrap {
+	.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-wrap {
 		display: flex !important;
 		flex: 1 1 auto !important;
 		min-width: 0 !important;
@@ -606,9 +612,9 @@ function selecta_nav_panels_collapse_script() {
 	}
 
 	.acf-field-field_nav_panel_item_link_path .acf-input-prepend,
-	.acf-field-field_nav_mega_link_path .acf-input-prepend,
+	.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-prepend,
 	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-prepend,
-	.acf-field[data-key="field_nav_mega_link_path"] .acf-input-prepend {
+	.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-prepend {
 		float: none !important;
 		display: flex !important;
 		align-items: center !important;
@@ -630,9 +636,9 @@ function selecta_nav_panels_collapse_script() {
 	}
 
 	.acf-field-field_nav_panel_item_link_path .acf-input input[type="text"],
-	.acf-field-field_nav_mega_link_path .acf-input input[type="text"],
+	.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input input[type="text"],
 	.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input input[type="text"],
-	.acf-field[data-key="field_nav_mega_link_path"] .acf-input input[type="text"] {
+	.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input input[type="text"] {
 		float: none !important;
 		flex: 1 1 auto !important;
 		min-width: 0 !important;
@@ -642,6 +648,24 @@ function selecta_nav_panels_collapse_script() {
 		margin: 0 !important;
 		box-sizing: border-box !important;
 		border-radius: 0 4px 4px 0 !important;
+	}
+
+	.acf-field-field_nav_mega_link_path.acf-hidden,
+	.acf-field-field_nav_mega_link_url.acf-hidden,
+	.acf-field[data-key="field_nav_mega_link_path"].acf-hidden,
+	.acf-field[data-key="field_nav_mega_link_url"].acf-hidden {
+		display: none !important;
+	}
+
+	.acf-field-field_nav_mega_col_links > .acf-input > .acf-repeater > .acf-table > tbody > .acf-row > .acf-fields > .acf-field {
+		overflow: hidden;
+	}
+
+	.acf-field-field_nav_mega_col_links .acf-field-field_nav_mega_link_path > .acf-input,
+	.acf-field-field_nav_mega_col_links .acf-field-field_nav_mega_link_url > .acf-input {
+		min-width: 0;
+		max-width: 100%;
+		box-sizing: border-box;
 	}
 	</style>
 	<script>
@@ -653,9 +677,38 @@ function selecta_nav_panels_collapse_script() {
 				.addClass( '-collapsed' );
 		}
 
-		if ( typeof acf !== 'undefined' ) {
-			acf.addAction( 'ready', collapseNavPanelRows );
+		function toggleMegaLinkFields( $context ) {
+			var $scope = $context && $context.length ? $context : $( document );
+
+			$scope.find( '.acf-field-field_nav_mega_col_links .acf-row' ).not( '.acf-clone' ).each( function () {
+				var $row  = $( this );
+				var type  = $row.find( '.acf-field-field_nav_mega_link_type input:checked' ).val() || 'internal';
+				var $path = $row.find( '.acf-field-field_nav_mega_link_path' );
+				var $url  = $row.find( '.acf-field-field_nav_mega_link_url' );
+
+				if ( 'internal' === type ) {
+					$path.removeClass( 'acf-hidden' ).show();
+					$url.addClass( 'acf-hidden' ).hide();
+				} else {
+					$path.addClass( 'acf-hidden' ).hide();
+					$url.removeClass( 'acf-hidden' ).show();
+				}
+			} );
 		}
+
+		if ( typeof acf !== 'undefined' ) {
+			acf.addAction( 'ready', function () {
+				collapseNavPanelRows();
+				toggleMegaLinkFields();
+			} );
+			acf.addAction( 'append', function ( $el ) {
+				toggleMegaLinkFields( $el );
+			} );
+		}
+
+		$( document ).on( 'change', '.acf-field-field_nav_mega_link_type input', function () {
+			toggleMegaLinkFields( $( this ).closest( '.acf-row' ) );
+		} );
 	} )( jQuery );
 	</script>
 	<?php
