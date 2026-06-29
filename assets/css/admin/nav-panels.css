@@ -1,0 +1,83 @@
+/**
+ * ACF Navigation Panels options page — admin-only styles.
+ */
+
+/* In-site path field: domain prefix + path input on one row */
+.acf-field-field_nav_panel_item_link_path .acf-input,
+.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input,
+.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input,
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: stretch !important;
+	width: 100%;
+}
+
+.acf-field-field_nav_panel_item_link_path .acf-input-wrap,
+.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-wrap,
+.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-wrap,
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-wrap {
+	display: flex !important;
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+	width: auto !important;
+}
+
+.acf-field-field_nav_panel_item_link_path .acf-input-prepend,
+.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-prepend,
+.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-prepend,
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-prepend {
+	float: none !important;
+	display: flex !important;
+	align-items: center !important;
+	flex: 0 0 auto !important;
+	width: auto !important;
+	max-width: none !important;
+	height: 32px !important;
+	min-height: 32px !important;
+	padding: 0 10px !important;
+	margin: 0 !important;
+	border: 1px solid #8c8f94 !important;
+	border-right: 0 !important;
+	border-radius: 4px 0 0 4px !important;
+	background: #f6f7f7 !important;
+	box-sizing: border-box !important;
+	line-height: 1 !important;
+	white-space: nowrap;
+	color: #50575e;
+}
+
+.acf-field-field_nav_panel_item_link_path .acf-input input[type="text"],
+.acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input input[type="text"],
+.acf-field[data-key="field_nav_panel_item_link_path"] .acf-input input[type="text"],
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input input[type="text"] {
+	float: none !important;
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+	width: 100% !important;
+	height: 32px !important;
+	min-height: 32px !important;
+	margin: 0 !important;
+	box-sizing: border-box !important;
+	border-radius: 0 4px 4px 0 !important;
+}
+
+/* Mega menu link type toggle: fully hide inactive field */
+.acf-field-field_nav_mega_link_path.acf-hidden,
+.acf-field-field_nav_mega_link_url.acf-hidden,
+.acf-field[data-key="field_nav_mega_link_path"].acf-hidden,
+.acf-field[data-key="field_nav_mega_link_url"].acf-hidden {
+	display: none !important;
+}
+
+/* Keep mega link fields inside the input column */
+.acf-field-field_nav_mega_col_links > .acf-input > .acf-repeater > .acf-table > tbody > .acf-row > .acf-fields > .acf-field {
+	overflow: hidden;
+}
+
+.acf-field-field_nav_mega_col_links .acf-field-field_nav_mega_link_path > .acf-input,
+.acf-field-field_nav_mega_col_links .acf-field-field_nav_mega_link_url > .acf-input {
+	min-width: 0;
+	max-width: 100%;
+	box-sizing: border-box;
+}

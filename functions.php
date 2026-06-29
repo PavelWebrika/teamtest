@@ -14,6 +14,7 @@ $selecta_includes = array(
 	'inc/assets.php',
 	'inc/post-types.php',
 	'inc/acf.php',
+	'inc/acf-admin.php',
 	'inc/helpers.php',
 );
 

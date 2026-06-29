@@ -1,0 +1,10 @@
+/**
+ * Appearance > Menus — panel-key hint under CSS Classes fields.
+ */
+
+.selecta-nav-menu-class-hint {
+	margin: 4px 0 0;
+	font-size: 11px;
+	color: #d63638;
+	font-style: italic;
+}
