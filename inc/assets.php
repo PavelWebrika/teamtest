@@ -37,8 +37,10 @@ add_action( 'wp_enqueue_scripts', 'selecta_enqueue_assets' );
 
 function selecta_register_component_styles() {
 	$components = array(
-		'selecta-hero-banner' => 'assets/css/components/hero-banner.css',
-		'selecta-text-block'  => 'assets/css/components/text-block.css',
+		'selecta-hero-banner'          => 'assets/css/components/hero-banner.css',
+		'selecta-text-block'           => 'assets/css/components/text-block.css',
+		'selecta-product-description'  => 'assets/css/components/product-description.css',
+		'selecta-product-card'         => 'assets/css/components/product-card.css',
 	);
 
 	foreach ( $components as $handle => $path ) {

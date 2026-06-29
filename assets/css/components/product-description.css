@@ -1,0 +1,84 @@
+/* =========================================================
+   Product Description Section
+   Two-column: text left + image right (desktop).
+   Single column stacked: text then image (mobile).
+   ========================================================= */
+
+.product-description {
+	padding-block: 3rem;
+}
+
+.product-description__inner {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 2rem;
+}
+
+/* Heading with decorative underline bar */
+.product-description__heading-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.product-description__heading {
+	margin: 0;
+	font-size: 1.5rem; /* 24px mobile */
+	font-weight: 900;
+	line-height: 1.22;
+	color: #4c4d4f;
+}
+
+.product-description__heading-bar {
+	display: block;
+	width: 70px;
+	height: 5px;
+	background-color: #383e44;
+	flex-shrink: 0;
+}
+
+/* Body text */
+.product-description__body {
+	color: #4c4d4f;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.product-description__body p {
+	margin-block: 0 0.5em;
+}
+
+.product-description__body p:last-child {
+	margin-bottom: 0;
+}
+
+.product-description__body strong,
+.product-description__body b {
+	font-weight: 900;
+}
+
+/* Image */
+.product-description__image-wrap {
+	width: 100%;
+}
+
+.product-description__image {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Desktop: two-column side by side */
+@media (min-width: 768px) {
+	.product-description__inner {
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		align-items: center;
+	}
+
+	.product-description__heading {
+		font-size: 2.25rem; /* 36px */
+	}
+}

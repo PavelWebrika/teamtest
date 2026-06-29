@@ -214,3 +214,52 @@ button:focus-visible {
 
 /* Component styles live in assets/css/components/ and are loaded
    per-component via wp_print_styles() inside each template part. */
+
+/* =========================================================
+   Product Archive Grid
+   ========================================================= */
+
+.product-archive__header {
+	padding-block: 2rem 1.5rem;
+}
+
+.product-archive__title {
+	margin: 0;
+	font-size: clamp(1.5rem, 4vw, 2.5rem);
+	color: var(--color-text);
+}
+
+.product-archive__empty {
+	padding-block: 3rem;
+	color: var(--color-muted);
+}
+
+.product-grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1.5rem;
+}
+
+.product-grid__item {
+	display: flex;
+}
+
+.product-grid__item .product-card {
+	width: 100%;
+}
+
+@media (min-width: 640px) {
+	.product-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (min-width: 1024px) {
+	.product-grid {
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1.625rem;
+	}
+}

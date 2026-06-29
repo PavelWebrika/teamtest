@@ -55,3 +55,29 @@ function selecta_get_sub_field( $selector, $default = '' ) {
 
 	return $value;
 }
+
+/**
+ * Load an SVG markup string from assets/svgs/{name}.php.
+ *
+ * Each file in assets/svgs/ must return an SVG string.
+ *
+ * @param string $name SVG file name without extension, e.g. 'star'.
+ * @return string SVG markup or empty string if not found.
+ */
+function selecta_get_svg( $name ) {
+	$name = sanitize_file_name( $name );
+
+	if ( '' === $name ) {
+		return '';
+	}
+
+	$path = get_template_directory() . '/assets/svgs/' . $name . '.php';
+
+	if ( ! file_exists( $path ) ) {
+		return '';
+	}
+
+	$svg = include $path;
+
+	return is_string( $svg ) ? $svg : '';
+}
