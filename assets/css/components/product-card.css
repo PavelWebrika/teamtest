@@ -60,7 +60,7 @@
 .product-card__image--default {
 	position: relative;
 	z-index: 0;
-	transition: opacity 0.25s ease;
+	transition: opacity 0.2s ease;
 }
 
 .product-card__image--hover {
@@ -68,7 +68,7 @@
 	inset: 0;
 	z-index: 1;
 	opacity: 0;
-	transition: opacity 0.25s ease;
+	transition: opacity 0.45s ease;
 }
 
 .product-card--has-hover-image:hover .product-card__image--default {
