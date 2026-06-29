@@ -331,7 +331,6 @@ function selecta_register_acf_field_groups() {
 						'instructions'      => 'Add up to 5 items with image, title, and link.',
 						'button_label'      => 'Add Item',
 						'layout'            => 'row',
-						'collapsed'         => 'field_nav_panel_item_url',
 						'max'               => 5,
 						'conditional_logic' => array(
 							array(
@@ -377,7 +376,6 @@ function selecta_register_acf_field_groups() {
 						'instructions'      => 'Add columns, each with an optional heading and a list of links.',
 						'button_label'      => 'Add Column',
 						'layout'            => 'block',
-						'collapsed'         => 'field_nav_mega_col_title',
 						'conditional_logic' => array(
 							array(
 								array(
@@ -401,7 +399,6 @@ function selecta_register_acf_field_groups() {
 								'type'         => 'repeater',
 								'button_label' => 'Add Link',
 								'layout'       => 'table',
-								'collapsed'    => 'field_nav_mega_link_text',
 								'sub_fields'   => array(
 									array(
 										'key'   => 'field_nav_mega_link_text',
@@ -505,19 +502,11 @@ function selecta_nav_panels_collapse_script() {
 	?>
 	<script>
 	( function ( $ ) {
-		function collapseRepeaterRows( $field ) {
-			if ( ! $field.length ) {
-				return;
-			}
-
-			$field.find( '.acf-row' ).not( '.acf-clone' ).addClass( '-collapsed' );
-		}
-
 		function collapseNavPanelRows() {
-			collapseRepeaterRows( $( '.acf-field-field_nav_panels' ) );
-			collapseRepeaterRows( $( '.acf-field-field_nav_panel_featured_items' ) );
-			collapseRepeaterRows( $( '.acf-field-field_nav_panel_mega_columns' ) );
-			collapseRepeaterRows( $( '.acf-field-field_nav_mega_col_links' ) );
+			$( '.acf-field-field_nav_panels' )
+				.find( '> .acf-input > .acf-repeater > .acf-table > tbody > .acf-row' )
+				.not( '.acf-clone' )
+				.addClass( '-collapsed' );
 		}
 
 		if ( typeof acf !== 'undefined' ) {
