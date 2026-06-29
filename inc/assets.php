@@ -41,6 +41,8 @@ function selecta_register_component_styles() {
 		'selecta-text-block'           => 'assets/css/components/text-block.css',
 		'selecta-product-description'  => 'assets/css/components/product-description.css',
 		'selecta-product-card'         => 'assets/css/components/product-card.css',
+		'selecta-category-banner'      => 'assets/css/components/category-banner.css',
+		'selecta-category-intro'       => 'assets/css/components/category-intro.css',
 	);
 
 	foreach ( $components as $handle => $path ) {

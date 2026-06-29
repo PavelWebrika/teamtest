@@ -234,7 +234,7 @@ button:focus-visible {
 }
 
 .product-archive__description {
-	margin-top: var(--space-3);
+	margin-block: var(--space-4) var(--space-3);
 	max-width: 42rem;
 	color: var(--color-muted);
 	font-size: 0.9375rem;

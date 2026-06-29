@@ -271,4 +271,46 @@ function selecta_register_acf_field_groups() {
 		'style'           => 'default',
 		'label_placement' => 'top',
 	) );
+
+	acf_add_local_field_group( array(
+		'key'    => 'group_product_category_banner',
+		'title'  => 'Category Page',
+		'fields' => array(
+			array(
+				'key'           => 'field_category_banner_image',
+				'label'         => 'Banner Image',
+				'name'          => 'category_banner_image',
+				'type'          => 'image',
+				'instructions'  => 'Wide banner image for this category page. Recommended: 1920×605 px.',
+				'required'      => 0,
+				'return_format' => 'id',
+				'preview_size'  => 'medium',
+				'library'       => 'all',
+			),
+			array(
+				'key'          => 'field_category_intro_text',
+				'label'        => 'Intro Text',
+				'name'         => 'category_intro_text',
+				'type'         => 'wysiwyg',
+				'instructions' => 'Centered text shown below the banner. Use bold for product or range names.',
+				'required'     => 0,
+				'tabs'         => 'all',
+				'toolbar'      => 'basic',
+				'media_upload' => 0,
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param'    => 'taxonomy',
+					'operator' => '==',
+					'value'    => 'selecta_product_category',
+				),
+			),
+		),
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'style'           => 'default',
+		'label_placement' => 'top',
+	) );
 }
