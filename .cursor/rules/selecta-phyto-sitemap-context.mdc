@@ -5,7 +5,7 @@ globs:
   - "**/*.css"
   - "**/*.json"
   - "**/*.md"
-alwaysApply: true
+alwaysApply: false
 ---
 
 # PHYTO Reference Sitemap Context

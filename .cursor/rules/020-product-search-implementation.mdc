@@ -1,0 +1,324 @@
+---
+description: Implementation guide for the PHYTO.bg header product search. Covers REST endpoint, search index meta, debounce, overlay UI, accessibility, and strict catalog-only rules. No plugins, no external services.
+globs:
+  - "**/*.php"
+  - "**/*.css"
+  - "**/*.js"
+alwaysApply: false
+---
+
+# Product Search Implementation: PHYTO.bg Catalog
+
+Use this rule when implementing or modifying any part of the header search feature.
+
+Use together with:
+- `000-main-phyto-cursor-instructions.mdc`
+- `selecta-phyto-catalog-project-context.mdc`
+- `wordpress-acf-theme-instructions-updated.mdc`
+
+## What this search is and is not
+
+Search is a catalog lookup tool. It is not a commerce feature.
+
+Search MUST:
+- Return only `selecta_product` posts.
+- Show product image, product line, title, and short benefit in results.
+- Link each result to the single product detail page.
+- Work entirely within WordPress native capabilities.
+
+Search MUST NOT:
+- Return or display price, add-to-cart, stock, discount, or any commerce field.
+- Return posts from any other post type (pages, advice, partners, etc.).
+- Use WooCommerce, Algolia, Upstash, Elasticsearch, SearchWP, Relevanssi, or any search plugin or external service.
+- Use jQuery.
+- Hardcode the REST URL in JavaScript.
+
+## Stack decision
+
+WordPress native only:
+- PHP REST endpoint registered in `inc/search.php`.
+- Search index stored as post meta (`_selecta_search_index`) on each product.
+- Vanilla JS appended to `assets/js/main.js`.
+- Plain CSS in `assets/css/components/search-overlay.css`.
+- REST URL localized via `wp_localize_script` in `inc/assets.php`.
+
+No search plugin. No external service. No build step.
+
+## Files involved
+
+```
+New:
+  inc/search.php
+  assets/css/components/search-overlay.css
+  template-parts/components/search-overlay.php
+
+Edit:
+  functions.php                                   require inc/search.php
+  inc/assets.php                                  enqueue CSS + localize REST URL
+  assets/js/main.js                               append search module (do not rewrite)
+  template-parts/components/site-header-bar.php  add aria attributes to search button
+  header.php                                      include search-overlay template part
+```
+
+## REST endpoint
+
+### Registration
+
+Namespace: `selecta/v1`
+Route: `GET /wp-json/selecta/v1/search`
+Permission callback: `__return_true` (public read, no auth required)
+Register on: `rest_api_init`
+
+### Query parameter `q`
+
+- Required.
+- Sanitize with `sanitize_text_field()` before any use.
+- If missing, empty, or fewer than 3 characters: return empty results array immediately, do not run a database query.
+- Do not trim the query before the length check — sanitize first, then check length.
+
+### WP_Query rules
+
+- `post_type`: `selecta_product`
+- `post_status`: `publish`
+- `posts_per_page`: `10` — hard limit, never higher
+- `no_found_rows`: `true` — skip total count for performance
+- `update_post_meta_cache`: `false`
+- `update_post_term_cache`: `false`
+- Use a `meta_query` against `_selecta_search_index` with `LIKE %{sanitized_query}%` and `CHAR` cast.
+- Also add an `OR` clause matching `post_title LIKE %{sanitized_query}%` so exact title matches always surface even before the index is built for that post. Use `posts_clauses` filter or a secondary query pass — keep it simple.
+- After the query, call `wp_reset_postdata()`.
+
+### Response shape
+
+Return a JSON array. Each element:
+
+```json
+{
+  "id": 123,
+  "title": "Product title",
+  "url": "https://example.com/products/product-slug/",
+  "line": "Boucles",
+  "benefit": "Хидратира и дефинира",
+  "image_url": "https://example.com/wp-content/uploads/...",
+  "image_alt": "Product title"
+}
+```
+
+- `line`: first term name from `selecta_product_line`, or empty string.
+- `benefit`: value of `product_short_benefits` ACF field, first line only (split on newline, take index 0), or empty string.
+- `image_url` / `image_alt`: from `wp_get_attachment_image_src()` on the featured image at `medium` size. If no featured image, `image_url` is empty string.
+- Return an empty array `[]` when there are no results, never `null` or `false`.
+- Do not include `product_price`, `product_score`, `product_badge`, or any commerce or admin-only field in the response.
+
+## Search index meta field
+
+### Key
+
+`_selecta_search_index`
+
+### What it is
+
+A single plain-text string per product. Concatenation of all searchable fields with spaces between them. Used by the REST endpoint's `meta_query`.
+
+### Builder function
+
+Name: `selecta_build_search_index( int $post_id ): void`
+
+Location: `inc/search.php`
+
+#### Guards — return early if any of these are true
+
+- `defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE`
+- `wp_is_post_revision( $post_id )`
+- `get_post_type( $post_id ) !== 'selecta_product'`
+- `get_post_status( $post_id ) === 'trash'`
+
+#### Fields to index — in this order
+
+| Priority | Source | How to get it |
+|----------|--------|---------------|
+| 1 — Very high | Post title | `get_the_title( $post_id )` |
+| 2 — High | `selecta_product_line` terms | `wp_get_object_terms( $post_id, 'selecta_product_line', ['fields' => 'names'] )` |
+| 3 — High | `selecta_product_category` terms | `wp_get_object_terms( $post_id, 'selecta_product_category', ['fields' => 'names'] )` |
+| 4 — High | `selecta_hair_concern` terms | `wp_get_object_terms( $post_id, 'selecta_hair_concern', ['fields' => 'names'] )` |
+| 5 — High | `selecta_hair_type` terms | `wp_get_object_terms( $post_id, 'selecta_hair_type', ['fields' => 'names'] )` |
+| 6 — Medium-high | `product_short_benefits` | `get_field( 'product_short_benefits', $post_id )` — ACF textarea |
+| 7 — Medium | `product_badge` | `get_field( 'product_badge', $post_id )` — ACF text |
+| 8 — Medium-low | `product_sections` body_text | Loop `have_rows( 'product_sections', $post_id )`. For each row where `get_row_layout() === 'product_description'`, get `get_sub_field( 'body_text' )` and strip HTML with `wp_strip_all_tags()`. |
+
+#### Fields explicitly excluded from the index
+
+- `product_price` — commerce, must never be indexed
+- `product_score` — presentational only
+- `product_hover_image` — binary asset reference
+- Any ACF image or file field
+- Post date, post author, slug
+
+#### Build steps
+
+1. Collect all values into a flat PHP array of strings.
+2. For each value: check it is a non-empty string. Skip `WP_Error` returns from taxonomy queries.
+3. For any value containing HTML: run `wp_strip_all_tags()` before adding to the array.
+4. Implode with a single space: `implode( ' ', array_filter( $parts ) )`.
+5. Save: `update_post_meta( $post_id, '_selecta_search_index', sanitize_textarea_field( $index_string ) )`.
+
+#### Hooks to trigger the builder
+
+Hook 1 — native WordPress save:
+```
+add_action( 'save_post_selecta_product', 'selecta_build_search_index', 20 );
+```
+
+Hook 2 — ACF save (covers field-group saves that bypass `save_post`):
+```
+add_action( 'acf/save_post', 'selecta_build_search_index', 20 );
+```
+Guard inside the function handles the post-type check so the ACF hook is safe to fire broadly.
+
+#### Future excerpt support
+
+The CPT currently supports `title`, `thumbnail`, `revisions` only — no `editor`, no `excerpt`.
+If `excerpt` support is added to the CPT later, add `get_the_excerpt( $post_id )` to the index builder at priority Medium (between `product_short_benefits` and `product_badge`).
+No other change is needed.
+
+## JavaScript behaviour
+
+Add a self-contained search module to `assets/js/main.js`.
+Append after all existing code. Do not rewrite or restructure the existing file.
+Use vanilla JS only. No jQuery, no fetch polyfill (modern browsers only).
+
+### Constants — read from `window.selectaSearch` (localized)
+
+```
+MIN_CHARS    = 3
+DEBOUNCE_MS  = 250
+REST_URL     = window.selectaSearch.restUrl
+```
+
+### Overlay open/close
+
+- Search button click: open overlay, set `aria-expanded="true"` on button, remove `hidden` from overlay, focus the search input.
+- Close button click: close overlay, set `aria-expanded="false"` on button, add `hidden` to overlay, return focus to search button.
+- `Escape` key while overlay is open: same as close button.
+- Click on the backdrop (outside overlay content): close overlay.
+
+### Input handling
+
+- Listen to `input` event on the search field.
+- Debounce: wait `DEBOUNCE_MS` (250ms) after the last keystroke before acting.
+- If trimmed value is fewer than `MIN_CHARS` (3) characters: clear results list, hide loading and empty states. Do not fetch.
+- If trimmed value is `MIN_CHARS` or more: fetch from `REST_URL`.
+
+### Fetch
+
+- `GET` request: `REST_URL + '?q=' + encodeURIComponent( trimmedQuery )`
+- Show loading state before fetch.
+- On success: hide loading state, render results or empty state.
+- On error: hide loading state. Do not surface the error message to the user.
+- Ignore responses where the query has already changed (stale response guard: compare query string before rendering).
+
+### Render
+
+- Clear the results `<ul>` before rendering.
+- Max 10 items (server enforces this; JS renders whatever the server returns, up to 10).
+- Each result: `<li role="option">` wrapping `<a href="{url}">` containing:
+  - Image `<img>` or placeholder `<span>` if no image.
+  - Line label `<span>` — hidden if empty.
+  - Title `<span>`.
+  - Benefit `<span>` — hidden if empty.
+- Clicking a result closes the overlay.
+- No price. No rating. No add-to-cart. No badge in results.
+
+### ARIA
+
+- `aria-expanded` on the search button reflects open/closed state.
+- `aria-busy="true"` on the results container while a fetch is pending.
+- `aria-busy` removed when fetch completes (success or error).
+- Overlay has `role="dialog"`, `aria-modal="true"`, `aria-label` pointing to the overlay heading or a descriptive label.
+
+### Focus trap
+
+- While the overlay is open, Tab and Shift+Tab must cycle between: search input, result links, close button.
+- Focus must not escape to the page behind the overlay.
+
+### Reduced motion
+
+- If `window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches` is true, skip any CSS transition toggling.
+
+## PHP template: search-overlay.php
+
+File: `template-parts/components/search-overlay.php`
+
+Include once in `header.php`, just before `</header>`.
+
+Required elements:
+- Outer: `<div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-label="..." hidden>`
+- Search input: `type="search"`, `id="search-input"`, `autocomplete="off"`, `spellcheck="false"`
+- Close button: `type="button"`, keyboard accessible, focusable
+- Results list: `<ul id="search-results" class="search-overlay__results" role="listbox">`
+- Loading state: `<p id="search-loading" class="search-overlay__loading" hidden>`
+- Empty state: `<p id="search-no-results" class="search-overlay__empty" hidden>`
+
+No product data is hard-coded in this template. All results are rendered by JS.
+
+## Search button in site-header-bar.php
+
+The existing button has class `site-header__action--search`.
+Add these two attributes:
+- `aria-expanded="false"`
+- `aria-controls="search-overlay"`
+
+Do not change anything else in that file.
+
+## wp_localize_script in assets.php
+
+Add inside `selecta_enqueue_assets()` after the main script is enqueued:
+
+```php
+wp_localize_script(
+    'selecta-main',
+    'selectaSearch',
+    array(
+        'restUrl'    => esc_url_raw( rest_url( 'selecta/v1/search' ) ),
+        'minChars'   => 3,
+        'debounceMs' => 250,
+    )
+);
+```
+
+## Implementation order
+
+Work one task at a time. Stop and report after each.
+
+```
+Step 1  inc/search.php — REST endpoint registration + index builder (no UI)
+Step 2  Rebuild index for any existing products (WP-CLI or a one-time admin action)
+Step 3  template-parts/components/search-overlay.php — markup only, no JS wired yet
+Step 4  site-header-bar.php — add aria attributes; header.php — include template part
+Step 5  assets/css/components/search-overlay.css — styles
+Step 6  assets/js/main.js — append search JS module
+Step 7  inc/assets.php — enqueue CSS + wp_localize_script
+Step 8  Keyboard/accessibility pass
+Step 9  Mobile responsive pass (later task, not in scope for initial build)
+```
+
+## Quality checklist before finishing any search task
+
+- Endpoint returns only `selecta_product` posts, `post_status = publish`.
+- Query sanitized with `sanitize_text_field()`.
+- Minimum 3 characters enforced server-side — short queries return `[]` immediately.
+- Maximum 10 results enforced server-side.
+- Response contains no price, stock, cart, rating, or commerce field.
+- Index builder guards against autosave, revisions, wrong post type, and trashed posts.
+- `wp_reset_postdata()` called after any custom `WP_Query`.
+- `_selecta_search_index` stored with `sanitize_textarea_field()`.
+- Overlay has `role="dialog"`, `aria-modal="true"`, `hidden` when closed.
+- Search button `aria-expanded` is toggled correctly by JS.
+- Escape key closes overlay and returns focus to the search button.
+- Focus is trapped inside the overlay while open.
+- REST URL comes from `window.selectaSearch.restUrl` — never hardcoded.
+- JS is appended to the existing `main.js` without rewriting the file.
+- CSS is a new component file, not added to `main.css`.
+- No jQuery used anywhere in the search feature.
+- No search plugin installed.
+- No external search service used.
