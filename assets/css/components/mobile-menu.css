@@ -331,7 +331,7 @@
 }
 
 .mobile-nav-panel__column {
-	border-bottom: 1px solid #e5e7eb;
+	border-bottom: 0;
 }
 
 .mobile-nav-panel__column-toggle {
