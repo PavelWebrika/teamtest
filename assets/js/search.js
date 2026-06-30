@@ -24,12 +24,23 @@
 
 	var debounceTimer = null;
 	var currentQuery  = '';
+	var siteHeader    = document.querySelector( '.site-header' );
+
+	function updateOverlayTop() {
+		if ( ! siteHeader ) {
+			return;
+		}
+
+		var top = siteHeader.getBoundingClientRect().bottom;
+		overlay.style.setProperty( '--search-overlay-top', top + 'px' );
+	}
 
 	// ---------------------------------------------------
 	// Open / close
 	// ---------------------------------------------------
 
 	function openOverlay() {
+		updateOverlayTop();
 		overlay.hidden = false;
 		searchBtn.setAttribute( 'aria-expanded', 'true' );
 		document.body.style.overflow = 'hidden';
@@ -66,6 +77,12 @@
 	document.addEventListener( 'keydown', function ( e ) {
 		if ( e.key === 'Escape' && ! overlay.hidden ) {
 			closeOverlay();
+		}
+	} );
+
+	window.addEventListener( 'resize', function () {
+		if ( ! overlay.hidden ) {
+			updateOverlayTop();
 		}
 	} );
 
