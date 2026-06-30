@@ -301,7 +301,7 @@
 .mobile-nav-panel__simple {
 	list-style: none;
 	margin: 0;
-	padding: 0.25rem 0 0.75rem 0;
+	padding: 0 0 0.75rem 0;
 }
 
 .mobile-nav-panel__simple-item {
@@ -315,6 +315,10 @@
 	color: #111;
 	text-decoration: none;
 	line-height: 1.4;
+}
+
+.mobile-nav-panel__simple-item:first-child .mobile-nav-panel__simple-link {
+	padding-top: 0.1rem;
 }
 
 .mobile-nav-panel__simple-link:hover {
