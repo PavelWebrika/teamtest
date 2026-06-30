@@ -85,6 +85,17 @@
 	animation: drawerSlideOut 0.3s ease forwards;
 }
 
+@media (max-width: 24.375rem) {
+	.mobile-menu__drawer {
+		width: 100%;
+		max-width: none;
+	}
+
+	.mobile-menu__overlay {
+		display: none;
+	}
+}
+
 /* Drawer header */
 .mobile-menu__header {
 	display: flex;
