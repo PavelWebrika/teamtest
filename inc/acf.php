@@ -294,6 +294,25 @@ function selecta_register_acf_field_groups() {
 		'title'  => 'Navigation Panels',
 		'fields' => array(
 			array(
+				'key'           => 'field_nav_header_logo',
+				'label'         => 'Header Logo',
+				'name'          => 'nav_header_logo',
+				'type'          => 'image',
+				'instructions'  => 'Logo shown on the left of the site header. Recommended: square PNG/SVG, at least 112×112 px.',
+				'required'      => 0,
+				'return_format' => 'id',
+				'preview_size'  => 'thumbnail',
+				'library'       => 'all',
+			),
+			array(
+				'key'          => 'field_nav_store_locator_url',
+				'label'        => 'Store Locator URL',
+				'name'         => 'nav_store_locator_url',
+				'type'         => 'url',
+				'instructions' => 'Link for the store locator icon in the header. Leave blank to hide the icon.',
+				'required'     => 0,
+			),
+			array(
 				'key'          => 'field_nav_panels',
 				'label'        => 'Panels',
 				'name'         => 'nav_panels',

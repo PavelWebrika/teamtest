@@ -19,24 +19,6 @@
 <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'selecta-theme' ); ?></a>
 
 <header class="site-header">
-	<div class="container site-header__inner">
-		<a class="site-header__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-			<?php echo esc_html( get_bloginfo( 'name' ) ); ?>
-		</a>
-
-		<nav class="site-header__nav" aria-label="<?php esc_attr_e( 'Primary navigation', 'selecta-theme' ); ?>">
-			<?php
-			wp_nav_menu(
-				array(
-					'theme_location' => 'primary',
-					'menu_class'     => 'nav-menu',
-					'container'      => false,
-					'fallback_cb'    => false,
-				)
-			);
-			?>
-		</nav>
-	</div>
-
+	<?php get_template_part( 'template-parts/components/site-header-bar' ); ?>
 	<?php get_template_part( 'template-parts/components/header-nav-panels' ); ?>
 </header>

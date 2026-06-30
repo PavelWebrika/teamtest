@@ -107,33 +107,12 @@ button {
 .site-main {}
 
 /* ==========================================================================
-   4. Site header
+   4. Site header — see assets/css/components/site-header.css
    ========================================================================== */
 
-.site-header {
-	position: sticky;
-	top: 0;
-	z-index: 100;
-	background: var(--color-bg);
-	border-bottom: 1px solid var(--color-border);
-}
-
-.site-header__inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: var(--header-height);
-	gap: var(--space-4);
-}
-
-.nav-panels {
-	border-top: 1px solid var(--color-border);
-}
-
-.nav-panel {
-	background: var(--color-bg);
-	box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
-}
+/* ==========================================================================
+   5. Site footer
+   ========================================================================== */
 
 .nav-panel__featured {
 	display: flex;
@@ -228,34 +207,6 @@ button {
 .nav-panel__mega-links a:hover {
 	text-decoration: underline;
 }
-
-.site-header__logo {
-	font-weight: 700;
-	font-size: 1.125rem;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	white-space: nowrap;
-}
-
-.site-header__nav .nav-menu {
-	display: flex;
-	align-items: center;
-	gap: var(--space-4);
-}
-
-.site-header__nav .nav-menu a {
-	font-size: 0.875rem;
-	font-weight: 500;
-}
-
-.site-header__nav .nav-menu a:hover {
-	text-decoration: underline;
-	text-underline-offset: 0.2em;
-}
-
-/* ==========================================================================
-   5. Site footer
-   ========================================================================== */
 
 .site-footer {
 	border-top: 1px solid var(--color-border);
