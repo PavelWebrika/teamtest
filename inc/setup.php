@@ -32,3 +32,12 @@ add_filter( 'use_widgets_block_editor', '__return_false' );
 add_action( 'init', function() {
 	remove_post_type_support( 'page', 'editor' );
 } );
+
+function selecta_admin_bar_bottom_position() {
+	if ( ! is_admin_bar_showing() ) {
+		return;
+	}
+
+	remove_action( 'wp_head', '_admin_bar_bump_cb' );
+}
+add_action( 'get_header', 'selecta_admin_bar_bottom_position' );

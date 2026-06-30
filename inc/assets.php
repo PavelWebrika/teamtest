@@ -32,8 +32,25 @@ function selecta_enqueue_assets() {
 	);
 
 	selecta_register_component_styles();
+	selecta_enqueue_admin_bar_styles();
 }
 add_action( 'wp_enqueue_scripts', 'selecta_enqueue_assets' );
+
+function selecta_enqueue_admin_bar_styles() {
+	if ( ! is_admin_bar_showing() ) {
+		return;
+	}
+
+	$css_path = get_template_directory() . '/assets/css/components/admin-bar.css';
+	$css_uri  = get_template_directory_uri() . '/assets/css/components/admin-bar.css';
+
+	wp_enqueue_style(
+		'selecta-admin-bar',
+		$css_uri,
+		array( 'admin-bar' ),
+		file_exists( $css_path ) ? filemtime( $css_path ) : wp_get_theme()->get( 'Version' )
+	);
+}
 
 function selecta_register_component_styles() {
 	$components = array(

@@ -1,0 +1,43 @@
+@media (min-width: 768px) {
+	#wpadminbar {
+		position: fixed !important;
+		top: auto !important;
+		bottom: 0 !important;
+		left: 0;
+		right: 0;
+	}
+
+	html.admin-bar:not(.wp-admin) {
+		margin-top: 0 !important;
+	}
+
+	html.admin-bar:not(.wp-admin) body {
+		padding-bottom: 32px;
+	}
+
+	#wpadminbar .quicklinks .ab-top-menu > li > .ab-sub-wrapper {
+		top: auto;
+		bottom: 100%;
+	}
+
+	#wpadminbar .quicklinks .ab-top-menu > li.menupop.hover > .ab-sub-wrapper,
+	#wpadminbar .quicklinks .ab-top-menu > li.menupop:hover > .ab-sub-wrapper {
+		top: auto;
+		bottom: 100%;
+	}
+}
+
+@media (max-width: 767px) {
+	#wpadminbar {
+		display: none !important;
+	}
+
+	html.admin-bar:not(.wp-admin) {
+		margin-top: 0 !important;
+	}
+
+	html.admin-bar:not(.wp-admin) body {
+		padding-bottom: 0 !important;
+		padding-top: 0 !important;
+	}
+}
