@@ -72,6 +72,88 @@ $has_primary_menu  = has_nav_menu( 'primary' );
 			</nav>
 		<?php endif; ?>
 
+		<?php if ( function_exists( 'have_rows' ) && have_rows( 'nav_panels', 'option' ) ) : ?>
+			<?php while ( have_rows( 'nav_panels', 'option' ) ) : the_row(); ?>
+				<?php
+				$panel_key  = get_sub_field( 'panel_key' );
+				$panel_type = get_sub_field( 'panel_type' );
+
+				if ( ! $panel_key ) {
+					continue;
+				}
+				?>
+				<div
+					class="mobile-nav-panel mobile-nav-panel--<?php echo esc_attr( $panel_type ); ?>"
+					data-panel="<?php echo esc_attr( $panel_key ); ?>"
+					hidden
+				>
+					<?php if ( 'simple' === $panel_type && have_rows( 'featured_items' ) ) : ?>
+
+						<ul class="mobile-nav-panel__simple">
+							<?php while ( have_rows( 'featured_items' ) ) : the_row(); ?>
+								<?php
+								$title     = get_sub_field( 'item_title' );
+								$link_type = get_sub_field( 'item_link_type' );
+								$link_path = get_sub_field( 'item_link_path' );
+								$link_url  = get_sub_field( 'item_url' );
+								$url       = selecta_get_nav_link_url( $link_type, $link_path, $link_url );
+
+								if ( ! $title || ! $url ) {
+									continue;
+								}
+								?>
+								<li class="mobile-nav-panel__simple-item">
+									<a class="mobile-nav-panel__simple-link" href="<?php echo esc_url( $url ); ?>">
+										<?php echo esc_html( $title ); ?>
+									</a>
+								</li>
+							<?php endwhile; ?>
+						</ul>
+
+					<?php elseif ( 'mega' === $panel_type && have_rows( 'mega_columns' ) ) : ?>
+
+						<div class="mobile-nav-panel__mega">
+							<?php while ( have_rows( 'mega_columns' ) ) : the_row(); ?>
+								<?php $col_title = get_sub_field( 'column_title' ); ?>
+								<?php if ( ! have_rows( 'column_links' ) ) : continue; endif; ?>
+								<div class="mobile-nav-panel__column is-expanded">
+									<?php if ( $col_title ) : ?>
+										<button
+											type="button"
+											class="mobile-nav-panel__column-toggle"
+											aria-expanded="true"
+										>
+											<span><?php echo esc_html( $col_title ); ?></span>
+											<span class="mobile-nav-panel__column-chevron" aria-hidden="true"></span>
+										</button>
+									<?php endif; ?>
+									<ul class="mobile-nav-panel__column-links">
+										<?php while ( have_rows( 'column_links' ) ) : the_row(); ?>
+											<?php
+											$link_text = get_sub_field( 'link_text' );
+											$link_type = get_sub_field( 'link_type' );
+											$link_path = get_sub_field( 'link_path' );
+											$link_url  = get_sub_field( 'link_url' );
+											$url       = selecta_get_nav_link_url( $link_type, $link_path, $link_url );
+
+											if ( ! $link_text || ! $url ) {
+												continue;
+											}
+											?>
+											<li>
+												<a href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $link_text ); ?></a>
+											</li>
+										<?php endwhile; ?>
+									</ul>
+								</div>
+							<?php endwhile; ?>
+						</div>
+
+					<?php endif; ?>
+				</div>
+			<?php endwhile; ?>
+		<?php endif; ?>
+
 		<?php if ( $store_locator_url ) : ?>
 			<div class="mobile-menu__store">
 				<a class="mobile-menu__store-link" href="<?php echo esc_url( $store_locator_url ); ?>">
