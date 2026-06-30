@@ -31,6 +31,16 @@ function selecta_enqueue_assets() {
 		true
 	);
 
+	wp_localize_script(
+		'selecta-main',
+		'selectaSearch',
+		array(
+			'restUrl'    => esc_url_raw( rest_url( 'selecta/v1/search' ) ),
+			'minChars'   => 3,
+			'debounceMs' => 250,
+		)
+	);
+
 	selecta_register_component_styles();
 	selecta_enqueue_admin_bar_styles();
 }
@@ -56,6 +66,7 @@ function selecta_register_component_styles() {
 	$components = array(
 		'selecta-site-header'           => 'assets/css/components/site-header.css',
 		'selecta-mobile-menu'           => 'assets/css/components/mobile-menu.css',
+		'selecta-search-overlay'        => 'assets/css/components/search-overlay.css',
 		'selecta-hero-banner'           => 'assets/css/components/hero-banner.css',
 		'selecta-text-block'            => 'assets/css/components/text-block.css',
 		'selecta-product-description'   => 'assets/css/components/product-description.css',

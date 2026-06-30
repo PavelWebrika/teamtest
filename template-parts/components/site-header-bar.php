@@ -65,11 +65,13 @@ if ( $logo_id ) {
 		<?php endif; ?>
 
 		<div class="site-header__actions">
-			<button
-				type="button"
-				class="site-header__action site-header__action--search"
-				aria-label="<?php esc_attr_e( 'Search', 'selecta-theme' ); ?>"
-			>
+		<button
+			type="button"
+			class="site-header__action site-header__action--search"
+			aria-label="<?php esc_attr_e( 'Search', 'selecta-theme' ); ?>"
+			aria-expanded="false"
+			aria-controls="search-overlay"
+		>
 				<span class="site-header__action-icon site-header__action-icon--search">
 					<?php echo selecta_get_svg( 'search' ); ?>
 				</span>
