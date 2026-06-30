@@ -72,7 +72,7 @@ Register on: `rest_api_init`
 ### Query parameter `q`
 
 - Required.
-- Sanitize with `sanitize_text_field()` before any use.
+- Process in the correct WordPress order: unslash first, then sanitize. Use `sanitize_text_field( wp_unslash( $raw_query ) )`. Never sanitize a slashed value.
 - If missing, empty, or fewer than 3 characters: return empty results array immediately, do not run a database query.
 - Length check must use `mb_strlen( trim( $query ), 'UTF-8' ) < 3`. Do not use `strlen()` — Bulgarian/Cyrillic characters are multi-byte and `strlen()` counts bytes, not characters. A 2-character Cyrillic query has `strlen()` = 4, so `strlen() < 3` evaluates to false and the query incorrectly passes the minimum-length guard. `mb_strlen()` returns 2 for the same input, so `mb_strlen() < 3` correctly blocks it.
 
@@ -124,14 +124,14 @@ A single plain-text string per product. Concatenation of all searchable fields w
 
 Name: `selecta_build_search_index( $post_id ): void`
 
-Do not add a strict `int` type hint on `$post_id`. The ACF `acf/save_post` hook may pass the post ID as a string. A strict scalar type hint would throw a `TypeError` in that case. Cast to int inside the function where needed: `$post_id = (int) $post_id;`.
+Do not add a strict `int` type hint on `$post_id`. The ACF `acf/save_post` hook may pass the post ID as a string or a non-post value such as `'options'`. A strict scalar type hint would throw a `TypeError` in that case. Inside the function, first check `is_numeric( $post_id )` and return early if false, then convert with `$post_id = absint( $post_id )` and return early if the result is zero. Use `absint()` rather than a raw `(int)` cast — it is the WordPress-idiomatic way to sanitize a post ID.
 
 Location: `inc/search.php`
 
 #### Guards — return early if any of these are true
 
-- `! is_numeric( $post_id )` — the ACF `acf/save_post` hook can fire with non-numeric IDs such as `'options'` for options pages; bail immediately if the ID is not numeric.
-- After confirming numeric: `$post_id = absint( $post_id ); if ( ! $post_id ) { return; }` — cast to a positive integer and bail if the result is zero.
+- `! is_numeric( $post_id )` — return early; the ACF `acf/save_post` hook can fire with non-numeric values such as `'options'`.
+- After the numeric check, convert with `absint()` and return early if the result is zero.
 - `defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE`
 - `wp_is_post_revision( $post_id )`
 - `get_post_type( $post_id ) !== 'selecta_product'`
