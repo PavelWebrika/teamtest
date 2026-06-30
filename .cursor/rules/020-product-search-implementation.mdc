@@ -74,7 +74,7 @@ Register on: `rest_api_init`
 - Required.
 - Sanitize with `sanitize_text_field()` before any use.
 - If missing, empty, or fewer than 3 characters: return empty results array immediately, do not run a database query.
-- Length check must use `mb_strlen( trim( $query ) ) < 3`. Do not use `strlen()` — Bulgarian/Cyrillic characters are multi-byte and `strlen()` counts bytes, not characters. A 3-character Cyrillic word is 6 bytes in UTF-8 and would fail a `strlen() < 3` check incorrectly.
+- Length check must use `mb_strlen( trim( $query ) ) < 3`. Do not use `strlen()` — Bulgarian/Cyrillic characters are multi-byte and `strlen()` counts bytes, not characters. A 2-character Cyrillic query has `strlen()` = 4, so `strlen() < 3` evaluates to false and the query incorrectly passes the minimum-length guard. `mb_strlen()` returns 2 for the same input, so `mb_strlen() < 3` correctly blocks it.
 
 ### WP_Query rules
 
@@ -84,8 +84,8 @@ Register on: `rest_api_init`
 - `no_found_rows`: `true` — skip total count for performance
 - `update_post_meta_cache`: `false`
 - `update_post_term_cache`: `false`
-- Use a `meta_query` against `_selecta_search_index` with a `LIKE` comparison. Build the value as `'%' . $wpdb->esc_like( $sanitized_query ) . '%'` — never place the raw query string directly inside the wildcards. `$wpdb->esc_like()` escapes any literal `%` or `_` characters in the user's input so they are treated as plain text, not SQL LIKE wildcards. Use `CHAR` cast.
-- Also add an `OR` clause matching the post title with the same `$wpdb->esc_like()` pattern, so exact title matches always surface even before the index is built for a post. Use a `posts_clauses` filter or a secondary query pass — keep it simple.
+- Use a `meta_query` against `_selecta_search_index` with `'compare' => 'LIKE'`. Pass the plain sanitized query as the `value` — do not add `%` wildcards yourself and do not call `$wpdb->esc_like()` on the value. WordPress's `WP_Meta_Query` internally wraps the value in `'%' . $wpdb->esc_like( $value ) . '%'` for `LIKE` comparisons. Adding your own wildcards produces `%%query%%` in the SQL, which is incorrect. Use `CHAR` cast.
+- Also match the post title. If doing this via a `posts_clauses` filter with a raw `$wpdb->prepare()` call, that is a different code path — there you must call `$wpdb->esc_like()` yourself and add the wildcards manually because `$wpdb->prepare()` does not do this automatically. Keep the implementation simple; a secondary title-only `WP_Query` pass is acceptable.
 - After the query, call `wp_reset_postdata()`.
 
 ### Response shape
@@ -130,6 +130,8 @@ Location: `inc/search.php`
 
 #### Guards — return early if any of these are true
 
+- `! is_numeric( $post_id )` — the ACF `acf/save_post` hook can fire with non-numeric IDs such as `'options'` for options pages; bail immediately if the ID is not numeric.
+- After confirming numeric: `$post_id = absint( $post_id ); if ( ! $post_id ) { return; }` — cast to a positive integer and bail if the result is zero.
 - `defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE`
 - `wp_is_post_revision( $post_id )`
 - `get_post_type( $post_id ) !== 'selecta_product'`
@@ -225,7 +227,7 @@ REST_URL     = window.selectaSearch.restUrl
 
 - Clear the results `<ul>` before rendering.
 - Max 10 items (server enforces this; JS renders whatever the server returns, up to 10).
-- Each result: `<li role="option">` wrapping `<a href="{url}">` containing:
+- Each result: `<li>` containing `<a href="{url}">` with:
   - Image `<img>` or placeholder `<span>` if no image.
   - Line label `<span>` — hidden if empty.
   - Title `<span>`.
@@ -260,7 +262,7 @@ Required elements:
 - Outer: `<div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-label="..." hidden>`
 - Search input: `type="search"`, `id="search-input"`, `autocomplete="off"`, `spellcheck="false"`
 - Close button: `type="button"`, keyboard accessible, focusable
-- Results list: `<ul id="search-results" class="search-overlay__results" role="listbox">`
+- Results list: `<ul id="search-results" class="search-overlay__results" aria-live="polite" aria-atomic="false">`. Do not use `role="listbox"` — a proper listbox requires the full ARIA combobox pattern (arrow-key navigation, `aria-selected`, `aria-activedescendant`). Without those, the role is incorrect and misleading to screen readers. A plain list of links with `aria-live` is the right pattern.
 - Loading state: `<p id="search-loading" class="search-overlay__loading" hidden>`
 - Empty state: `<p id="search-no-results" class="search-overlay__empty" hidden>`
 
