@@ -173,7 +173,7 @@
 }
 
 .mobile-menu__nav .nav-menu > li {
-	border-bottom: 1px solid #e5e7eb;
+	border-top: 1px solid #e5e7eb;
 }
 
 .mobile-menu__nav .nav-menu > li > a {
@@ -195,7 +195,12 @@
 	color: #111;
 }
 
-/* Chevron for items that have sub-menus */
+.mobile-menu__nav .nav-menu > li.is-expanded > a {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* Chevron */
 .mobile-menu__chevron {
 	display: inline-flex;
 	align-items: center;
@@ -210,7 +215,7 @@
 	display: block;
 }
 
-.mobile-menu__nav .menu-item-has-children.is-expanded > a .mobile-menu__chevron {
+.mobile-menu__nav .nav-menu > li.is-expanded > a .mobile-menu__chevron {
 	transform: rotate(180deg);
 }
 
@@ -289,7 +294,7 @@
    ------------------------------------------------------- */
 
 .mobile-nav-panel {
-	border-top: 1px solid #e5e7eb;
+	border-top: none;
 }
 
 /* Simple panel — text links only, no images */
