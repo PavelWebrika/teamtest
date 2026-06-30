@@ -90,20 +90,24 @@
 	text-align: center;
 	text-decoration: none;
 	white-space: nowrap;
+	position: relative;
 }
 
-.site-header__nav .nav-menu a:hover,
-.site-header__nav .nav-menu a:focus-visible {
-	text-decoration: none;
+.site-header__nav .nav-menu a::after {
+	content: '';
+	position: absolute;
+	left: 0.75rem;
+	right: 0.75rem;
+	bottom: 0.125rem;
+	height: 2px;
+	background-color: currentColor;
+	opacity: 0;
+	transition: opacity 0.3s ease;
 }
 
-.site-header__nav .nav-menu .current-menu-item > a,
-.site-header__nav .nav-menu .current-menu-ancestor > a,
-.site-header__nav .nav-menu a[aria-expanded="true"] {
-	text-decoration: underline;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 0.5rem;
-	text-decoration-color: currentColor;
+.site-header__nav .nav-menu a:hover::after,
+.site-header__nav .nav-menu a:focus-visible::after {
+	opacity: 1;
 }
 
 .site-header__nav .nav-menu .menu-item-highlight > a {
