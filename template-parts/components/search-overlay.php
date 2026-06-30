@@ -20,6 +20,7 @@ wp_enqueue_style( 'selecta-search-overlay' );
 	<div class="search-overlay__backdrop" aria-hidden="true"></div>
 
 	<div class="search-overlay__panel">
+		<div class="search-overlay__drawer-top" aria-hidden="true"></div>
 		<div class="search-overlay__header">
 			<div class="search-overlay__bar">
 				<span class="search-overlay__bar-icon" aria-hidden="true">

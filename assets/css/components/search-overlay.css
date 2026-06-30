@@ -54,6 +54,10 @@
 	flex-shrink: 0;
 }
 
+.search-overlay__drawer-top {
+	display: none;
+}
+
 .search-overlay__header {
 	max-width: 1270px;
 	margin-inline: auto;
@@ -471,6 +475,13 @@
 
 	.search-overlay.is-closing .search-overlay__panel {
 		animation: searchDrawerSlideOut 0.3s ease forwards;
+	}
+
+	.search-overlay__drawer-top {
+		display: block;
+		flex-shrink: 0;
+		height: 24px;
+		background: #fff;
 	}
 
 	.search-overlay__header {
