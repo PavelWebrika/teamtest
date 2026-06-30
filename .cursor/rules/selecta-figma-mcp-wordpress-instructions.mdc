@@ -270,7 +270,6 @@ When using Figma values:
 - Use `clamp()` for fluid typography/spacing when appropriate.
 - Use CSS Grid/Flexbox rather than absolute positioning unless the design truly requires overlay positioning.
 - Preserve focus styles and accessible states even if not visible in Figma.
-- Respect `prefers-reduced-motion`.
 
 Do not blindly copy pixel-perfect absolute positions from Figma if it would break responsiveness.
 

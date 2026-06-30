@@ -249,10 +249,6 @@ REST_URL     = window.selectaSearch.restUrl
 - While the overlay is open, Tab and Shift+Tab must cycle between: search input, result links, close button.
 - Focus must not escape to the page behind the overlay.
 
-### Reduced motion
-
-- If `window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches` is true, skip any CSS transition toggling.
-
 ## PHP template: search-overlay.php
 
 File: `template-parts/components/search-overlay.php`

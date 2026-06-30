@@ -41,17 +41,6 @@ html {
 	scroll-behavior: smooth;
 }
 
-/* @media (prefers-reduced-motion: reduce) {
-	html { scroll-behavior: auto; }
-
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0s !important;
-		transition-duration: 0s !important;
-	}
-} */
-
 body {
 	margin: 0;
 	color: var(--color-text);
