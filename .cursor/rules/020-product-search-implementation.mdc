@@ -86,6 +86,7 @@ Register on: `rest_api_init`
 - `update_post_term_cache`: `false`
 - Use a `meta_query` against `_selecta_search_index` with `'compare' => 'LIKE'`. Pass the plain sanitized query as the `value` — do not add `%` wildcards yourself and do not call `$wpdb->esc_like()` on the value. WordPress's `WP_Meta_Query` internally wraps the value in `'%' . $wpdb->esc_like( $value ) . '%'` for `LIKE` comparisons. Adding your own wildcards can cause the wildcards to be escaped or duplicated incorrectly by `WP_Meta_Query`. Use `CHAR` cast.
 - Also match the post title. If doing this via a `posts_clauses` filter with a raw `$wpdb->prepare()` call, that is a different code path — there you must call `$wpdb->esc_like()` yourself and add the wildcards manually because `$wpdb->prepare()` does not do this automatically. Keep the implementation simple; a secondary title-only `WP_Query` pass is acceptable.
+- If using a secondary title query, merge the results in priority order: title matches first, then index matches. Deduplicate by post ID before returning — a product that matches both queries must appear only once. After deduplication, slice the combined array to a maximum of 10 items. Never return more than 10 products regardless of how many queries were used internally.
 - After the query, call `wp_reset_postdata()`.
 
 ### Response shape
