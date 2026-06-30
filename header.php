@@ -22,3 +22,5 @@
 	<?php get_template_part( 'template-parts/components/site-header-bar' ); ?>
 	<?php get_template_part( 'template-parts/components/header-nav-panels' ); ?>
 </header>
+
+<?php get_template_part( 'template-parts/components/mobile-menu' ); ?>

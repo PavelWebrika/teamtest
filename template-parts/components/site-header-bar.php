@@ -18,6 +18,16 @@ if ( $logo_id ) {
 ?>
 <div class="<?php echo esc_attr( $bar_class ); ?>">
 	<div class="container site-header__inner">
+		<button
+			type="button"
+			class="site-header__burger"
+			aria-label="<?php esc_attr_e( 'Open menu', 'selecta-theme' ); ?>"
+			aria-expanded="false"
+			aria-controls="mobile-menu"
+		>
+			<?php echo selecta_get_svg( 'hamburger' ); ?>
+		</button>
+
 		<div class="site-header__brand">
 			<a class="site-header__logo-link" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 				<?php if ( $logo_id ) : ?>

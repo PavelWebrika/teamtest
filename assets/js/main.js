@@ -68,12 +68,94 @@
 	document.addEventListener( 'keydown', function ( e ) {
 		if ( e.key === 'Escape' ) {
 			closeAllPanels();
+			closeMobileMenu();
 		}
 	} );
 
 	// -------------------------------------------------------
-	// Mobile menu toggle
-	// Will be implemented in Phase 2 (mobile menu component).
+	// Mobile menu — drawer open / close
 	// -------------------------------------------------------
+
+	var mobileMenu    = document.getElementById( 'mobile-menu' );
+	var mobileOverlay = mobileMenu ? mobileMenu.querySelector( '.mobile-menu__overlay' ) : null;
+	var mobileClose   = mobileMenu ? mobileMenu.querySelector( '.mobile-menu__close' )   : null;
+	var mobileBurger  = document.querySelector( '.site-header__burger' );
+
+	function openMobileMenu() {
+		if ( ! mobileMenu ) {
+			return;
+		}
+		mobileMenu.classList.add( 'is-open' );
+		mobileMenu.setAttribute( 'aria-hidden', 'false' );
+		document.body.classList.add( 'mobile-menu-open' );
+		if ( mobileBurger ) {
+			mobileBurger.setAttribute( 'aria-expanded', 'true' );
+		}
+		if ( mobileClose ) {
+			mobileClose.focus();
+		}
+	}
+
+	function closeMobileMenu() {
+		if ( ! mobileMenu || ! mobileMenu.classList.contains( 'is-open' ) ) {
+			return;
+		}
+		mobileMenu.classList.remove( 'is-open' );
+		mobileMenu.setAttribute( 'aria-hidden', 'true' );
+		document.body.classList.remove( 'mobile-menu-open' );
+		if ( mobileBurger ) {
+			mobileBurger.setAttribute( 'aria-expanded', 'false' );
+			mobileBurger.focus();
+		}
+	}
+
+	if ( mobileBurger ) {
+		mobileBurger.addEventListener( 'click', openMobileMenu );
+	}
+
+	if ( mobileOverlay ) {
+		mobileOverlay.addEventListener( 'click', closeMobileMenu );
+	}
+
+	if ( mobileClose ) {
+		mobileClose.addEventListener( 'click', closeMobileMenu );
+	}
+
+	// -------------------------------------------------------
+	// Mobile menu — sub-menu accordion
+	// -------------------------------------------------------
+
+	var mobileNavParents = mobileMenu
+		? mobileMenu.querySelectorAll( '.mobile-menu__nav .menu-item-has-children' )
+		: [];
+
+	mobileNavParents.forEach( function ( item ) {
+		var link = item.querySelector( ':scope > a' );
+		if ( ! link ) {
+			return;
+		}
+
+		link.setAttribute( 'aria-expanded', 'false' );
+
+		link.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+
+			var isExpanded = 'true' === link.getAttribute( 'aria-expanded' );
+
+			mobileNavParents.forEach( function ( other ) {
+				if ( other === item ) {
+					return;
+				}
+				other.classList.remove( 'is-expanded' );
+				var otherLink = other.querySelector( ':scope > a' );
+				if ( otherLink ) {
+					otherLink.setAttribute( 'aria-expanded', 'false' );
+				}
+			} );
+
+			item.classList.toggle( 'is-expanded', ! isExpanded );
+			link.setAttribute( 'aria-expanded', isExpanded ? 'false' : 'true' );
+		} );
+	} );
 
 } )();

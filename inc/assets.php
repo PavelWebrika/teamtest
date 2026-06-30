@@ -37,13 +37,14 @@ add_action( 'wp_enqueue_scripts', 'selecta_enqueue_assets' );
 
 function selecta_register_component_styles() {
 	$components = array(
-		'selecta-site-header'          => 'assets/css/components/site-header.css',
-		'selecta-hero-banner'          => 'assets/css/components/hero-banner.css',
-		'selecta-text-block'           => 'assets/css/components/text-block.css',
-		'selecta-product-description'  => 'assets/css/components/product-description.css',
-		'selecta-product-card'         => 'assets/css/components/product-card.css',
-		'selecta-category-banner'      => 'assets/css/components/category-banner.css',
-		'selecta-category-intro'       => 'assets/css/components/category-intro.css',
+		'selecta-site-header'           => 'assets/css/components/site-header.css',
+		'selecta-mobile-menu'           => 'assets/css/components/mobile-menu.css',
+		'selecta-hero-banner'           => 'assets/css/components/hero-banner.css',
+		'selecta-text-block'            => 'assets/css/components/text-block.css',
+		'selecta-product-description'   => 'assets/css/components/product-description.css',
+		'selecta-product-card'          => 'assets/css/components/product-card.css',
+		'selecta-category-banner'       => 'assets/css/components/category-banner.css',
+		'selecta-category-intro'        => 'assets/css/components/category-intro.css',
 		'selecta-product-grid-progress' => 'assets/css/components/product-grid-progress.css',
 	);
 

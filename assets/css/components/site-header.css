@@ -187,24 +187,76 @@
 	color: var(--color-text);
 }
 
+/* Burger button — hidden on desktop */
+.site-header__burger {
+	display: none;
+}
+
 @media (max-width: 64rem) {
 	.site-header__inner {
-		flex-wrap: wrap;
+		position: relative;
+		flex-wrap: nowrap;
+		height: 80px;
+		padding-inline: var(--space-2);
 	}
 
+	/* Burger */
+	.site-header__burger {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--color-header-text);
+		cursor: pointer;
+		flex-shrink: 0;
+		z-index: 1;
+	}
+
+	.site-header__burger:hover {
+		opacity: 0.8;
+	}
+
+	.site-header__burger:focus-visible {
+		opacity: 0.8;
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	.site-header__burger svg {
+		display: block;
+	}
+
+	/* Center the logo absolutely so burger and search don't affect its position */
+	.site-header__brand {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	/* Hide desktop nav — replaced by the mobile drawer */
 	.site-header__nav {
-		order: 3;
-		flex: 1 1 100%;
-		padding-top: 0;
-	}
-
-	.site-header__nav .nav-menu {
-		justify-content: flex-start;
-		overflow-x: auto;
+		display: none;
 	}
 
 	.site-header__actions {
 		margin-left: auto;
+		padding-top: 0;
+		z-index: 1;
+	}
+
+	/* Store locator moves into the drawer on mobile */
+	.site-header__action--store {
+		display: none;
+	}
+
+	/* Reset logo padding overrides that only apply to desktop */
+	.site-header__bar--has-logo .site-header__nav,
+	.site-header__bar--has-logo .site-header__actions {
 		padding-top: 0;
 	}
 }
