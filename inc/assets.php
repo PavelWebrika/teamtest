@@ -41,6 +41,17 @@ function selecta_enqueue_assets() {
 		)
 	);
 
+	$search_js_path = get_template_directory() . '/assets/js/search.js';
+	$search_js_uri  = get_template_directory_uri() . '/assets/js/search.js';
+
+	wp_enqueue_script(
+		'selecta-search',
+		$search_js_uri,
+		array( 'selecta-main' ),
+		file_exists( $search_js_path ) ? filemtime( $search_js_path ) : wp_get_theme()->get( 'Version' ),
+		true
+	);
+
 	selecta_register_component_styles();
 	selecta_enqueue_admin_bar_styles();
 }
