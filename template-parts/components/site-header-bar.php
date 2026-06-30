@@ -8,10 +8,15 @@
 wp_enqueue_style( 'selecta-site-header' );
 
 $logo_id           = selecta_get_field( 'nav_header_logo', 'option' );
-$store_locator_url  = selecta_get_field( 'nav_store_locator_url', 'option' );
-$has_primary_menu    = has_nav_menu( 'primary' );
+$store_locator_url = selecta_get_field( 'nav_store_locator_url', 'option' );
+$has_primary_menu  = has_nav_menu( 'primary' );
+$bar_class         = 'site-header__bar';
+
+if ( $logo_id ) {
+	$bar_class .= ' site-header__bar--has-logo';
+}
 ?>
-<div class="site-header__bar">
+<div class="<?php echo esc_attr( $bar_class ); ?>">
 	<div class="container site-header__inner">
 		<div class="site-header__brand">
 			<a class="site-header__logo-link" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">

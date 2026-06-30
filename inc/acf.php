@@ -305,12 +305,13 @@ function selecta_register_acf_field_groups() {
 				'library'       => 'all',
 			),
 			array(
-				'key'          => 'field_nav_store_locator_url',
-				'label'        => 'Store Locator URL',
-				'name'         => 'nav_store_locator_url',
-				'type'         => 'url',
-				'instructions' => 'Link for the store locator icon in the header. Leave blank to hide the icon.',
-				'required'     => 0,
+				'key'           => 'field_nav_store_locator_url',
+				'label'         => 'Store Locator URL',
+				'name'          => 'nav_store_locator_url',
+				'type'          => 'url',
+				'instructions'  => 'Link for the store locator icon in the header.',
+				'default_value' => '/storelocator',
+				'required'      => 0,
 			),
 			array(
 				'key'          => 'field_nav_panels',
@@ -599,4 +600,13 @@ function selecta_nav_link_path_prepend( $field ) {
 	$field['prepend'] = untrailingslashit( home_url() );
 
 	return $field;
+}
+
+add_filter( 'acf/load_value/key=field_nav_store_locator_url', 'selecta_nav_store_locator_default_value', 10, 3 );
+function selecta_nav_store_locator_default_value( $value, $post_id, $field ) {
+	if ( '' === $value || null === $value || false === $value ) {
+		return '/storelocator';
+	}
+
+	return $value;
 }
