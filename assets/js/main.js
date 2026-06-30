@@ -148,7 +148,25 @@
 		? Array.from( mobileMenu.querySelectorAll( '.mobile-menu__nav .nav-menu > li' ) )
 		: [];
 
-	var activeItem = null;
+	var activeMobileItem = null;
+
+	function closeMobileNavItem( navItem ) {
+		if ( ! navItem ) {
+			return;
+		}
+
+		var prevPanel  = navItem.querySelector( '.mobile-nav-panel' );
+		var prevToggle = navItem.querySelector( '.mobile-menu__nav-toggle' );
+
+		if ( prevPanel ) {
+			prevPanel.hidden = true;
+		}
+		if ( prevToggle ) {
+			prevToggle.setAttribute( 'aria-expanded', 'false' );
+		}
+
+		navItem.classList.remove( 'is-expanded' );
+	}
 
 	mobileNavItems.forEach( function ( item ) {
 		var panelKey = getPanelKeyFromItem( item );
@@ -158,7 +176,6 @@
 
 		var panel = mobileMenu.querySelector( '.mobile-nav-panel[data-panel="' + panelKey + '"]' );
 
-		// Move the panel inside the <li> so it appears inline under its link
 		if ( panel ) {
 			item.appendChild( panel );
 		}
@@ -168,41 +185,53 @@
 			return;
 		}
 
-		// Inject chevron into the top-level link
+		var row = document.createElement( 'div' );
+		row.className = 'mobile-menu__nav-row';
+
+		link.parentNode.insertBefore( row, link );
+		row.appendChild( link );
+		link.classList.add( 'mobile-menu__nav-link' );
+
+		var toggleBtn = document.createElement( 'button' );
+		toggleBtn.type = 'button';
+		toggleBtn.className = 'mobile-menu__nav-toggle';
+		toggleBtn.setAttribute( 'aria-expanded', 'false' );
+		toggleBtn.setAttribute(
+			'aria-label',
+			'Toggle ' + link.textContent.trim() + ' submenu'
+		);
+
 		var chevronSpan = document.createElement( 'span' );
 		chevronSpan.className = 'mobile-menu__chevron';
 		chevronSpan.innerHTML = chevronSVG;
-		link.appendChild( chevronSpan );
+		chevronSpan.setAttribute( 'aria-hidden', 'true' );
+		toggleBtn.appendChild( chevronSpan );
+		row.appendChild( toggleBtn );
 
-		link.setAttribute( 'aria-expanded', 'false' );
+		if ( ! panel ) {
+			toggleBtn.hidden = true;
+			return;
+		}
 
-		link.addEventListener( 'click', function ( e ) {
-			if ( panel ) {
-				e.preventDefault();
+		toggleBtn.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			var isOpen = activeMobileItem === item;
+
+			if ( activeMobileItem && activeMobileItem !== item ) {
+				closeMobileNavItem( activeMobileItem );
+				activeMobileItem = null;
 			}
 
-			var isOpen = activeItem === item;
-
-			// Close the currently open item
-			if ( activeItem && activeItem !== item ) {
-				var prevPanel = activeItem.querySelector( '.mobile-nav-panel' );
-				var prevLink  = activeItem.querySelector( ':scope > a' );
-				if ( prevPanel ) { prevPanel.hidden = true; }
-				if ( prevLink )  { prevLink.setAttribute( 'aria-expanded', 'false' ); }
-				activeItem.classList.remove( 'is-expanded' );
-				activeItem = null;
-			}
-
-			if ( ! isOpen && panel ) {
+			if ( ! isOpen ) {
 				panel.hidden = false;
 				item.classList.add( 'is-expanded' );
-				link.setAttribute( 'aria-expanded', 'true' );
-				activeItem = item;
-			} else if ( isOpen && panel ) {
-				panel.hidden = true;
-				item.classList.remove( 'is-expanded' );
-				link.setAttribute( 'aria-expanded', 'false' );
-				activeItem = null;
+				toggleBtn.setAttribute( 'aria-expanded', 'true' );
+				activeMobileItem = item;
+			} else {
+				closeMobileNavItem( item );
+				activeMobileItem = null;
 			}
 		} );
 	} );
