@@ -7,8 +7,9 @@
 
 wp_enqueue_style( 'selecta-site-header' );
 
-$logo_id           = selecta_get_field( 'nav_header_logo', 'option' );
-$store_locator_url = selecta_get_field( 'nav_store_locator_url', 'option' );
+$logo_id              = selecta_get_field( 'nav_header_logo', 'option' );
+$store_locator_path   = selecta_get_field( 'nav_store_locator_url', 'option' );
+$store_locator_url    = selecta_get_nav_link_url( 'internal', $store_locator_path, '' );
 $has_primary_menu  = has_nav_menu( 'primary' );
 $bar_class         = 'site-header__bar';
 

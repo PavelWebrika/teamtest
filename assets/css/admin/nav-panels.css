@@ -5,8 +5,10 @@
 /* In-site path field: domain prefix + path input on one row */
 .acf-field-field_nav_panel_item_link_path .acf-input,
 .acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input,
+.acf-field-field_nav_store_locator_url .acf-input,
 .acf-field[data-key="field_nav_panel_item_link_path"] .acf-input,
-.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input {
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input,
+.acf-field[data-key="field_nav_store_locator_url"] .acf-input {
 	display: flex !important;
 	flex-direction: row !important;
 	align-items: stretch !important;
@@ -15,8 +17,10 @@
 
 .acf-field-field_nav_panel_item_link_path .acf-input-wrap,
 .acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-wrap,
+.acf-field-field_nav_store_locator_url .acf-input-wrap,
 .acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-wrap,
-.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-wrap {
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-wrap,
+.acf-field[data-key="field_nav_store_locator_url"] .acf-input-wrap {
 	display: flex !important;
 	flex: 1 1 auto !important;
 	min-width: 0 !important;
@@ -25,8 +29,10 @@
 
 .acf-field-field_nav_panel_item_link_path .acf-input-prepend,
 .acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input-prepend,
+.acf-field-field_nav_store_locator_url .acf-input-prepend,
 .acf-field[data-key="field_nav_panel_item_link_path"] .acf-input-prepend,
-.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-prepend {
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input-prepend,
+.acf-field[data-key="field_nav_store_locator_url"] .acf-input-prepend {
 	float: none !important;
 	display: flex !important;
 	align-items: center !important;
@@ -49,8 +55,10 @@
 
 .acf-field-field_nav_panel_item_link_path .acf-input input[type="text"],
 .acf-field-field_nav_mega_link_path:not(.acf-hidden) .acf-input input[type="text"],
+.acf-field-field_nav_store_locator_url .acf-input input[type="text"],
 .acf-field[data-key="field_nav_panel_item_link_path"] .acf-input input[type="text"],
-.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input input[type="text"] {
+.acf-field[data-key="field_nav_mega_link_path"]:not(.acf-hidden) .acf-input input[type="text"],
+.acf-field[data-key="field_nav_store_locator_url"] .acf-input input[type="text"] {
 	float: none !important;
 	flex: 1 1 auto !important;
 	min-width: 0 !important;

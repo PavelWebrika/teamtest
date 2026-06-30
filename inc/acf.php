@@ -308,8 +308,9 @@ function selecta_register_acf_field_groups() {
 				'key'           => 'field_nav_store_locator_url',
 				'label'         => 'Store Locator URL',
 				'name'          => 'nav_store_locator_url',
-				'type'          => 'url',
-				'instructions'  => 'Link for the store locator icon in the header.',
+				'type'          => 'text',
+				'instructions'  => 'Enter the path only — e.g. <code>/storelocator</code> or <code>/partnyori/</code>. The site domain is added automatically.',
+				'placeholder'   => '/storelocator',
 				'default_value' => '/storelocator',
 				'required'      => 0,
 			),
@@ -596,6 +597,7 @@ function selecta_validate_nav_panel_key( $valid, $value, $field, $input_name ) {
 
 add_filter( 'acf/load_field/key=field_nav_panel_item_link_path', 'selecta_nav_link_path_prepend' );
 add_filter( 'acf/load_field/key=field_nav_mega_link_path', 'selecta_nav_link_path_prepend' );
+add_filter( 'acf/load_field/key=field_nav_store_locator_url', 'selecta_nav_link_path_prepend' );
 function selecta_nav_link_path_prepend( $field ) {
 	$field['prepend'] = untrailingslashit( home_url() );
 
