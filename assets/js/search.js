@@ -94,6 +94,12 @@
 	// Open / close
 	// ---------------------------------------------------
 
+	function finishClose() {
+		overlay.classList.remove( 'is-closing' );
+		overlay.setAttribute( 'aria-hidden', 'true' );
+		searchBtn.focus();
+	}
+
 	function openOverlay() {
 		if ( overlay.classList.contains( 'is-open' ) ) {
 			return;
@@ -101,6 +107,7 @@
 		updateOverlayTop();
 		overlay.classList.remove( 'is-closing' );
 		overlay.classList.add( 'is-open' );
+		overlay.setAttribute( 'aria-hidden', 'false' );
 		searchBtn.setAttribute( 'aria-expanded', 'true' );
 		document.body.style.overflow = 'hidden';
 		searchInput.focus();
@@ -116,17 +123,15 @@
 		searchBtn.setAttribute( 'aria-expanded', 'false' );
 
 		if ( isMobileSearch() && panel ) {
-		panel.addEventListener( 'animationend', function onDone() {
+			panel.addEventListener( 'animationend', function onDone() {
 				panel.removeEventListener( 'animationend', onDone );
-				overlay.classList.remove( 'is-closing' );
-				searchBtn.focus();
+				finishClose();
 			} );
 
 			return;
 		}
 
-		overlay.classList.remove( 'is-closing' );
-		searchBtn.focus();
+		finishClose();
 	}
 
 	function clearResults() {

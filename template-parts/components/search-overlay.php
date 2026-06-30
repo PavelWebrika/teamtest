@@ -15,6 +15,7 @@ wp_enqueue_style( 'selecta-search-overlay' );
 	role="dialog"
 	aria-modal="true"
 	aria-label="<?php esc_attr_e( 'Product search', 'selecta-theme' ); ?>"
+	aria-hidden="true"
 >
 	<div class="search-overlay__backdrop" aria-hidden="true"></div>
 
