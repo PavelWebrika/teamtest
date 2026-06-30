@@ -21,7 +21,7 @@
 <header class="site-header">
 	<?php get_template_part( 'template-parts/components/site-header-bar' ); ?>
 	<?php get_template_part( 'template-parts/components/header-nav-panels' ); ?>
-	<?php get_template_part( 'template-parts/components/search-overlay' ); ?>
 </header>
 
+<?php get_template_part( 'template-parts/components/search-overlay' ); ?>
 <?php get_template_part( 'template-parts/components/mobile-menu' ); ?>

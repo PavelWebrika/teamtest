@@ -35,14 +35,6 @@
 		return mobileMq.matches;
 	}
 
-	function finishClose() {
-		overlay.hidden = true;
-		overlay.classList.remove( 'is-open', 'is-closing' );
-		searchBtn.setAttribute( 'aria-expanded', 'false' );
-		document.body.style.overflow = '';
-		searchBtn.focus();
-	}
-
 	function createStarsRow( score ) {
 		if ( ! starMarkup || typeof score !== 'number' || isNaN( score ) ) {
 			return null;
@@ -103,8 +95,10 @@
 	// ---------------------------------------------------
 
 	function openOverlay() {
+		if ( overlay.classList.contains( 'is-open' ) ) {
+			return;
+		}
 		updateOverlayTop();
-		overlay.hidden = false;
 		overlay.classList.remove( 'is-closing' );
 		overlay.classList.add( 'is-open' );
 		searchBtn.setAttribute( 'aria-expanded', 'true' );
@@ -113,28 +107,26 @@
 	}
 
 	function closeOverlay() {
-		if ( isMobileSearch() && overlay.classList.contains( 'is-open' ) && panel ) {
-			overlay.classList.remove( 'is-open' );
-			overlay.classList.add( 'is-closing' );
+		if ( ! overlay.classList.contains( 'is-open' ) ) {
+			return;
+		}
+		overlay.classList.remove( 'is-open' );
+		overlay.classList.add( 'is-closing' );
+		document.body.style.overflow = '';
+		searchBtn.setAttribute( 'aria-expanded', 'false' );
 
-			if ( window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
-				finishClose();
-				return;
-			}
-
-			panel.addEventListener( 'animationend', function onDone( e ) {
-				if ( e.target !== panel ) {
-					return;
-				}
-
+		if ( isMobileSearch() && panel ) {
+		panel.addEventListener( 'animationend', function onDone() {
 				panel.removeEventListener( 'animationend', onDone );
-				finishClose();
+				overlay.classList.remove( 'is-closing' );
+				searchBtn.focus();
 			} );
 
 			return;
 		}
 
-		finishClose();
+		overlay.classList.remove( 'is-closing' );
+		searchBtn.focus();
 	}
 
 	function clearResults() {
@@ -153,13 +145,13 @@
 	}
 
 	document.addEventListener( 'keydown', function ( e ) {
-		if ( e.key === 'Escape' && ! overlay.hidden ) {
+		if ( e.key === 'Escape' && overlay.classList.contains( 'is-open' ) ) {
 			closeOverlay();
 		}
 	} );
 
 	window.addEventListener( 'resize', function () {
-		if ( ! overlay.hidden ) {
+		if ( overlay.classList.contains( 'is-open' ) ) {
 			updateOverlayTop();
 		}
 	} );
