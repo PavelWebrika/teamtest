@@ -82,6 +82,6 @@ wp_enqueue_style( 'selecta-search-overlay' );
 
 	<template id="selecta-search-star-template" aria-hidden="true"><?php
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- hardcoded theme SVG
-		echo selecta_get_svg( 'star' );
+		echo selecta_get_svg( 'star2' );
 	?></template>
 </div>

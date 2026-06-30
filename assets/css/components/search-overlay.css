@@ -273,8 +273,8 @@
 }
 
 .search-overlay__stars svg {
-	width: 14px;
-	height: 14px;
+	width: 11px;
+	height: 10px;
 	display: block;
 	flex-shrink: 0;
 }
