@@ -6,18 +6,37 @@
 	display: none;
 }
 
+@keyframes drawerSlideIn {
+	from { transform: translateX(-100%); }
+	to   { transform: translateX(0); }
+}
+
+@keyframes drawerSlideOut {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-100%); }
+}
+
+@keyframes overlayFadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@keyframes overlayFadeOut {
+	from { opacity: 1; }
+	to   { opacity: 0; }
+}
+
 @media (max-width: 64rem) {
 	.mobile-menu {
 		display: block;
 		position: fixed;
 		inset: 0;
 		z-index: 200;
-		visibility: hidden;
 		pointer-events: none;
 	}
 
-	.mobile-menu.is-open {
-		visibility: visible;
+	.mobile-menu.is-open,
+	.mobile-menu.is-closing {
 		pointer-events: auto;
 	}
 }
@@ -28,12 +47,18 @@
 	inset: 0;
 	background: rgb(0 0 0 / 50%);
 	opacity: 0;
-	transition: opacity 0.3s ease;
+	pointer-events: none;
 	cursor: pointer;
 }
 
 .mobile-menu.is-open .mobile-menu__overlay {
-	opacity: 1;
+	animation: overlayFadeIn 0.3s ease forwards;
+	pointer-events: auto;
+}
+
+.mobile-menu.is-closing .mobile-menu__overlay {
+	animation: overlayFadeOut 0.3s ease forwards;
+	pointer-events: none;
 }
 
 /* Drawer */
@@ -50,11 +75,14 @@
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	transform: translateX(-100%);
-	transition: transform 0.3s ease;
 }
 
 .mobile-menu.is-open .mobile-menu__drawer {
-	transform: translateX(0);
+	animation: drawerSlideIn 0.3s ease forwards;
+}
+
+.mobile-menu.is-closing .mobile-menu__drawer {
+	animation: drawerSlideOut 0.3s ease forwards;
 }
 
 /* Drawer header */
@@ -249,10 +277,3 @@ body.mobile-menu-open {
 	overflow: hidden;
 }
 
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-	.mobile-menu__overlay,
-	.mobile-menu__drawer {
-		transition: none;
-	}
-}
