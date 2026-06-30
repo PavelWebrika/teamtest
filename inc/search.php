@@ -234,11 +234,24 @@ function selecta_search_endpoint_callback( WP_REST_Request $request ) {
 
 		// Short benefit: first line of product_short_benefits ACF field.
 		$benefit = '';
+		$score   = null;
+		$price   = '';
+
 		if ( function_exists( 'get_field' ) ) {
 			$raw_benefit = get_field( 'product_short_benefits', $post_id );
 			if ( $raw_benefit && is_string( $raw_benefit ) ) {
 				$benefit_lines = explode( "\n", $raw_benefit );
 				$benefit       = trim( wp_strip_all_tags( $benefit_lines[0] ) );
+			}
+
+			$score_raw = get_field( 'product_score', $post_id );
+			if ( '' !== $score_raw && is_numeric( $score_raw ) ) {
+				$score = max( 0, min( 5, (float) $score_raw ) );
+			}
+
+			$price_raw = get_field( 'product_price', $post_id );
+			if ( is_string( $price_raw ) ) {
+				$price = trim( $price_raw );
 			}
 		}
 
@@ -259,12 +272,14 @@ function selecta_search_endpoint_callback( WP_REST_Request $request ) {
 
 		$results[] = array(
 			'id'        => $post_id,
-			'title'     => get_the_title( $post_id ),
+			'title'     => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
 			'url'       => get_permalink( $post_id ),
 			'line'      => $line,
 			'benefit'   => $benefit,
+			'score'     => $score,
+			'price'     => $price,
 			'image_url' => $image_url,
-			'image_alt' => $image_alt,
+			'image_alt' => html_entity_decode( $image_alt, ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
 		);
 	}
 

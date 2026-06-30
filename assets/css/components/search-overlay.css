@@ -37,6 +37,8 @@
 	border-top: 1px solid rgba(212, 217, 219, 0.4);
 	box-shadow: 0 28px 60px -24px rgba(21, 46, 74, 0.4);
 	width: 100%;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 
 /* Centred inner container — matches site header max-width */
@@ -149,6 +151,7 @@
 
 .search-overlay__results-wrap {
 	max-height: 480px;
+	overflow-x: hidden;
 	overflow-y: auto;
 	overscroll-behavior: contain;
 }
@@ -172,6 +175,8 @@
 	display: flex;
 	align-items: center;
 	gap: 16px;
+	min-width: 0;
+	max-width: 100%;
 	padding-block: 16px;
 	text-decoration: none;
 	color: inherit;
@@ -226,6 +231,7 @@
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
 	color: #1a2340;
+	overflow-wrap: break-word;
 }
 
 .search-overlay__result-title {
@@ -233,6 +239,7 @@
 	font-size: 1rem; /* 16px */
 	line-height: 1.375; /* 22px */
 	color: #4c4d4f;
+	overflow-wrap: break-word;
 }
 
 .search-overlay__result-benefit {
@@ -240,6 +247,68 @@
 	font-size: 0.75rem; /* 12px */
 	line-height: 1.25; /* 15px */
 	color: #626b74;
+	overflow-wrap: break-word;
+}
+
+/* Stars row — mirrors product-card star widget */
+.search-overlay__stars-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-top: 4px;
+}
+
+.search-overlay__stars {
+	position: relative;
+	display: inline-flex;
+	line-height: 1;
+}
+
+.search-overlay__stars-empty,
+.search-overlay__stars-filled {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	line-height: 1;
+}
+
+.search-overlay__stars svg {
+	width: 14px;
+	height: 14px;
+	display: block;
+	flex-shrink: 0;
+}
+
+.search-overlay__stars-empty {
+	color: #d4d9db;
+}
+
+.search-overlay__stars-filled {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	color: #f59e0b;
+}
+
+.search-overlay__score {
+	font-family: var(--font-base);
+	font-size: 0.6875rem; /* 11px */
+	line-height: 1.5;
+	color: #4c4d4f;
+}
+
+.search-overlay__result-price {
+	flex-shrink: 0;
+	align-self: flex-start;
+	padding-top: 4px;
+	padding-left: 4px;
+	font-family: var(--font-base);
+	font-size: 1rem;
+	line-height: 1.5;
+	color: #4c4d4f;
+	text-align: right;
+	white-space: nowrap;
 }
 
 /* Arrow that appears on hover */

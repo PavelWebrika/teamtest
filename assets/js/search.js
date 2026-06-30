@@ -25,6 +25,54 @@
 	var debounceTimer = null;
 	var currentQuery  = '';
 	var siteHeader    = document.querySelector( '.site-header' );
+	var starTemplate  = document.getElementById( 'selecta-search-star-template' );
+	var starMarkup    = starTemplate ? starTemplate.innerHTML : '';
+
+	function createStarsRow( score ) {
+		if ( ! starMarkup || typeof score !== 'number' || isNaN( score ) ) {
+			return null;
+		}
+
+		var clamped  = Math.max( 0, Math.min( 5, score ) );
+		var fillPct  = Math.round( ( clamped / 5 ) * 10000 ) / 100;
+		var fiveStars = '';
+
+		for ( var i = 0; i < 5; i++ ) {
+			fiveStars += starMarkup;
+		}
+
+		var row = document.createElement( 'div' );
+		row.className = 'search-overlay__stars-row';
+
+		var stars = document.createElement( 'div' );
+		stars.className = 'search-overlay__stars';
+		stars.setAttribute( 'role', 'img' );
+		stars.setAttribute( 'aria-label', 'Score: ' + clamped + ' out of 5' );
+
+		var empty = document.createElement( 'span' );
+		empty.className = 'search-overlay__stars-empty';
+		empty.setAttribute( 'aria-hidden', 'true' );
+		empty.insertAdjacentHTML( 'afterbegin', fiveStars );
+
+		var filled = document.createElement( 'span' );
+		filled.className = 'search-overlay__stars-filled';
+		filled.setAttribute( 'aria-hidden', 'true' );
+		filled.style.width = fillPct + '%';
+		filled.insertAdjacentHTML( 'afterbegin', fiveStars );
+
+		stars.appendChild( empty );
+		stars.appendChild( filled );
+
+		var scoreEl = document.createElement( 'span' );
+		scoreEl.className = 'search-overlay__score';
+		scoreEl.setAttribute( 'aria-hidden', 'true' );
+		scoreEl.textContent = String( clamped );
+
+		row.appendChild( stars );
+		row.appendChild( scoreEl );
+
+		return row;
+	}
 
 	function updateOverlayTop() {
 		if ( ! siteHeader ) {
@@ -247,7 +295,21 @@
 				body.appendChild( benefitEl );
 			}
 
+			if ( typeof item.score === 'number' && ! isNaN( item.score ) ) {
+				var starsRow = createStarsRow( item.score );
+				if ( starsRow ) {
+					body.appendChild( starsRow );
+				}
+			}
+
 			a.appendChild( body );
+
+			if ( item.price ) {
+				var priceEl = document.createElement( 'span' );
+				priceEl.className = 'search-overlay__result-price';
+				priceEl.textContent = item.price;
+				a.appendChild( priceEl );
+			}
 
 			var arrow = document.createElement( 'span' );
 			arrow.className = 'search-overlay__result-arrow';
