@@ -193,11 +193,16 @@
 }
 
 @media (max-width: 64rem) {
+	.site-header {
+		--header-logo-size: 5rem;
+	}
+
 	.site-header__inner {
 		position: relative;
 		flex-wrap: nowrap;
 		height: 80px;
 		padding-inline: var(--space-2);
+		overflow: hidden;
 	}
 
 	/* Burger */
@@ -235,7 +240,20 @@
 	.site-header__brand {
 		position: absolute;
 		left: 50%;
-		transform: translateX(-50%);
+		top: 50%;
+		transform: translate(-50%, -50%);
+		max-height: 100%;
+	}
+
+	.site-header__logo-link {
+		max-height: 80px;
+	}
+
+	.site-header__logo-image {
+		width: var(--header-logo-size);
+		height: var(--header-logo-size);
+		max-height: 80px;
+		max-width: 5rem;
 	}
 
 	/* Hide desktop nav — replaced by the mobile drawer */
