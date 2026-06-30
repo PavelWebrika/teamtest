@@ -17,14 +17,15 @@ wp_enqueue_style( 'selecta-search-overlay' );
 	aria-label="<?php esc_attr_e( 'Product search', 'selecta-theme' ); ?>"
 	hidden
 >
-	<div class="search-overlay__panel">
-		<div class="search-overlay__inner">
+	<div class="search-overlay__backdrop" aria-hidden="true"></div>
 
+	<div class="search-overlay__panel">
+		<div class="search-overlay__header">
 			<div class="search-overlay__bar">
 				<span class="search-overlay__bar-icon" aria-hidden="true">
 					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-						<circle cx="8.5" cy="8.5" r="6" stroke="#4c4d4f" stroke-width="1.5"/>
-						<line x1="13" y1="13" x2="18" y2="18" stroke="#4c4d4f" stroke-width="1.5" stroke-linecap="round"/>
+						<circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.5"/>
+						<line x1="13" y1="13" x2="18" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
 					</svg>
 				</span>
 
@@ -45,12 +46,14 @@ wp_enqueue_style( 'selecta-search-overlay' );
 					aria-label="<?php esc_attr_e( 'Close search', 'selecta-theme' ); ?>"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false">
-						<line x1="1" y1="1" x2="13" y2="13" stroke="#626b74" stroke-width="1.5" stroke-linecap="round"/>
-						<line x1="13" y1="1" x2="1" y2="13" stroke="#626b74" stroke-width="1.5" stroke-linecap="round"/>
+						<line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+						<line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
 					</svg>
 				</button>
 			</div>
+		</div>
 
+		<div class="search-overlay__body">
 			<p id="search-count" class="search-overlay__count" hidden></p>
 
 			<p id="search-loading" class="search-overlay__loading" hidden>
@@ -76,7 +79,6 @@ wp_enqueue_style( 'selecta-search-overlay' );
 					<span class="search-overlay__empty-hint"><?php esc_html_e( 'Опитайте с други ключови думи или разгледайте каталога ни.', 'selecta-theme' ); ?></span>
 				</p>
 			</div>
-
 		</div>
 	</div>
 

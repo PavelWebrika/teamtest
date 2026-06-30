@@ -11,6 +11,8 @@
 
 	var searchBtn   = document.querySelector( '.site-header__action--search' );
 	var overlay     = document.getElementById( 'search-overlay' );
+	var backdrop    = overlay ? overlay.querySelector( '.search-overlay__backdrop' ) : null;
+	var panel       = overlay ? overlay.querySelector( '.search-overlay__panel' ) : null;
 	var closeBtn    = document.getElementById( 'search-close' );
 	var searchInput = document.getElementById( 'search-input' );
 	var resultsList = document.getElementById( 'search-results' );
@@ -27,6 +29,19 @@
 	var siteHeader    = document.querySelector( '.site-header' );
 	var starTemplate  = document.getElementById( 'selecta-search-star-template' );
 	var starMarkup    = starTemplate ? starTemplate.innerHTML : '';
+	var mobileMq      = window.matchMedia( '(max-width: 64rem)' );
+
+	function isMobileSearch() {
+		return mobileMq.matches;
+	}
+
+	function finishClose() {
+		overlay.hidden = true;
+		overlay.classList.remove( 'is-open', 'is-closing' );
+		searchBtn.setAttribute( 'aria-expanded', 'false' );
+		document.body.style.overflow = '';
+		searchBtn.focus();
+	}
 
 	function createStarsRow( score ) {
 		if ( ! starMarkup || typeof score !== 'number' || isNaN( score ) ) {
@@ -75,7 +90,7 @@
 	}
 
 	function updateOverlayTop() {
-		if ( ! siteHeader ) {
+		if ( ! siteHeader || isMobileSearch() ) {
 			return;
 		}
 
@@ -90,16 +105,36 @@
 	function openOverlay() {
 		updateOverlayTop();
 		overlay.hidden = false;
+		overlay.classList.remove( 'is-closing' );
+		overlay.classList.add( 'is-open' );
 		searchBtn.setAttribute( 'aria-expanded', 'true' );
 		document.body.style.overflow = 'hidden';
 		searchInput.focus();
 	}
 
 	function closeOverlay() {
-		overlay.hidden = true;
-		searchBtn.setAttribute( 'aria-expanded', 'false' );
-		document.body.style.overflow = '';
-		searchBtn.focus();
+		if ( isMobileSearch() && overlay.classList.contains( 'is-open' ) && panel ) {
+			overlay.classList.remove( 'is-open' );
+			overlay.classList.add( 'is-closing' );
+
+			if ( window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+				finishClose();
+				return;
+			}
+
+			panel.addEventListener( 'animationend', function onDone( e ) {
+				if ( e.target !== panel ) {
+					return;
+				}
+
+				panel.removeEventListener( 'animationend', onDone );
+				finishClose();
+			} );
+
+			return;
+		}
+
+		finishClose();
 	}
 
 	function clearResults() {
@@ -113,11 +148,9 @@
 	searchBtn.addEventListener( 'click', openOverlay );
 	closeBtn.addEventListener( 'click', closeOverlay );
 
-	overlay.addEventListener( 'click', function ( e ) {
-		if ( e.target === overlay ) {
-			closeOverlay();
-		}
-	} );
+	if ( backdrop ) {
+		backdrop.addEventListener( 'click', closeOverlay );
+	}
 
 	document.addEventListener( 'keydown', function ( e ) {
 		if ( e.key === 'Escape' && ! overlay.hidden ) {
