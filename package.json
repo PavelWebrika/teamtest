@@ -1,0 +1,9 @@
+{
+	"name": "selecta-theme",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Frontend dependencies for the Selecta WordPress catalog theme",
+	"dependencies": {
+		"swiper": "^11.2.10"
+	}
+}
