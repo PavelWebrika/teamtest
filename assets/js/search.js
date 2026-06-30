@@ -99,9 +99,6 @@
 		overlay.hidden = true;
 		searchBtn.setAttribute( 'aria-expanded', 'false' );
 		document.body.style.overflow = '';
-		clearResults();
-		searchInput.value = '';
-		currentQuery = '';
 		searchBtn.focus();
 	}
 
