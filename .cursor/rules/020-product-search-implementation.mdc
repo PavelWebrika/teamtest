@@ -300,6 +300,31 @@ Work one task at a time. Stop and report after each.
 
 ```
 Step 1  inc/search.php — REST endpoint registration + index builder (no UI)
+Step 1b TEST the endpoint directly in a browser or REST client before writing any UI.
+        Confirm all five cases before continuing to Step 2:
+
+        Case 1 — short query:
+          GET /wp-json/selecta/v1/search?q=ко
+          Expected: []
+
+        Case 2 — valid product term (use a real term or title from the local install):
+          GET /wp-json/selecta/v1/search?q=шампоан
+          Expected: array of up to 10 products, all selecta_product post type
+
+        Case 3 — title match deduplication:
+          Search for a word that exists in both a product title and the index.
+          Expected: that product appears exactly once in the response.
+
+        Case 4 — non-product content:
+          Search for a word that exists only in a page, post, or advice entry.
+          Expected: []
+
+        Case 5 — response shape:
+          Inspect any returned item.
+          Expected: no price, stock, rating, cart, badge, or any commerce field present.
+
+        Do not proceed to Step 2 until all five cases pass.
+
 Step 2  Rebuild index for any existing products (WP-CLI or a one-time admin action)
 Step 3  template-parts/components/search-overlay.php — markup only, no JS wired yet
 Step 4  site-header-bar.php — add aria attributes; header.php — include template part
