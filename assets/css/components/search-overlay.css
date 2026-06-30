@@ -2,6 +2,14 @@
    Search overlay
    ========================================================================== */
 
+/* Prevent CSS display values from overriding the [hidden] attribute */
+.search-overlay[hidden],
+.search-overlay__empty[hidden],
+.search-overlay__loading[hidden],
+.search-overlay__count[hidden] {
+	display: none;
+}
+
 /* Overlay root — hidden by default via [hidden] */
 .search-overlay {
 	position: fixed;
