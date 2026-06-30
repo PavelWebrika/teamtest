@@ -16,6 +16,7 @@ $selecta_includes = array(
 	'inc/acf.php',
 	'inc/acf-nav-admin.php',
 	'inc/helpers.php',
+	'inc/search.php',
 );
 
 foreach ( $selecta_includes as $selecta_file ) {
