@@ -104,7 +104,7 @@ $has_primary_menu  = has_nav_menu( 'primary' );
 								?>
 								<li class="mobile-nav-panel__simple-item">
 									<a class="mobile-nav-panel__simple-link" href="<?php echo esc_url( $url ); ?>">
-										<?php echo esc_html( $title ); ?>
+										<?php echo wp_kses_post( $title ); ?>
 									</a>
 								</li>
 							<?php endwhile; ?>

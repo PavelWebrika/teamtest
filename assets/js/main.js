@@ -148,7 +148,7 @@
 		? Array.from( mobileMenu.querySelectorAll( '.mobile-menu__nav .nav-menu > li' ) )
 		: [];
 
-	var activePanelKey = null;
+	var activeItem = null;
 
 	mobileNavItems.forEach( function ( item ) {
 		var panelKey = getPanelKeyFromItem( item );
@@ -157,7 +157,13 @@
 		}
 
 		var panel = mobileMenu.querySelector( '.mobile-nav-panel[data-panel="' + panelKey + '"]' );
-		var link  = item.querySelector( ':scope > a' );
+
+		// Move the panel inside the <li> so it appears inline under its link
+		if ( panel ) {
+			item.appendChild( panel );
+		}
+
+		var link = item.querySelector( ':scope > a' );
 		if ( ! link ) {
 			return;
 		}
@@ -175,24 +181,28 @@
 				e.preventDefault();
 			}
 
-			var isOpen = panelKey === activePanelKey;
+			var isOpen = activeItem === item;
 
-			// Close currently open panel
-			if ( activePanelKey ) {
-				var prevPanel = mobileMenu.querySelector( '.mobile-nav-panel[data-panel="' + activePanelKey + '"]' );
-				var prevItem  = mobileMenu.querySelector( '.mobile-menu__nav .nav-menu > li.' + activePanelKey );
-				var prevLink  = prevItem ? prevItem.querySelector( ':scope > a' ) : null;
-				if ( prevPanel )  { prevPanel.hidden = true; }
-				if ( prevItem )   { prevItem.classList.remove( 'is-expanded' ); }
-				if ( prevLink )   { prevLink.setAttribute( 'aria-expanded', 'false' ); }
-				activePanelKey = null;
+			// Close the currently open item
+			if ( activeItem && activeItem !== item ) {
+				var prevPanel = activeItem.querySelector( '.mobile-nav-panel' );
+				var prevLink  = activeItem.querySelector( ':scope > a' );
+				if ( prevPanel ) { prevPanel.hidden = true; }
+				if ( prevLink )  { prevLink.setAttribute( 'aria-expanded', 'false' ); }
+				activeItem.classList.remove( 'is-expanded' );
+				activeItem = null;
 			}
 
 			if ( ! isOpen && panel ) {
 				panel.hidden = false;
 				item.classList.add( 'is-expanded' );
 				link.setAttribute( 'aria-expanded', 'true' );
-				activePanelKey = panelKey;
+				activeItem = item;
+			} else if ( isOpen && panel ) {
+				panel.hidden = true;
+				item.classList.remove( 'is-expanded' );
+				link.setAttribute( 'aria-expanded', 'false' );
+				activeItem = null;
 			}
 		} );
 	} );
