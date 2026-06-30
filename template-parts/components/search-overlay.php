@@ -2,7 +2,7 @@
 /**
  * Search overlay — markup only. All results are rendered by JS.
  *
- * Included once in header.php just before </header>.
+ * Included once in header.php after </header> (sibling to mobile menu).
  *
  * @package SelectaTheme
  */

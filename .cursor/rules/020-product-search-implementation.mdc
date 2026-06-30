@@ -25,9 +25,10 @@ Search MUST:
 - Show product image, product line, title, and short benefit in results.
 - Link each result to the single product detail page.
 - Work entirely within WordPress native capabilities.
+- Optionally show `product_score` (stars) and `product_price` in results when those ACF fields are set — same conditional display logic as the product card. These are catalog display fields only, not checkout or cart behaviour.
 
 Search MUST NOT:
-- Return or display price, add-to-cart, stock, discount, or any commerce field.
+- Return or display add-to-cart, stock, discount badges, checkout, or any commerce action.
 - Return posts from any other post type (pages, advice, partners, etc.).
 - Use WooCommerce, Algolia, Upstash, Elasticsearch, SearchWP, Relevanssi, or any search plugin or external service.
 - Use jQuery.
@@ -38,27 +39,30 @@ Search MUST NOT:
 WordPress native only:
 - PHP REST endpoint registered in `inc/search.php`.
 - Search index stored as post meta (`_selecta_search_index`) on each product.
-- Vanilla JS appended to `assets/js/main.js`.
+- Vanilla JS in `assets/js/search.js` (separate module, enqueued after `main.js`).
 - Plain CSS in `assets/css/components/search-overlay.css`.
-- REST URL localized via `wp_localize_script` in `inc/assets.php`.
+- REST URL localized via `wp_localize_script` on `selecta-main` in `inc/assets.php`; read by `search.js` as `window.selectaSearch`.
 
 No search plugin. No external service. No build step.
 
 ## Files involved
 
 ```
-New:
+Implemented:
   inc/search.php
   assets/css/components/search-overlay.css
+  assets/js/search.js
+  assets/svgs/star2.php                          star icon for result rows
   template-parts/components/search-overlay.php
 
 Edit:
   functions.php                                   require inc/search.php
-  inc/assets.php                                  enqueue CSS + localize REST URL
-  assets/js/main.js                               append search module (do not rewrite)
-  template-parts/components/site-header-bar.php  add aria attributes to search button
-  header.php                                      include search-overlay template part
+  inc/assets.php                                  register CSS, enqueue search.js, wp_localize_script
+  template-parts/components/site-header-bar.php  aria attributes on search button
+  header.php                                      include search-overlay after </header>
 ```
+
+Overlay placement: include `search-overlay.php` **outside** `<header>`, as a sibling to `mobile-menu.php`. Do not place it inside `<header>` — the header has mobile `overflow: hidden` which breaks fixed drawer animations.
 
 ## REST endpoint
 
@@ -100,6 +104,8 @@ Return a JSON array. Each element:
   "url": "https://example.com/products/product-slug/",
   "line": "Boucles",
   "benefit": "Хидратира и дефинира",
+  "score": 4.5,
+  "price": "29,90 лв.",
   "image_url": "https://example.com/wp-content/uploads/...",
   "image_alt": "Product title"
 }
@@ -107,9 +113,12 @@ Return a JSON array. Each element:
 
 - `line`: first term name from `selecta_product_line`, or empty string.
 - `benefit`: value of `product_short_benefits` ACF field, first line only (split on newline, take index 0), or empty string.
+- `score`: numeric `product_score` ACF value clamped 0–5, or `null` if unset/non-numeric.
+- `price`: trimmed `product_price` ACF string, or empty string if unset.
 - `image_url` / `image_alt`: from `wp_get_attachment_image_src()` on the featured image at `medium` size. If no featured image, `image_url` is empty string.
+- `title` and `image_alt`: decode HTML entities before output.
 - Return an empty array `[]` when there are no results, never `null` or `false`.
-- Do not include `product_price`, `product_score`, `product_badge`, or any commerce or admin-only field in the response.
+- Do not include stock, cart, checkout, badge, SKU, or any commerce-action field in the response.
 
 ## Search index meta field
 
@@ -155,8 +164,8 @@ The order below is the concatenation order inside the index string. It does NOT 
 
 #### Fields explicitly excluded from the index
 
-- `product_price` — commerce, must never be indexed
-- `product_score` — presentational only
+- `product_price` — not searchable; display-only in results
+- `product_score` — not searchable; display-only in results
 - `product_hover_image` — binary asset reference
 - Any ACF image or file field
 - Post date, post author, slug
@@ -182,6 +191,10 @@ add_action( 'acf/save_post', 'selecta_build_search_index', 20 );
 ```
 Guard inside the function handles the post-type check so the ACF hook is safe to fire broadly.
 
+#### Bulk rebuild for existing products
+
+Products only get indexed on save. After first deploy, run a one-time rebuild for all existing `selecta_product` posts (WP-CLI loop or admin action) so pre-existing products are searchable.
+
 #### Future excerpt support
 
 The CPT currently supports `title`, `thumbnail`, `revisions` only — no `editor`, no `excerpt`.
@@ -190,11 +203,10 @@ No other change is needed.
 
 ## JavaScript behaviour
 
-Add a self-contained search module to `assets/js/main.js`.
-Append after all existing code. Do not rewrite or restructure the existing file.
-Use vanilla JS only. No jQuery, no fetch polyfill (modern browsers only).
+File: `assets/js/search.js` — self-contained IIFE, enqueued as `selecta-search` with dependency on `selecta-main`.
+Use vanilla JS only. No jQuery, no fetch polyfill (modern browsers only). Do not append search logic to `main.js`.
 
-### Constants — read from `window.selectaSearch` (localized)
+### Constants — read from `window.selectaSearch` (localized on `selecta-main`)
 
 ```
 MIN_CHARS    = 3
@@ -204,10 +216,14 @@ REST_URL     = window.selectaSearch.restUrl
 
 ### Overlay open/close
 
-- Search button click: open overlay, set `aria-expanded="true"` on button, remove `hidden` from overlay, focus the search input.
-- Close button click: close overlay, set `aria-expanded="false"` on button, add `hidden` to overlay, return focus to search button.
-- `Escape` key while overlay is open: same as close button.
-- Click on the backdrop (outside overlay content): close overlay.
+Visibility is controlled by CSS classes, not the HTML `hidden` attribute. Same pattern as `mobile-menu`.
+
+- Closed default: no `is-open` / `is-closing` classes; root has `aria-hidden="true"`.
+- Search button click: add `is-open`, remove `is-closing`, set `aria-hidden="false"`, set `aria-expanded="true"` on button, lock body scroll, focus search input.
+- Close button / Escape / backdrop click: remove `is-open`, add `is-closing`, set `aria-expanded="false"`, unlock body scroll.
+- **Desktop (≥1025px):** remove `is-closing` immediately, set `aria-hidden="true"`, return focus to search button.
+- **Mobile (≤1024px):** wait for `animationend` on `.search-overlay__panel`, then remove `is-closing`, set `aria-hidden="true"`, return focus to search button.
+- Closing does not clear the input or results (state is preserved between opens).
 
 ### Input handling
 
@@ -228,55 +244,72 @@ REST_URL     = window.selectaSearch.restUrl
 
 - Clear the results `<ul>` before rendering.
 - Max 10 items (server enforces this; JS renders whatever the server returns, up to 10).
+- Show result count in `#search-count` when results exist.
 - Each result: `<li>` containing `<a href="{url}">` with:
   - Image `<img>` or placeholder `<span>` if no image.
-  - Line label `<span>` — hidden if empty.
+  - Line label `<span>` — omitted if empty.
   - Title `<span>`.
-  - Benefit `<span>` — hidden if empty.
+  - Benefit `<span>` — omitted if empty.
+  - Stars row — only if `score` is a valid number (uses `#selecta-search-star-template` markup from PHP).
+  - Price `<span>` — only if `price` is non-empty.
+  - Hover arrow (desktop only, hidden on mobile).
 - Clicking a result closes the overlay.
-- No price. No rating. No add-to-cart. No badge in results.
-- Never use `innerHTML` to render any value that comes from the REST API response (title, line, benefit, URL, image alt, etc.). These values originate from user-entered WordPress content and are an XSS vector if injected via `innerHTML`. Use `textContent` to set text values. Use `setAttribute` or direct property assignment for `href`, `src`, `alt`. Create elements with `document.createElement()` and build the result node programmatically.
+- No add-to-cart. No badge in results.
+- Never use `innerHTML` to render any value that comes from the REST API response (title, line, benefit, URL, image alt, price, etc.). Use `textContent` for text. Use `setAttribute` or direct property assignment for `href`, `src`, `alt`. Create elements with `document.createElement()`. Star SVG markup from the hardcoded PHP `<template>` is the only allowed `insertAdjacentHTML` source.
 
 ### ARIA
 
 - `aria-expanded` on the search button reflects open/closed state.
-- `aria-busy="true"` on the results container while a fetch is pending.
+- `aria-hidden` on `#search-overlay` toggled by JS: `true` when closed, `false` when open.
+- `aria-busy="true"` on `#search-results` while a fetch is pending.
 - `aria-busy` removed when fetch completes (success or error).
-- Overlay has `role="dialog"`, `aria-modal="true"`, `aria-label` pointing to the overlay heading or a descriptive label.
+- Overlay has `role="dialog"`, `aria-modal="true"`, `aria-label`.
 
 ### Focus trap
 
 - While the overlay is open, Tab and Shift+Tab must cycle between: search input, result links, close button.
 - Focus must not escape to the page behind the overlay.
 
+## Mobile drawer animation
+
+Below `64rem` (1024px), the search overlay uses the same open/close animation pattern as `mobile-menu`:
+
+- Root: `display: block; position: fixed; inset: 0; pointer-events: none` — visible in DOM always, not hidden via `[hidden]`.
+- `is-open` / `is-closing`: `pointer-events: auto`.
+- Backdrop: fade in/out keyframes (`searchOverlayFadeIn` / `searchOverlayFadeOut`).
+- Panel (`.search-overlay__panel`): `position: absolute; bottom: 0; left: 0; right: 0; transform: translateY(100%)` — slide up/down keyframes (`searchDrawerSlideIn` / `searchDrawerSlideOut`).
+- Do not use `prefers-reduced-motion` overrides that disable drawer animations unless the mobile menu also gets them — keep both drawers consistent.
+
 ## PHP template: search-overlay.php
 
 File: `template-parts/components/search-overlay.php`
 
-Include once in `header.php`, just before `</header>`.
+Include once in `header.php` after `</header>`, before `mobile-menu.php`.
 
 Required elements:
-- Outer: `<div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-label="..." hidden>`
+- Outer: `<div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-label="..." aria-hidden="true">` — no `hidden` attribute.
+- Backdrop: `.search-overlay__backdrop`
+- Panel: `.search-overlay__panel` with `.search-overlay__drawer-top` (mobile white strip), header bar, body
 - Search input: `type="search"`, `id="search-input"`, `autocomplete="off"`, `spellcheck="false"`
-- Close button: `type="button"`, keyboard accessible, focusable
-- Results list: `<ul id="search-results" class="search-overlay__results" aria-live="polite" aria-atomic="false">`. Do not use `role="listbox"` — a proper listbox requires the full ARIA combobox pattern (arrow-key navigation, `aria-selected`, `aria-activedescendant`). Without those, the role is incorrect and misleading to screen readers. A plain list of links with `aria-live` is the right pattern.
+- Close button: `type="button"`, `id="search-close"`, keyboard accessible
+- Results count: `<p id="search-count" class="search-overlay__count" hidden>`
+- Results list: `<ul id="search-results" class="search-overlay__results" aria-live="polite" aria-atomic="false">`. Do not use `role="listbox"`.
 - Loading state: `<p id="search-loading" class="search-overlay__loading" hidden>`
 - Empty state: `<p id="search-no-results" class="search-overlay__empty" hidden>`
+- Star template: `<template id="selecta-search-star-template">` with `selecta_get_svg( 'star2' )`
 
 No product data is hard-coded in this template. All results are rendered by JS.
 
 ## Search button in site-header-bar.php
 
 The existing button has class `site-header__action--search`.
-Add these two attributes:
+Required attributes:
 - `aria-expanded="false"`
 - `aria-controls="search-overlay"`
 
-Do not change anything else in that file.
+## wp_localize_script and enqueue in assets.php
 
-## wp_localize_script in assets.php
-
-Add inside `selecta_enqueue_assets()` after the main script is enqueued:
+`selectaSearch` is localized on `selecta-main` (available before `selecta-search` loads):
 
 ```php
 wp_localize_script(
@@ -288,47 +321,43 @@ wp_localize_script(
         'debounceMs' => 250,
     )
 );
+
+wp_enqueue_script(
+    'selecta-search',
+    $search_js_uri,
+    array( 'selecta-main' ),
+    filemtime( $search_js_path ),
+    true
+);
 ```
 
-## Implementation order
+CSS handle `selecta-search-overlay` is registered in `selecta_register_component_styles()` and enqueued from `search-overlay.php` via `wp_enqueue_style( 'selecta-search-overlay' )`.
 
-Work one task at a time. Stop and report after each.
+## Implementation status
+
+All steps below are implemented. Use this list when modifying search — do not re-scaffold from scratch.
 
 ```
-Step 1  inc/search.php — REST endpoint registration + index builder (no UI)
-Step 1b TEST the endpoint directly in a browser or REST client before writing any UI.
-        Confirm all five cases before continuing to Step 2:
+Step 1   inc/search.php — REST endpoint + index builder
+Step 1b  Endpoint test cases (manual verification)
+Step 2   Bulk index rebuild for existing products (one-time, on deploy)
+Step 3   template-parts/components/search-overlay.php
+Step 4   site-header-bar.php aria attrs; header.php include (outside header)
+Step 5   assets/css/components/search-overlay.css
+Step 6   assets/js/search.js
+Step 7   inc/assets.php — CSS register + search.js enqueue + wp_localize_script
+Step 8   Keyboard/accessibility — focus trap, Escape, aria-expanded, aria-hidden
+Step 9   Mobile drawer — slide-up panel + backdrop fade (matches mobile-menu pattern)
+```
 
-        Case 1 — short query:
-          GET /wp-json/selecta/v1/search?q=ко
-          Expected: []
+### Endpoint test cases (Step 1b)
 
-        Case 2 — valid product term (use a real term or title from the local install):
-          GET /wp-json/selecta/v1/search?q=шампоан
-          Expected: array of up to 10 products, all selecta_product post type
-
-        Case 3 — title match deduplication:
-          Search for a word that exists in both a product title and the index.
-          Expected: that product appears exactly once in the response.
-
-        Case 4 — non-product content:
-          Search for a word that exists only in a page, post, or advice entry.
-          Expected: []
-
-        Case 5 — response shape:
-          Inspect any returned item.
-          Expected: no price, stock, rating, cart, badge, or any commerce field present.
-
-        Do not proceed to Step 2 until all five cases pass.
-
-Step 2  Rebuild index for any existing products (WP-CLI or a one-time admin action)
-Step 3  template-parts/components/search-overlay.php — markup only, no JS wired yet
-Step 4  site-header-bar.php — add aria attributes; header.php — include template part
-Step 5  assets/css/components/search-overlay.css — styles
-Step 6  assets/js/main.js — append search JS module
-Step 7  inc/assets.php — enqueue CSS + wp_localize_script
-Step 8  Keyboard/accessibility pass
-Step 9  Mobile responsive pass (later task, not in scope for initial build)
+```
+Case 1 — short query:           GET .../search?q=ко           → []
+Case 2 — valid product term:    GET .../search?q=шампоан      → up to 10 selecta_product items
+Case 3 — title deduplication:   product matching title+index  → appears once
+Case 4 — non-product content:   word only in page/advice      → []
+Case 5 — response shape:        no stock, cart, checkout fields; score/price optional display fields OK
 ```
 
 ## Quality checklist before finishing any search task
@@ -337,17 +366,21 @@ Step 9  Mobile responsive pass (later task, not in scope for initial build)
 - Query sanitized with `sanitize_text_field()`.
 - Minimum 3 characters enforced server-side — short queries return `[]` immediately.
 - Maximum 10 results enforced server-side.
-- Response contains no price, stock, cart, rating, or commerce field.
+- Response contains no stock, cart, checkout, or commerce-action field.
+- `score` and `price` are optional catalog display fields only — omit from UI when empty/null.
 - Index builder guards against autosave, revisions, wrong post type, and trashed posts.
 - `wp_reset_postdata()` called after any custom `WP_Query`.
 - `_selecta_search_index` stored with `sanitize_textarea_field()`.
-- Overlay has `role="dialog"`, `aria-modal="true"`, `hidden` when closed.
+- Overlay has `role="dialog"`, `aria-modal="true"`, `aria-hidden="true"` when closed.
+- Open/close uses `is-open` / `is-closing` classes — not the HTML `hidden` attribute.
 - Search button `aria-expanded` is toggled correctly by JS.
 - Escape key closes overlay and returns focus to the search button.
 - Focus is trapped inside the overlay while open.
 - REST URL comes from `window.selectaSearch.restUrl` — never hardcoded.
-- JS is appended to the existing `main.js` without rewriting the file.
-- CSS is a new component file, not added to `main.css`.
+- Search JS lives in `assets/js/search.js` — do not append to `main.js`.
+- CSS is in `assets/css/components/search-overlay.css`, not `main.css`.
+- Overlay is outside `<header>`, sibling to mobile menu.
+- Mobile drawer animation matches mobile-menu pattern (absolute panel, keyframes, animationend on close).
 - No jQuery used anywhere in the search feature.
 - No search plugin installed.
 - No external search service used.
