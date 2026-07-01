@@ -203,6 +203,7 @@
 
 	.product-hero-info__title-group {
 		order: 1;
+		width: 100%;
 		align-items: center;
 		gap: 0;
 		padding-bottom: 16px;
@@ -212,6 +213,8 @@
 	.product-hero-info__line {
 		font-size: 1.25rem;
 		line-height: 1.4;
+		text-align: center;
+		width: 100%;
 	}
 
 	.product-hero-info__name {
@@ -220,6 +223,8 @@
 		line-height: 1.4;
 		color: #4c4d4f;
 		text-transform: capitalize;
+		text-align: center;
+		width: 100%;
 	}
 
 	.product-hero-info__benefits {

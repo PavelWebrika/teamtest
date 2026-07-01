@@ -197,6 +197,7 @@
 	.product-hero-section__inner {
 		display: flex;
 		flex-direction: column;
+		align-items: stretch;
 	}
 
 	.product-gallery {
