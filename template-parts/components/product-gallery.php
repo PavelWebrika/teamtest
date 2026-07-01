@@ -31,7 +31,7 @@ $product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 ?>
 
 <section class="product-hero-section">
-	<div class="container product-hero-section__inner">
+	<div class="product-hero-section__inner">
 
 		<?php if ( ! empty( $gallery_ids ) ) : ?>
 		<div class="product-gallery">
