@@ -39,9 +39,9 @@ if ( empty( $gallery_ids ) ) {
 
 			<div class="product-gallery__thumbs-col">
 				<button type="button" class="product-gallery__thumbs-nav product-gallery__thumbs-nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'selecta-theme' ); ?>">
-					<svg class="product-gallery__thumbs-nav-icon" width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M14.1836 7.34871C13.8814 7.67105 13.3751 7.68737 13.0528 7.38519L7.19998 1.89814L1.34718 7.38519C1.02478 7.68737 0.518535 7.67105 0.216294 7.34871C-0.085785 7.02638 -0.0694648 6.52011 0.252775 6.21793L6.65282 0.21788C6.96055 -0.0705999 7.4394 -0.0705999 7.74713 0.21788L14.1471 6.21793C14.4695 6.5201 14.4858 7.02638 14.1836 7.34871Z" fill="#4C4D4F"/>
-					</svg>
+					<span class="product-gallery__thumbs-nav-icon">
+						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+					</span>
 				</button>
 
 				<div class="swiper product-gallery-thumbs">
@@ -64,9 +64,9 @@ if ( empty( $gallery_ids ) ) {
 				</div>
 
 				<button type="button" class="product-gallery__thumbs-nav product-gallery__thumbs-nav--next" aria-label="<?php esc_attr_e( 'Next image', 'selecta-theme' ); ?>">
-					<svg class="product-gallery__thumbs-nav-icon" width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M14.1836 7.34871C13.8814 7.67105 13.3751 7.68737 13.0528 7.38519L7.19998 1.89814L1.34718 7.38519C1.02478 7.68737 0.518535 7.67105 0.216294 7.34871C-0.085785 7.02638 -0.0694648 6.52011 0.252775 6.21793L6.65282 0.21788C6.96055 -0.0705999 7.4394 -0.0705999 7.74713 0.21788L14.1471 6.21793C14.4695 6.5201 14.4858 7.02638 14.1836 7.34871Z" fill="#4C4D4F"/>
-					</svg>
+					<span class="product-gallery__thumbs-nav-icon">
+						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+					</span>
 				</button>
 			</div>
 
