@@ -84,6 +84,27 @@ function selecta_register_swiper_assets() {
 		$version,
 		true
 	);
+
+	$swiper_inits = array(
+		'selecta-swiper-image-content'    => 'assets/js/swiper/image-content.js',
+		'selecta-swiper-product-carousel' => 'assets/js/swiper/product-carousel.js',
+	);
+
+	foreach ( $swiper_inits as $handle => $path ) {
+		$init_path = get_template_directory() . '/' . $path;
+
+		if ( ! file_exists( $init_path ) ) {
+			continue;
+		}
+
+		wp_register_script(
+			$handle,
+			get_template_directory_uri() . '/' . $path,
+			array( 'selecta-swiper' ),
+			filemtime( $init_path ),
+			true
+		);
+	}
 }
 
 function selecta_enqueue_swiper_assets() {
@@ -91,6 +112,16 @@ function selecta_enqueue_swiper_assets() {
 
 	wp_enqueue_style( 'selecta-swiper' );
 	wp_enqueue_script( 'selecta-swiper' );
+}
+
+function selecta_enqueue_swiper_image_content() {
+	selecta_enqueue_swiper_assets();
+	wp_enqueue_script( 'selecta-swiper-image-content' );
+}
+
+function selecta_enqueue_swiper_product_carousel() {
+	selecta_enqueue_swiper_assets();
+	wp_enqueue_script( 'selecta-swiper-product-carousel' );
 }
 
 function selecta_enqueue_admin_bar_styles() {
