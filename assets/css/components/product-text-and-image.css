@@ -1,7 +1,7 @@
 /* =========================================================
    Product Text & Image Section
    Two-column with configurable order on desktop.
-   Single column stacked: text then image (mobile).
+   Mobile stack: desktop left → top, desktop right → bottom.
    ========================================================= */
 
 .product-text-and-image {
@@ -12,6 +12,14 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 2rem;
+}
+
+.product-text-and-image--image-left .product-text-and-image__text {
+	order: 2;
+}
+
+.product-text-and-image--image-left .product-text-and-image__image-wrap {
+	order: 1;
 }
 
 .product-text-and-image__heading-wrap {
@@ -76,13 +84,5 @@
 
 	.product-text-and-image__heading {
 		font-size: 2.25rem;
-	}
-
-	.product-text-and-image--image-left .product-text-and-image__text {
-		order: 2;
-	}
-
-	.product-text-and-image--image-left .product-text-and-image__image-wrap {
-		order: 1;
 	}
 }

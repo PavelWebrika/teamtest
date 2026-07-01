@@ -3,7 +3,7 @@
  * Product text and image section.
  *
  * Two-column layout with configurable text/image order on desktop.
- * Single column stacked on mobile (text then image).
+ * Mobile stack mirrors desktop horizontal order: left → top, right → bottom.
  *
  * Reads sub_fields from the active product_sections flexible content row.
  *
