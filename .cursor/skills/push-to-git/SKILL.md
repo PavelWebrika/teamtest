@@ -12,6 +12,21 @@ Run the full publish workflow: stage, commit, push.
 
 Only use this skill when the user explicitly asks to push (or commit and push). Do not push unprompted.
 
+## ⚠️ CRITICAL RULE — DO NOT MODIFY FILES BEFORE COMMITTING
+
+**NEVER edit, create, or delete any file before running the git workflow.**
+
+The user's saved files on disk are the source of truth. When the user says "push to git", they mean: commit and push exactly what is already saved — nothing more, nothing less.
+
+- Do NOT run StrReplace, Write, Delete, or any other file-editing tool before staging.
+- Do NOT "fix" things you notice before committing.
+- Do NOT add your own code changes to the commit.
+- Stage → commit → push what is on disk, as-is.
+
+Violating this rule overwrites the user's work with your own changes without their knowledge. This is unacceptable.
+
+---
+
 ## Autonomous execution (required)
 
 When this skill is active, the user's request **is** their permission. Run the entire workflow yourself — do not delegate steps to the user.
