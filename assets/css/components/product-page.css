@@ -1,0 +1,8 @@
+/* =========================================================
+   Product page layout
+   Max content width 1270px → 325px side inset at 1920px viewport.
+   ========================================================= */
+
+.product-page .container {
+	width: min(100% - 3rem, 79.375rem);
+}

@@ -55,6 +55,10 @@ function selecta_enqueue_assets() {
 	selecta_register_swiper_assets();
 	selecta_register_component_styles();
 	selecta_enqueue_admin_bar_styles();
+
+	if ( is_singular( 'selecta_product' ) ) {
+		wp_enqueue_style( 'selecta-product-page' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'selecta_enqueue_assets' );
 
@@ -154,6 +158,7 @@ function selecta_register_component_styles() {
 		'selecta-product-grid-progress' => 'assets/css/components/product-grid-progress.css',
 		'selecta-product-gallery'       => 'assets/css/components/product-gallery.css',
 		'selecta-product-hero-info'     => 'assets/css/components/product-hero-info.css',
+		'selecta-product-page'          => 'assets/css/components/product-page.css',
 	);
 
 	foreach ( $components as $handle => $path ) {
