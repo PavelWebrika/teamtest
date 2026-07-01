@@ -10,8 +10,8 @@
 
 .product-hero-section__inner {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: 0;
+	grid-template-columns: minmax(0, 361fr) minmax(0, 265fr);
+	gap: 18px;
 	align-items: start;
 }
 
@@ -20,7 +20,7 @@
 	grid-template-columns: 120px minmax(0, 1fr);
 	gap: 16px;
 	width: 100%;
-	aspect-ratio: 740 / 657;
+	aspect-ratio: 722 / 657;
 	max-height: 657px;
 }
 
