@@ -11,7 +11,7 @@
 		return;
 	}
 
-	var desktopMq = window.matchMedia( '(min-width: 1024px)' );
+	var desktopMq = window.matchMedia( '(min-width: 768px)' );
 
 	function updateNavVisibility( section ) {
 		var count     = parseInt( section.getAttribute( 'data-slide-count' ), 10 ) || 0;
@@ -30,7 +30,7 @@
 		updateNavVisibility( section );
 
 		new Swiper( swiperEl, {
-			slidesPerView: 1.25,
+			slidesPerView: 2,
 			spaceBetween: 10,
 			watchOverflow: true,
 			navigation: {
@@ -38,15 +38,7 @@
 				nextEl: section.querySelector( '.product-related__nav--next' ),
 			},
 			breakpoints: {
-				480: {
-					slidesPerView: 2,
-					spaceBetween: 10,
-				},
 				768: {
-					slidesPerView: 3,
-					spaceBetween: 10,
-				},
-				1024: {
 					slidesPerView: 4,
 					spaceBetween: 26,
 				},
