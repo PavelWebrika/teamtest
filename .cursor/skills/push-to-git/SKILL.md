@@ -12,6 +12,26 @@ Run the full publish workflow: stage, commit, push.
 
 Only use this skill when the user explicitly asks to push (or commit and push). Do not push unprompted.
 
+## Autonomous execution (required)
+
+When this skill is active, the user's request **is** their permission. Run the entire workflow yourself — do not delegate steps to the user.
+
+**Do:**
+
+- Execute every git command directly via the Shell tool
+- Run inspect → stage → commit → push → verify in one continuous flow
+- If Auto-review blocks a git command (especially `git push`), immediately retry the **same command** with `request_smart_mode_approval: true` and `smart_mode_block_reason` set to the exact block message — do not stop and ask the user to run it
+- Report the final result after the push completes (or fails)
+
+**Do not:**
+
+- Ask the user to confirm before staging, committing, or pushing
+- Ask the user to click Run, approve, or execute a command manually
+- Pause between steps waiting for user input
+- Suggest the user run git commands in their terminal instead of doing it yourself
+
+The only acceptable stops are: no changes to commit, secrets detected in the diff, or a hard failure (hook error, auth error, non-fast-forward rejection) that cannot be resolved automatically.
+
 ## Safety rules
 
 - NEVER update git config
@@ -98,7 +118,7 @@ If the commit fails due to a pre-commit hook, fix the issue and create a **new**
 
 ### Step 4: Push to origin
 
-Push the **current branch** to origin:
+Push the **current branch** to origin. Run this yourself — never hand off to the user.
 
 ```bash
 git push origin HEAD
@@ -117,6 +137,8 @@ If the branch has no upstream yet:
 ```bash
 git push -u origin HEAD
 ```
+
+If the push command is blocked by Auto-review, retry immediately with smart-mode approval (see **Autonomous execution**). Do not ask the user to approve or run the push manually.
 
 ### Step 5: Verify
 
