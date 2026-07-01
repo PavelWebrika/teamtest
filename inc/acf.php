@@ -184,14 +184,6 @@ function selecta_register_acf_field_groups() {
 					'max'           => 0,
 				),
 				array(
-					'key'          => 'field_pg_subtitle',
-					'label'        => 'Product Subtitle',
-					'name'         => 'product_subtitle',
-					'type'         => 'text',
-					'instructions' => 'Short descriptor shown below the product name. e.g. "DUO COMPLÉMENT ALIMENTAIRE CAPSULES CHEVEUX & ONGLES".',
-					'required'     => 0,
-				),
-				array(
 					'key'          => 'field_pg_tag',
 					'label'        => 'Product Tag',
 					'name'         => 'product_tag',

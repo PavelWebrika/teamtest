@@ -3,11 +3,12 @@
  * Product hero — right column info panel.
  *
  * Reads from:
- *   - get_the_title()         → product name
+ *   - get_the_title()         → product name (display title)
+ *   - selecta_product_line    → product line (purple heading)
  *   - get_sub_field('product_hero_description') → hero description (wysiwyg)
  *   - get_field('product_short_benefits')   → concern/hair-type line (group_product_card_meta)
  *   - get_field('product_score')            → star rating (group_product_card_meta)
- *   - get_sub_field(...)      → subtitle, tag, format, review count, vegan note, variants
+ *   - get_sub_field(...)      → tag, hero description, format, review count, vegan note, variants
  *
  * Called from product-gallery.php while a flexible content row is active.
  *
@@ -16,12 +17,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$product_name       = get_the_title();
-$short_benefits     = function_exists( 'get_field' ) ? (string) get_field( 'product_short_benefits' ) : '';
-$score              = function_exists( 'get_field' ) ? get_field( 'product_score' ) : null;
-$hero_description   = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_hero_description' ) : '';
+$product_name     = get_the_title();
+$short_benefits   = function_exists( 'get_field' ) ? (string) get_field( 'product_short_benefits' ) : '';
+$score            = function_exists( 'get_field' ) ? get_field( 'product_score' ) : null;
+$hero_description = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_hero_description' ) : '';
 
-$subtitle        = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_subtitle' ) : '';
+$post_id      = get_the_ID();
+$line_terms   = $post_id ? wp_get_object_terms( $post_id, 'selecta_product_line', array( 'fields' => 'names' ) ) : array();
+$product_line = ( ! is_wp_error( $line_terms ) && ! empty( $line_terms ) ) ? $line_terms[0] : '';
+
 $tag             = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_tag' ) : '';
 $format          = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_format' ) : '';
 $review_count    = function_exists( 'get_sub_field' ) ? get_sub_field( 'product_review_count' ) : null;
@@ -40,12 +44,12 @@ $has_variants    = ! empty( $variants ) && is_array( $variants );
 
 	<div class="product-hero-info__title-group">
 
-		<?php if ( $product_name ) : ?>
-			<h1 class="product-hero-info__name"><?php echo esc_html( $product_name ); ?></h1>
+		<?php if ( $product_line ) : ?>
+			<p class="product-hero-info__line"><?php echo esc_html( $product_line ); ?></p>
 		<?php endif; ?>
 
-		<?php if ( $subtitle ) : ?>
-			<p class="product-hero-info__subtitle"><?php echo esc_html( $subtitle ); ?></p>
+		<?php if ( $product_name ) : ?>
+			<h1 class="product-hero-info__name"><?php echo esc_html( $product_name ); ?></h1>
 		<?php endif; ?>
 
 	</div>
