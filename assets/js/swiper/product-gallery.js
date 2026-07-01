@@ -24,6 +24,10 @@
 		spaceBetween:        8,
 		watchSlidesProgress: true,
 		loop:                false,
+		navigation:          {
+			prevEl: gallery.querySelector( '.product-gallery__thumbs-nav--prev' ),
+			nextEl: gallery.querySelector( '.product-gallery__thumbs-nav--next' ),
+		},
 	} );
 
 	new Swiper( mainEl, {

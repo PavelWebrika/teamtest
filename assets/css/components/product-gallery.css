@@ -26,12 +26,52 @@
 /* ---- Thumb column ---- */
 
 .product-gallery__thumbs-col {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	height: 100%;
 	overflow: hidden;
 }
 
+.product-gallery__thumbs-nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 120px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	color: #4c4d4f;
+}
+
+.product-gallery__thumbs-nav:focus-visible {
+	outline: 2px solid var(--color-text);
+	outline-offset: 2px;
+}
+
+.product-gallery__thumbs-nav.swiper-button-disabled {
+	opacity: 0.35;
+	cursor: default;
+	pointer-events: none;
+}
+
+.product-gallery__thumbs-nav-icon {
+	display: block;
+	width: 15px;
+	height: 8px;
+}
+
+.product-gallery__thumbs-nav--next .product-gallery__thumbs-nav-icon {
+	transform: rotate(180deg);
+}
+
 .product-gallery-thumbs {
-	height: 100%;
+	flex: 1;
+	min-height: 0;
+	width: 120px;
 }
 
 .product-gallery-thumbs .swiper-slide {
