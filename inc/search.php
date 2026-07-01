@@ -99,11 +99,12 @@ function selecta_build_search_index( $post_id ) {
 			$parts[] = wp_strip_all_tags( $badge );
 		}
 
-		// 8. Product description layout body_text from product_sections repeater/flexible.
+		// 8. Product text & image layout body_text from product_sections flexible content.
 		if ( function_exists( 'have_rows' ) && have_rows( 'product_sections', $post_id ) ) {
 			while ( have_rows( 'product_sections', $post_id ) ) {
 				the_row();
-				if ( get_row_layout() === 'product_description' ) {
+				$layout = get_row_layout();
+				if ( 'product_text_and_image' === $layout ) {
 					$body_text = get_sub_field( 'body_text' );
 					if ( $body_text && is_string( $body_text ) ) {
 						$parts[] = wp_strip_all_tags( $body_text );

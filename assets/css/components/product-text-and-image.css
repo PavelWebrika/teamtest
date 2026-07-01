@@ -1,21 +1,20 @@
 /* =========================================================
-   Product Description Section
-   Two-column: text left + image right (desktop).
+   Product Text & Image Section
+   Two-column with configurable order on desktop.
    Single column stacked: text then image (mobile).
    ========================================================= */
 
-.product-description {
+.product-text-and-image {
 	padding-block: 3rem;
 }
 
-.product-description__inner {
+.product-text-and-image__inner {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 2rem;
 }
 
-/* Heading with decorative underline bar */
-.product-description__heading-wrap {
+.product-text-and-image__heading-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -23,15 +22,15 @@
 	margin-bottom: 1rem;
 }
 
-.product-description__heading {
+.product-text-and-image__heading {
 	margin: 0;
-	font-size: 1.5rem; /* 24px mobile */
+	font-size: 1.5rem;
 	font-weight: 900;
 	line-height: 1.22;
 	color: #4c4d4f;
 }
 
-.product-description__heading-bar {
+.product-text-and-image__heading-bar {
 	display: block;
 	width: 70px;
 	height: 5px;
@@ -39,46 +38,51 @@
 	flex-shrink: 0;
 }
 
-/* Body text */
-.product-description__body {
+.product-text-and-image__body {
 	color: #4c4d4f;
 	font-size: 1rem;
 	line-height: 1.5;
 }
 
-.product-description__body p {
+.product-text-and-image__body p {
 	margin-block: 0 0.5em;
 }
 
-.product-description__body p:last-child {
+.product-text-and-image__body p:last-child {
 	margin-bottom: 0;
 }
 
-.product-description__body strong,
-.product-description__body b {
+.product-text-and-image__body strong,
+.product-text-and-image__body b {
 	font-weight: 900;
 }
 
-/* Image */
-.product-description__image-wrap {
+.product-text-and-image__image-wrap {
 	width: 100%;
 }
 
-.product-description__image {
+.product-text-and-image__image {
 	display: block;
 	width: 100%;
 	height: auto;
 }
 
-/* Desktop: two-column side by side */
 @media (min-width: 768px) {
-	.product-description__inner {
+	.product-text-and-image__inner {
 		grid-template-columns: 1fr 1fr;
 		gap: 2rem;
 		align-items: center;
 	}
 
-	.product-description__heading {
-		font-size: 2.25rem; /* 36px */
+	.product-text-and-image__heading {
+		font-size: 2.25rem;
+	}
+
+	.product-text-and-image--image-left .product-text-and-image__text {
+		order: 2;
+	}
+
+	.product-text-and-image--image-left .product-text-and-image__image-wrap {
+		order: 1;
 	}
 }

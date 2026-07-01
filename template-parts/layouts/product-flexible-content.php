@@ -28,8 +28,8 @@ while ( have_rows( 'product_sections' ) ) :
 
 	switch ( $layout ) {
 
-		case 'product_description':
-			get_template_part( 'template-parts/components/product-description' );
+		case 'product_text_and_image':
+			get_template_part( 'template-parts/components/product-text-and-image' );
 			break;
 
 		default:

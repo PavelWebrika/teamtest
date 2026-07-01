@@ -147,7 +147,7 @@ function selecta_register_component_styles() {
 		'selecta-search-overlay'        => 'assets/css/components/search-overlay.css',
 		'selecta-hero-banner'           => 'assets/css/components/hero-banner.css',
 		'selecta-text-block'            => 'assets/css/components/text-block.css',
-		'selecta-product-description'   => 'assets/css/components/product-description.css',
+		'selecta-product-text-and-image' => 'assets/css/components/product-text-and-image.css',
 		'selecta-product-card'          => 'assets/css/components/product-card.css',
 		'selecta-category-banner'       => 'assets/css/components/category-banner.css',
 		'selecta-category-intro'        => 'assets/css/components/category-intro.css',
