@@ -114,26 +114,6 @@
 	overflow: hidden;
 }
 
-.product-gallery__badge {
-	position: absolute;
-	top: 12px;
-	left: 16px;
-	z-index: 2;
-	display: inline-flex;
-	align-items: center;
-	padding: 5px 13px;
-	border: 1px solid #4c4d4f;
-	border-radius: 4px;
-	background: #fff;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 1.07;
-	text-transform: uppercase;
-	color: #4c4d4f;
-	white-space: nowrap;
-	pointer-events: none;
-}
-
 .product-gallery__main-nav {
 	display: none;
 	position: absolute;

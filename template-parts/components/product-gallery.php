@@ -26,8 +26,6 @@ if ( empty( $gallery_ids ) ) {
 		$gallery_ids = array( $featured_id );
 	}
 }
-
-$product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 ?>
 
 <section class="product-hero-section">
@@ -70,10 +68,6 @@ $product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 			</div>
 
 			<div class="product-gallery__main-col">
-				<?php if ( $product_badge ) : ?>
-					<span class="product-gallery__badge"><?php echo esc_html( $product_badge ); ?></span>
-				<?php endif; ?>
-
 				<button type="button" class="product-gallery__main-nav product-gallery__main-nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'selecta-theme' ); ?>">
 					<span class="product-gallery__main-nav-icon">
 						<?php echo selecta_get_svg( 'chevron-left' ); ?>
