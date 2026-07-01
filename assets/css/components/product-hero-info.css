@@ -35,7 +35,7 @@
 	font-size: 1.5rem;
 	font-weight: 900;
 	line-height: 1.2;
-	color: #793871;
+	color: var(--product-line-color, #4c4d4f);
 	text-transform: uppercase;
 }
 
@@ -53,11 +53,11 @@
 .product-hero-info__tag {
 	display: inline-block;
 	padding: 9px 13px;
-	border: 1px solid #793871;
+	border: 1px solid var(--product-line-color, #4c4d4f);
 	font-size: 0.875rem;
 	font-weight: 700;
 	line-height: 1.2;
-	color: #793871;
+	color: var(--product-line-color, #4c4d4f);
 	align-self: flex-start;
 }
 

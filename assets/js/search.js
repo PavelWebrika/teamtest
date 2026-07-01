@@ -307,6 +307,9 @@
 				var lineEl = document.createElement( 'span' );
 				lineEl.className = 'search-overlay__result-line';
 				lineEl.textContent = item.line;
+				if ( item.line_color ) {
+					lineEl.style.setProperty( '--product-line-color', item.line_color );
+				}
 				body.appendChild( lineEl );
 			}
 

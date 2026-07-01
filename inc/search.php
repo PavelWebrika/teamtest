@@ -228,9 +228,11 @@ function selecta_search_endpoint_callback( WP_REST_Request $request ) {
 
 		// Product line: first term from selecta_product_line.
 		$line       = '';
+		$line_color = '';
 		$line_terms = get_the_terms( $post_id, 'selecta_product_line' );
 		if ( $line_terms && ! is_wp_error( $line_terms ) ) {
-			$line = $line_terms[0]->name;
+			$line       = $line_terms[0]->name;
+			$line_color = selecta_get_product_line_color( $line_terms[0] );
 		}
 
 		// Short benefit: first line of product_short_benefits ACF field.
@@ -272,11 +274,12 @@ function selecta_search_endpoint_callback( WP_REST_Request $request ) {
 		}
 
 		$results[] = array(
-			'id'        => $post_id,
-			'title'     => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
-			'url'       => get_permalink( $post_id ),
-			'line'      => $line,
-			'benefit'   => $benefit,
+			'id'         => $post_id,
+			'title'      => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+			'url'        => get_permalink( $post_id ),
+			'line'       => $line,
+			'line_color' => $line_color,
+			'benefit'    => $benefit,
 			'score'     => $score,
 			'price'     => $price,
 			'image_url' => $image_url,

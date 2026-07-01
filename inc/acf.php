@@ -681,6 +681,35 @@ function selecta_register_acf_field_groups() {
 		'style'           => 'default',
 		'label_placement' => 'top',
 	) );
+
+	acf_add_local_field_group( array(
+		'key'    => 'group_product_line_settings',
+		'title'  => 'Product Line Settings',
+		'fields' => array(
+			array(
+				'key'           => 'field_product_line_color',
+				'label'         => 'Line Color',
+				'name'          => 'product_line_color',
+				'type'          => 'color_picker',
+				'instructions'  => 'Hex color applied to the product line name on cards, search results, and the product hero (including the tag box).',
+				'required'      => 0,
+				'default_value' => '',
+			),
+		),
+		'location' => array(
+			array(
+				array(
+					'param'    => 'taxonomy',
+					'operator' => '==',
+					'value'    => 'selecta_product_line',
+				),
+			),
+		),
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'style'           => 'default',
+		'label_placement' => 'top',
+	) );
 }
 
 add_filter( 'acf/validate_value/key=field_nav_panel_key', 'selecta_validate_nav_panel_key', 10, 4 );

@@ -258,7 +258,7 @@
 	line-height: 1.5;
 	letter-spacing: 0.24em;
 	text-transform: uppercase;
-	color: #1a2340;
+	color: var(--product-line-color, #4c4d4f);
 	overflow-wrap: break-word;
 }
 

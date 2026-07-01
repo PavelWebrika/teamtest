@@ -23,8 +23,8 @@ $score            = function_exists( 'get_field' ) ? get_field( 'product_score' 
 $hero_description = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_hero_description' ) : '';
 
 $post_id      = get_the_ID();
-$line_terms   = $post_id ? wp_get_object_terms( $post_id, 'selecta_product_line', array( 'fields' => 'names' ) ) : array();
-$product_line = ( ! is_wp_error( $line_terms ) && ! empty( $line_terms ) ) ? $line_terms[0] : '';
+$line_term    = selecta_get_product_line_term( $post_id );
+$product_line = $line_term ? $line_term->name : '';
 
 $tag             = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_tag' ) : '';
 $format          = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_format' ) : '';
@@ -36,7 +36,7 @@ $has_rating      = is_numeric( $score ) && $score > 0;
 $has_variants    = ! empty( $variants ) && is_array( $variants );
 ?>
 
-<div class="product-hero-info">
+<div class="product-hero-info"<?php echo selecta_product_line_color_style( $line_term ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in helper ?>>
 
 	<?php if ( $short_benefits ) : ?>
 		<p class="product-hero-info__benefits"><?php echo esc_html( $short_benefits ); ?></p>

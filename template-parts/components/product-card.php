@@ -38,8 +38,8 @@ $price       = selecta_get_field( 'product_price', $post_id );
 
 $score       = ( '' !== $score_raw && is_numeric( $score_raw ) ) ? (float) $score_raw : null;
 
-$lines       = wp_get_object_terms( $post_id, 'selecta_product_line', array( 'fields' => 'names' ) );
-$product_line = ( ! is_wp_error( $lines ) && ! empty( $lines ) ) ? $lines[0] : '';
+$line_term    = selecta_get_product_line_term( $post_id );
+$product_line = $line_term ? $line_term->name : '';
 $hover_image_id = (int) selecta_get_field( 'product_hover_image', $post_id );
 
 $card_classes = array( 'product-card' );
@@ -49,7 +49,7 @@ if ( $hover_image_id ) {
 }
 ?>
 
-<article class="<?php echo esc_attr( implode( ' ', $card_classes ) ); ?>">
+<article class="<?php echo esc_attr( implode( ' ', $card_classes ) ); ?>"<?php echo selecta_product_line_color_style( $line_term ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in helper ?>>
 
 	<a class="product-card__image-link" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
 		<div class="product-card__image-wrap">
