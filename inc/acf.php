@@ -200,6 +200,17 @@ function selecta_register_acf_field_groups() {
 					'required'     => 0,
 				),
 				array(
+					'key'          => 'field_pg_hero_description',
+					'label'        => 'Hero Description',
+					'name'         => 'product_hero_description',
+					'type'         => 'wysiwyg',
+					'instructions' => 'Main product description. Use bold for emphasis. Shown below the tag.',
+					'required'     => 0,
+					'tabs'         => 'all',
+					'toolbar'      => 'basic',
+					'media_upload' => 0,
+				),
+				array(
 					'key'          => 'field_pg_format',
 					'label'        => 'Format / Size',
 					'name'         => 'product_format',

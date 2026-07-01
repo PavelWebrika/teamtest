@@ -4,7 +4,7 @@
  *
  * Reads from:
  *   - get_the_title()         → product name
- *   - get_the_excerpt()       → short description
+ *   - get_sub_field('product_hero_description') → hero description (wysiwyg)
  *   - get_field('product_short_benefits')   → concern/hair-type line (group_product_card_meta)
  *   - get_field('product_score')            → star rating (group_product_card_meta)
  *   - get_sub_field(...)      → subtitle, tag, format, review count, vegan note, variants
@@ -16,10 +16,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$product_name    = get_the_title();
-$short_benefits  = function_exists( 'get_field' ) ? (string) get_field( 'product_short_benefits' ) : '';
-$score           = function_exists( 'get_field' ) ? get_field( 'product_score' ) : null;
-$excerpt         = get_the_excerpt();
+$product_name       = get_the_title();
+$short_benefits     = function_exists( 'get_field' ) ? (string) get_field( 'product_short_benefits' ) : '';
+$score              = function_exists( 'get_field' ) ? get_field( 'product_score' ) : null;
+$hero_description   = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_hero_description' ) : '';
 
 $subtitle        = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_subtitle' ) : '';
 $tag             = function_exists( 'get_sub_field' ) ? (string) get_sub_field( 'product_tag' ) : '';
@@ -54,9 +54,9 @@ $has_variants    = ! empty( $variants ) && is_array( $variants );
 		<span class="product-hero-info__tag"><?php echo esc_html( $tag ); ?></span>
 	<?php endif; ?>
 
-	<?php if ( $excerpt ) : ?>
+	<?php if ( $hero_description ) : ?>
 		<div class="product-hero-info__description">
-			<?php echo wp_kses_post( wpautop( $excerpt ) ); ?>
+			<?php echo wp_kses_post( $hero_description ); ?>
 		</div>
 	<?php endif; ?>
 
