@@ -1,17 +1,18 @@
 /* =========================================================
-   Product Gallery — dual synced sliders
-   Vertical thumbnail strip (left) + main image (right).
+   Product Hero — gallery (left) + info (right)
    Desktop layout only; mobile handled in a later task.
-   Design: 740 × 657 px total gallery area.
+   Design: 740 × 657 px for the gallery area.
    ========================================================= */
 
-.product-gallery-section {
+.product-hero-section {
 	padding-block: var(--space-5);
 }
 
-.product-gallery-section__inner {
-	display: flex;
-	justify-content: flex-start;
+.product-hero-section__inner {
+	display: grid;
+	grid-template-columns: 740px 1fr;
+	gap: 0;
+	align-items: start;
 }
 
 .product-gallery {
@@ -19,7 +20,6 @@
 	grid-template-columns: 120px minmax(0, 1fr);
 	gap: 16px;
 	width: 100%;
-	max-width: 740px;
 	height: 657px;
 }
 

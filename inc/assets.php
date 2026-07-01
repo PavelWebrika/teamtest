@@ -153,6 +153,7 @@ function selecta_register_component_styles() {
 		'selecta-category-intro'        => 'assets/css/components/category-intro.css',
 		'selecta-product-grid-progress' => 'assets/css/components/product-grid-progress.css',
 		'selecta-product-gallery'       => 'assets/css/components/product-gallery.css',
+		'selecta-product-hero-info'     => 'assets/css/components/product-hero-info.css',
 	);
 
 	foreach ( $components as $handle => $path ) {

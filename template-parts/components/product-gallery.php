@@ -1,14 +1,12 @@
 <?php
 /**
- * Product gallery — dual synced sliders.
+ * Product hero — gallery (left) + info (right).
  *
- * Left column: vertical thumbnail Swiper.
- * Right column: main image Swiper.
- * Clicking a thumbnail advances the main slider.
- * Advancing the main slider scrolls the thumbnail strip.
+ * Left column: vertical thumbnail Swiper + main image Swiper (synced).
+ * Right column: product title, subtitle, tag, description, variants.
  *
- * Images come from the product_gallery ACF gallery field.
- * Falls back to the featured image when no gallery is set.
+ * Images come from the gallery_images ACF sub-field.
+ * All other info fields are ACF sub-fields or native WP data.
  *
  * @package SelectaTheme
  */
@@ -16,6 +14,7 @@
 defined( 'ABSPATH' ) || exit;
 
 wp_enqueue_style( 'selecta-product-gallery' );
+wp_enqueue_style( 'selecta-product-hero-info' );
 selecta_enqueue_product_gallery();
 
 $gallery_ids = function_exists( 'get_sub_field' ) ? get_sub_field( 'gallery_images' ) : array();
@@ -27,14 +26,12 @@ if ( empty( $gallery_ids ) ) {
 		$gallery_ids = array( $featured_id );
 	}
 }
-
-if ( empty( $gallery_ids ) ) {
-	return;
-}
 ?>
 
-<section class="product-gallery-section">
-	<div class="container product-gallery-section__inner">
+<section class="product-hero-section">
+	<div class="container product-hero-section__inner">
+
+		<?php if ( ! empty( $gallery_ids ) ) : ?>
 		<div class="product-gallery">
 
 			<div class="product-gallery__thumbs-col">
@@ -92,5 +89,9 @@ if ( empty( $gallery_ids ) ) {
 			</div>
 
 		</div>
+		<?php endif; ?>
+
+		<?php get_template_part( 'template-parts/components/product-hero-info' ); ?>
+
 	</div>
 </section>
