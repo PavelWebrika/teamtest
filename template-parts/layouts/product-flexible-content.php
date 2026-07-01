@@ -36,6 +36,10 @@ while ( have_rows( 'product_sections' ) ) :
 			get_template_part( 'template-parts/components/product-text-and-image' );
 			break;
 
+		case 'product_related':
+			get_template_part( 'template-parts/components/product-related' );
+			break;
+
 		default:
 			break;
 	}

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * ACF configuration and field groups.
  *
@@ -303,6 +303,28 @@ function selecta_register_acf_field_groups() {
 						),
 						'default_value' => 'text_left',
 						'layout'        => 'horizontal',
+					),
+				),
+			),
+			'layout_product_related' => array(
+				'key'        => 'layout_product_related',
+				'name'       => 'product_related',
+				'label'      => 'You May Also Like',
+				'display'    => 'block',
+				'sub_fields' => array(
+					array(
+						'key'           => 'field_product_related',
+						'label'         => 'Suggested Products',
+						'name'          => 'related_products',
+						'type'          => 'relationship',
+						'instructions'  => 'Select up to 6 products to show in this "You May Also Like" row.',
+						'required'      => 0,
+						'post_type'     => array( 'selecta_product' ),
+						'filters'       => array( 'search' ),
+						'elements'      => array( 'featured_image' ),
+						'min'           => 0,
+						'max'           => 6,
+						'return_format' => 'id',
 					),
 				),
 			),
@@ -710,6 +732,15 @@ function selecta_register_acf_field_groups() {
 		'style'           => 'default',
 		'label_placement' => 'top',
 	) );
+}
+
+add_filter( 'acf/fields/relationship/query/key=field_product_related', 'selecta_exclude_self_from_related', 10, 3 );
+function selecta_exclude_self_from_related( $args, $field, $post_id ) {
+	if ( $post_id ) {
+		$args['post__not_in'] = array( (int) $post_id );
+	}
+
+	return $args;
 }
 
 add_filter( 'acf/validate_value/key=field_nav_panel_key', 'selecta_validate_nav_panel_key', 10, 4 );
