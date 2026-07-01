@@ -95,7 +95,6 @@
 
 .product-gallery-thumbs .swiper-slide-thumb-active {
 	opacity: 1;
-	border-color: var(--color-text);
 }
 
 .product-gallery__thumb-img {
@@ -221,6 +220,14 @@
 		display: flex;
 	}
 
+	.product-gallery__main-nav--prev {
+		left: -6px;
+	}
+
+	.product-gallery__main-nav--next {
+		right: -6px;
+	}
+
 	.product-gallery-main {
 		height: 100%;
 		border-radius: 8px;
@@ -281,7 +288,7 @@
 	}
 
 	.product-gallery-thumbs .swiper-slide-thumb-active {
-		border-color: var(--color-text);
+		border-color: transparent;
 	}
 }
 
