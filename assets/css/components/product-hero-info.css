@@ -195,3 +195,69 @@
 	color: #4c4d4f;
 	text-align: center;
 }
+
+@media (max-width: 1023px) {
+	.product-hero-info {
+		display: contents;
+	}
+
+	.product-hero-info__title-group {
+		order: 1;
+		align-items: center;
+		gap: 0;
+		padding-bottom: 16px;
+		text-align: center;
+	}
+
+	.product-hero-info__line {
+		font-size: 1.25rem;
+		line-height: 1.4;
+	}
+
+	.product-hero-info__name {
+		font-size: 1.25rem;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #4c4d4f;
+		text-transform: capitalize;
+	}
+
+	.product-hero-info__benefits {
+		order: 3;
+		font-size: 1rem;
+		font-weight: 900;
+		line-height: 1.5;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	.product-hero-info__tag {
+		order: 4;
+		margin-top: 8px;
+	}
+
+	.product-hero-info__description {
+		order: 5;
+		margin-top: 24px;
+	}
+
+	.product-hero-info__format {
+		order: 6;
+		margin-top: 16px;
+	}
+
+	.product-hero-info__rating {
+		order: 7;
+	}
+
+	.product-hero-info__vegan-note {
+		order: 8;
+		margin-top: 8px;
+	}
+
+	.product-hero-info__variants {
+		order: 9;
+		margin-top: 8px;
+		padding-bottom: 8px;
+	}
+}

@@ -26,6 +26,8 @@ if ( empty( $gallery_ids ) ) {
 		$gallery_ids = array( $featured_id );
 	}
 }
+
+$product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 ?>
 
 <section class="product-hero-section">
@@ -68,6 +70,16 @@ if ( empty( $gallery_ids ) ) {
 			</div>
 
 			<div class="product-gallery__main-col">
+				<?php if ( $product_badge ) : ?>
+					<span class="product-gallery__badge"><?php echo esc_html( $product_badge ); ?></span>
+				<?php endif; ?>
+
+				<button type="button" class="product-gallery__main-nav product-gallery__main-nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'selecta-theme' ); ?>">
+					<span class="product-gallery__main-nav-icon product-gallery__main-nav-icon--prev">
+						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+					</span>
+				</button>
+
 				<div class="swiper product-gallery-main">
 					<div class="swiper-wrapper">
 
@@ -86,6 +98,12 @@ if ( empty( $gallery_ids ) ) {
 
 					</div>
 				</div>
+
+				<button type="button" class="product-gallery__main-nav product-gallery__main-nav--next" aria-label="<?php esc_attr_e( 'Next image', 'selecta-theme' ); ?>">
+					<span class="product-gallery__main-nav-icon product-gallery__main-nav-icon--next">
+						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+					</span>
+				</button>
 			</div>
 
 		</div>
