@@ -77,9 +77,5 @@
 
 	rebuildSwipers();
 
-	if ( typeof mq.addEventListener === 'function' ) {
-		mq.addEventListener( 'change', rebuildSwipers );
-	} else if ( typeof mq.addListener === 'function' ) {
-		mq.addListener( rebuildSwipers );
-	}
+	mq.addEventListener( 'change', rebuildSwipers );
 } )();
