@@ -154,7 +154,6 @@
 
 .product-gallery__main-nav--prev {
 	left: 4px;
-	opacity: 0.5;
 }
 
 .product-gallery__main-nav--next {
@@ -174,22 +173,18 @@
 
 .product-gallery__main-nav-icon {
 	display: block;
-	width: 32px;
-	height: 32px;
+	width: 10px;
+	height: 16px;
 }
 
 .product-gallery__main-nav-icon svg {
 	display: block;
-	width: 100%;
-	height: 100%;
-}
-
-.product-gallery__main-nav-icon--prev {
-	transform: rotate( -90deg );
+	width: 10px;
+	height: 16px;
 }
 
 .product-gallery__main-nav-icon--next {
-	transform: rotate( 90deg );
+	transform: scaleX( -1 );
 }
 
 .product-gallery-main {

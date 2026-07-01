@@ -75,8 +75,8 @@ $product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 				<?php endif; ?>
 
 				<button type="button" class="product-gallery__main-nav product-gallery__main-nav--prev" aria-label="<?php esc_attr_e( 'Previous image', 'selecta-theme' ); ?>">
-					<span class="product-gallery__main-nav-icon product-gallery__main-nav-icon--prev">
-						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+					<span class="product-gallery__main-nav-icon">
+						<?php echo selecta_get_svg( 'chevron-left' ); ?>
 					</span>
 				</button>
 
@@ -101,7 +101,7 @@ $product_badge = selecta_get_field( 'product_badge', get_the_ID() );
 
 				<button type="button" class="product-gallery__main-nav product-gallery__main-nav--next" aria-label="<?php esc_attr_e( 'Next image', 'selecta-theme' ); ?>">
 					<span class="product-gallery__main-nav-icon product-gallery__main-nav-icon--next">
-						<?php echo selecta_get_svg( 'chevron-up' ); ?>
+						<?php echo selecta_get_svg( 'chevron-left' ); ?>
 					</span>
 				</button>
 			</div>
