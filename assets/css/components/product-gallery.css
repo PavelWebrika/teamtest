@@ -2,13 +2,25 @@
    Product Gallery — dual synced sliders
    Vertical thumbnail strip (left) + main image (right).
    Desktop layout only; mobile handled in a later task.
+   Design: 740 × 657 px total gallery area.
    ========================================================= */
+
+.product-gallery-section {
+	padding-block: var(--space-5);
+}
+
+.product-gallery-section__inner {
+	display: flex;
+	justify-content: flex-start;
+}
 
 .product-gallery {
 	display: grid;
-	grid-template-columns: 84px 1fr;
-	gap: 12px;
-	height: 520px;
+	grid-template-columns: 120px minmax(0, 1fr);
+	gap: 16px;
+	width: 100%;
+	max-width: 740px;
+	height: 657px;
 }
 
 /* ---- Thumb column ---- */
@@ -23,8 +35,11 @@
 }
 
 .product-gallery-thumbs .swiper-slide {
+	width: 120px;
+	height: 120px;
 	cursor: pointer;
 	overflow: hidden;
+	border-radius: 8px;
 	opacity: 0.45;
 	transition: opacity 0.2s ease;
 	border: 1px solid transparent;
@@ -46,6 +61,7 @@
 
 .product-gallery__main-col {
 	height: 100%;
+	min-width: 0;
 	overflow: hidden;
 }
 
@@ -58,6 +74,8 @@
 	align-items: center;
 	justify-content: center;
 	background: var(--color-bg);
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .product-gallery__main-img {

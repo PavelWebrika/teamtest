@@ -20,11 +20,10 @@
 
 	var thumbsSwiper = new Swiper( thumbsEl, {
 		direction:           'vertical',
-		slidesPerView:       4,
+		slidesPerView:       'auto',
 		spaceBetween:        8,
 		watchSlidesProgress: true,
 		loop:                false,
-		freeMode:            false,
 	} );
 
 	new Swiper( mainEl, {

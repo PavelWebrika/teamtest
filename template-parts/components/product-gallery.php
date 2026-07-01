@@ -33,50 +33,52 @@ if ( empty( $gallery_ids ) ) {
 }
 ?>
 
-<div class="product-gallery">
-	<div class="product-gallery__thumbs-col">
+<section class="product-gallery-section">
+	<div class="container product-gallery-section__inner">
+		<div class="product-gallery">
 
-		<div class="swiper product-gallery-thumbs">
-			<div class="swiper-wrapper">
+			<div class="product-gallery__thumbs-col">
+				<div class="swiper product-gallery-thumbs">
+					<div class="swiper-wrapper">
 
-				<?php foreach ( $gallery_ids as $image_id ) : ?>
-					<div class="swiper-slide">
-						<?php
-						echo wp_get_attachment_image(
-							(int) $image_id,
-							'thumbnail',
-							false,
-							array( 'class' => 'product-gallery__thumb-img' )
-						);
-						?>
+						<?php foreach ( $gallery_ids as $image_id ) : ?>
+							<div class="swiper-slide">
+								<?php
+								echo wp_get_attachment_image(
+									(int) $image_id,
+									'thumbnail',
+									false,
+									array( 'class' => 'product-gallery__thumb-img' )
+								);
+								?>
+							</div>
+						<?php endforeach; ?>
+
 					</div>
-				<?php endforeach; ?>
-
+				</div>
 			</div>
-		</div>
 
-	</div>
+			<div class="product-gallery__main-col">
+				<div class="swiper product-gallery-main">
+					<div class="swiper-wrapper">
 
-	<div class="product-gallery__main-col">
+						<?php foreach ( $gallery_ids as $image_id ) : ?>
+							<div class="swiper-slide">
+								<?php
+								echo wp_get_attachment_image(
+									(int) $image_id,
+									'large',
+									false,
+									array( 'class' => 'product-gallery__main-img' )
+								);
+								?>
+							</div>
+						<?php endforeach; ?>
 
-		<div class="swiper product-gallery-main">
-			<div class="swiper-wrapper">
-
-				<?php foreach ( $gallery_ids as $image_id ) : ?>
-					<div class="swiper-slide">
-						<?php
-						echo wp_get_attachment_image(
-							(int) $image_id,
-							'large',
-							false,
-							array( 'class' => 'product-gallery__main-img' )
-						);
-						?>
 					</div>
-				<?php endforeach; ?>
-
+				</div>
 			</div>
-		</div>
 
+		</div>
 	</div>
-</div>
+</section>
