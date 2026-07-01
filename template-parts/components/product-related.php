@@ -39,7 +39,7 @@ wp_enqueue_style( 'selecta-product-related' );
 selecta_enqueue_product_related();
 ?>
 
-<section class="product-related">
+<section class="product-related" data-slide-count="<?php echo esc_attr( (string) (int) $related_query->post_count ); ?>">
 	<div class="product-related__inner container">
 		<h2 class="product-related__heading"><?php esc_html_e( 'Може да ви хареса и', 'selecta-theme' ); ?></h2>
 

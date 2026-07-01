@@ -11,12 +11,23 @@
 		return;
 	}
 
+	var desktopMq = window.matchMedia( '(min-width: 1024px)' );
+
+	function updateNavVisibility( section ) {
+		var count     = parseInt( section.getAttribute( 'data-slide-count' ), 10 ) || 0;
+		var threshold = desktopMq.matches ? 4 : 3;
+
+		section.classList.toggle( 'product-related--show-nav', count > threshold );
+	}
+
 	sections.forEach( function ( section ) {
 		var swiperEl = section.querySelector( '.product-related-swiper' );
 
 		if ( ! swiperEl ) {
 			return;
 		}
+
+		updateNavVisibility( section );
 
 		new Swiper( swiperEl, {
 			slidesPerView: 1.25,
@@ -41,5 +52,9 @@
 				},
 			},
 		} );
+	} );
+
+	desktopMq.addEventListener( 'change', function () {
+		sections.forEach( updateNavVisibility );
 	} );
 } )();
