@@ -91,6 +91,7 @@
 
 		mainSwiper = new Swiper( mainEl, {
 			slidesPerView: 1,
+			autoHeight:    ! isMobile,
 			loop:          false,
 			navigation:    isMobile
 				? {
