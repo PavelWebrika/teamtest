@@ -1,0 +1,90 @@
+/* =========================================================
+   Product related — "You may also like" Swiper row
+   ========================================================= */
+
+.product-related {
+	padding-block: clamp(2rem, 5vw, 3rem);
+}
+
+.product-related__heading {
+	margin: 0 0 1.5rem;
+	font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+	font-weight: 700;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: #4c4d4f;
+}
+
+.product-related__controls {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.product-related-swiper {
+	width: 100%;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.product-related-swiper .swiper-slide {
+	height: auto;
+	display: flex;
+}
+
+.product-related-swiper .swiper-slide .product-card {
+	width: 100%;
+	height: 100%;
+}
+
+.product-related__nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #4c4d4f;
+	cursor: pointer;
+}
+
+.product-related__nav:focus-visible {
+	outline: 2px solid var(--color-text);
+	outline-offset: 2px;
+}
+
+.product-related__nav.swiper-button-disabled {
+	opacity: 0.35;
+	cursor: default;
+	pointer-events: none;
+}
+
+.product-related__nav-icon {
+	display: block;
+	width: 15px;
+	height: 15px;
+}
+
+.product-related__nav-icon svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.product-related__nav-icon--next {
+	transform: rotate(180deg);
+}
+
+@media (max-width: 639px) {
+	.product-related__controls {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.product-related__nav {
+		display: none;
+	}
+}

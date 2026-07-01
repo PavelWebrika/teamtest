@@ -92,6 +92,7 @@ function selecta_register_swiper_assets() {
 	$swiper_inits = array(
 		'selecta-swiper-image-content'   => 'assets/js/swiper/image-content.js',
 		'selecta-swiper-product-gallery' => 'assets/js/swiper/product-gallery.js',
+		'selecta-swiper-product-related' => 'assets/js/swiper/product-related.js',
 	);
 
 	foreach ( $swiper_inits as $handle => $path ) {
@@ -128,6 +129,11 @@ function selecta_enqueue_product_gallery() {
 	wp_enqueue_script( 'selecta-swiper-product-gallery' );
 }
 
+function selecta_enqueue_product_related() {
+	selecta_enqueue_swiper_assets();
+	wp_enqueue_script( 'selecta-swiper-product-related' );
+}
+
 function selecta_enqueue_admin_bar_styles() {
 	if ( ! is_admin_bar_showing() ) {
 		return;
@@ -159,6 +165,7 @@ function selecta_register_component_styles() {
 		'selecta-product-gallery'       => 'assets/css/components/product-gallery.css',
 		'selecta-product-hero-info'     => 'assets/css/components/product-hero-info.css',
 		'selecta-product-page'          => 'assets/css/components/product-page.css',
+		'selecta-product-related'       => 'assets/css/components/product-related.css',
 	);
 
 	foreach ( $components as $handle => $path ) {
