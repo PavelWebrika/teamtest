@@ -17,14 +17,7 @@
 }
 
 .product-related__controls {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	align-items: center;
-	gap: 0.75rem;
-}
-
-.product-related--show-nav .product-related__controls {
-	grid-template-columns: auto minmax(0, 1fr) auto;
+	position: relative;
 }
 
 .product-related-swiper {
@@ -52,9 +45,11 @@
 
 .product-related__nav {
 	display: none;
+	position: absolute;
+	top: 50%;
+	z-index: 2;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0;
 	width: 2rem;
 	height: 2rem;
 	padding: 0;
@@ -62,6 +57,15 @@
 	background: transparent;
 	color: #4c4d4f;
 	cursor: pointer;
+	transform: translateY(-50%);
+}
+
+.product-related__nav--prev {
+	left: -1.5rem;
+}
+
+.product-related__nav--next {
+	right: -1.5rem;
 }
 
 .product-related--show-nav .product-related__nav {
